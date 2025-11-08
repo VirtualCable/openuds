@@ -56,6 +56,9 @@ from .user_services import AssignedUserService, CachedService, Changelog, Groups
 
 logger = logging.getLogger(__name__)
 
+if typing.TYPE_CHECKING:
+    from django.db.models import QuerySet
+
 
 @dataclasses.dataclass
 class ServicePoolItem(types.rest.BaseRestItem):
@@ -157,7 +160,7 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
         .text_column(name='pool_group_name', title=_('Pool group'))
         .text_column(name='parent', title=_('Parent service'))
         .text_column(name='tags', title=_('tags'), visible=False)
-        .row_style(prefix='row-state-', field='state')  
+        .row_style(prefix='row-state-', field='state')
         .with_filter_fields('name', 'state')
         .build()
     )
@@ -175,6 +178,14 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
     REST_API_INFO = types.rest.api.RestApiInfo(
         typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
     )
+
+    def apply_sort(self, qs: 'QuerySet[typing.Any]') -> 'list[typing.Any] | QuerySet[typing.Any]':
+        if field_info := self.get_sort_field_info('state'):
+            field_name, is_descending = field_info
+            order_by_field = f"-{field_name}" if is_descending else field_name
+            return qs.order_by(order_by_field)
+
+        return super().apply_sort(qs)
 
     def get_items(
         self, *args: typing.Any, **kwargs: typing.Any

@@ -58,6 +58,7 @@ logger = logging.getLogger(__name__)
 
 T = typing.TypeVar('T')
 
+
 class Handler(abc.ABC):
     """
     REST requests handler base class
@@ -391,8 +392,29 @@ class Handler(abc.ABC):
                 return self._params[name]
         return ''
 
+    def get_sort_field_info(self, *args: str) -> tuple[str, bool]|None:
+        """
+        Returns sorting information for the first sorting if it is contained in the odata orderby list.
+
+        Args:
+            args: The  possible name of the field name to check for sorting information.
+            
+        Returns:
+            A tuple containing the clean field name found and a boolean indicating if the sorting is descending,
+            
+        Note:
+            We only use the first in case of table sort translations, so this only returns info for the first field
+        """
+        if self.odata.orderby:
+            order_field = self.odata.orderby[0]
+            clean_field = order_field.lstrip('-')
+            for field_name in args:
+                if clean_field == field_name:
+                    is_descending = order_field.startswith('-')
+                    return (clean_field, is_descending)
+        return None
     
-    def custom_sort(self, qs: QuerySet[typing.Any], order_by: list[str]) -> list[typing.Any]|QuerySet[typing.Any]:
+    def apply_sort(self, qs: QuerySet[typing.Any]) -> list[typing.Any] | QuerySet[typing.Any]:
         """
         Custom sorting function to apply to querysets.
         Override this method in subclasses to provide custom sorting logic.
@@ -404,8 +426,7 @@ class Handler(abc.ABC):
         Returns:
             The sorted queryset.
         """
-        return qs.order_by(order_by)
-
+        return qs.order_by(*self.odata.orderby)
 
     def filter_odata_queryset(self, qs: QuerySet[typing.Any]) -> list[typing.Any]:
         """
@@ -420,13 +441,14 @@ class Handler(abc.ABC):
                 qs = query_db_filter.exec_query(self.odata.filter, qs)
             except ValueError as e:
                 raise exceptions.rest.RequestError(f'Invalid odata filter: {e}') from e
-        
+
         # Store total count before slicing
         self.add_header('X-Total-Count', str(qs.count()))
 
         # order_by must be unique and all fields are summited by once
+        # As after slicing we can have a list, we may use list result from sorting
         if self.odata.orderby:
-            result = self.custom_sort(qs, self.odata.orderby)
+            result = self.apply_sort(qs)
         else:
             result = qs
 

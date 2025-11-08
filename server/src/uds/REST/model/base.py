@@ -131,7 +131,7 @@ class BaseModelHandler(Handler, abc.ABC, typing.Generic[types.rest.T_Item]):
             raise exceptions.rest.RequestError(f'needed parameter not found in data {e}')
 
         return args
-
+    
     # Success methods
     def success(self) -> str:
         """
