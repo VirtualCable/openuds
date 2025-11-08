@@ -52,7 +52,7 @@ class TestServiceNoCache(services.Service):
     Basic testing service without cache and no publication OFC
     """
     type_name = _('Testing Service no cache')
-    type_type = 'TestService1'
+    type_type = 'TestService2'
     type_description = _('Testing (and dummy) service with no cache')
     icon_file = 'service.png'
 
@@ -84,7 +84,7 @@ class TestServiceCache(services.Service):
     """
 
     type_name = _('Testing Service WITH cache')
-    type_type = 'TestService2'
+    type_type = 'TestService1'
     type_description = _('Testing (and dummy) service with CACHE and PUBLICATION')
     icon_file = 'provider.png'  # : We reuse provider icon here :-), it's just for testing purpuoses
 

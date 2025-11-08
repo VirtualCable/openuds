@@ -53,6 +53,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+T = typing.TypeVar('T', bound=models.Model)
 
 # Details do not have types at all
 # so, right now, we only process details petitions for Handling & tables info
@@ -244,6 +245,16 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         Here derived classes can process "non default" (and so, not understood) GET constructions
         """
         raise exceptions.rest.RequestError('Invalid GET request') from None
+
+    def filter(self, qs: models.QuerySet[T]) -> list[T]:
+        """
+        Invoked to filter the queryset according to parameters received
+        Default implementation does not filter anything
+        :param qs: Queryset to filterasdf
+        :return: Filtered queryset
+        """
+        return self.filter_odata_queryset(qs)
+        
 
     # Override this to provide functionality
     # Default (as sample) get_items

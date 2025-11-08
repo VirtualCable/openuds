@@ -31,17 +31,19 @@ def _as_dict_without_none(v: typing.Any) -> typing.Any:
 # (handler, model, detail, etc.)
 # So we can override names or whatever we need
 
+
 # Types of GUI info that can be provided
 class RestApiInfoGuiType(enum.Enum):
     SINGLE_TYPE = 0
     MULTIPLE_TYPES = 1
     UNTYPED = 3
-    
+
     def is_single_type(self) -> bool:
         return self == RestApiInfoGuiType.SINGLE_TYPE
-    
+
     def supports_multiple_types(self) -> bool:
         return self == RestApiInfoGuiType.MULTIPLE_TYPES
+
 
 @dataclasses.dataclass
 class RestApiInfo:
@@ -429,7 +431,9 @@ class ODataParams:
                 filter=data.get('$filter'),
                 start=start,
                 limit=limit,
-                orderby=order_by,
+                orderby=[
+                    o.replace('.', '__') for o in order_by
+                ],  # Allow order by related fields with dot or __
                 select=select,
             )
         except (ValueError, TypeError):

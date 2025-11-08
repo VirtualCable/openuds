@@ -157,7 +157,8 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
         .text_column(name='pool_group_name', title=_('Pool group'))
         .text_column(name='parent', title=_('Parent service'))
         .text_column(name='tags', title=_('tags'), visible=False)
-        .row_style(prefix='row-state-', field='state')
+        .row_style(prefix='row-state-', field='state')  
+        .with_filter_fields('name', 'state')
         .build()
     )
 
@@ -181,7 +182,7 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
         # Optimized query, due that there is a lot of info needed for theee
         d = sql_now() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
         return super().get_items(
-            overview=kwargs.get('overview', True),
+            sumarize=kwargs.get('overview', True),
             query=(
                 ServicePool.objects.prefetch_related(
                     'service',

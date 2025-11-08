@@ -122,7 +122,7 @@ class Users(DetailHandler[UserItem]):
         # Extract authenticator
         try:
             if item is None:  # All users
-                return [as_user_item(i) for i in self.filter_queryset(parent.users.all())]
+                return [as_user_item(i) for i in self.filter_odata_queryset(parent.users.all())]
 
             u = parent.users.get(uuid__iexact=process_uuid(item))
             res = as_user_item(u)
@@ -356,7 +356,7 @@ class Groups(DetailHandler[GroupItem]):
             multi = False
             if item is None:
                 multi = True
-                q = self.filter_queryset(parent.groups.all())
+                q = self.filter_odata_queryset(parent.groups.all())
             else:
                 q = parent.groups.filter(uuid=process_uuid(item))
             res: list[GroupItem] = []

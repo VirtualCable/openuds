@@ -399,6 +399,8 @@ class TableBuilder:
     subtitle: str | None
     fields: list[types.rest.TableField]
     style_info: types.rest.RowStyleInfo
+    filter_fields: list[str]
+    field_mappings: dict[str, str]
 
     def __init__(self, title: str, subtitle: str | None = None) -> None:
         # TODO: USe table_name on a later iteration of the code
@@ -406,6 +408,8 @@ class TableBuilder:
         self.subtitle = subtitle
         self.fields = []
         self.style_info = types.rest.RowStyleInfo.null()
+        self.filter_fields = []
+        self.field_mappings = {}
 
     def _add_field(
         self,
@@ -513,6 +517,20 @@ class TableBuilder:
         self.style_info = types.rest.RowStyleInfo(prefix=prefix, field=field)
         return self
 
+    def with_filter_fields(self, *fields: str) -> typing.Self:
+        """
+        Sets the sorting fields for the table fields.
+        """
+        self.filter_fields = list(fields)
+        return self
+
+    def with_field_mappings(self, **kwargs: str) -> typing.Self:
+        """
+        Sets the filter fields translations for the table fields.
+        """
+        self.field_mappings = kwargs
+        return self
+
     def build(self) -> types.rest.TableInfo:
         """
         Returns the table info for the table fields.
@@ -522,4 +540,6 @@ class TableBuilder:
             fields=self.fields,
             row_style=self.style_info,
             subtitle=self.subtitle,
+            filter_fields=self.filter_fields,
+            field_mappings=self.field_mappings,
         )

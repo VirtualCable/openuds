@@ -224,12 +224,12 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
         return self.get_item(item)
 
     def get_items(
-        self, *, overview: bool = False, query: QuerySet[T] | None = None
+        self, *, sumarize: bool = False, query: QuerySet[T] | None = None
     ) -> typing.Generator[types.rest.T_Item, None, None]:
         """
         Get items from the model.
         Args:
-            overview: If True, return a summary of the items.
+            sumarize: If True, return a summary of the items.
             query: Optional queryset to filter the items. Used to optimize the process for some models
                    (such as ServicePools)
 
@@ -245,7 +245,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
         if self.EXCLUDE is not None:
             qs = qs.exclude(**self.EXCLUDE)
 
-        qs = self.filter_queryset(qs)
+        qs = self.filter_odata_queryset(qs)
 
         for item in qs:
             try:
@@ -259,7 +259,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
                     is False
                 ):
                     continue
-                yield self.get_item_summary(item) if overview else self.get_item(item)
+                yield self.get_item_summary(item) if sumarize else self.get_item(item)
             except Exception as e:  # maybe an exception is thrown to skip an item
                 logger.debug('Got exception processing item from model: %s', e)
                 # logger.exception('Exception getting item from {0}'.format(self.model))
@@ -269,7 +269,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
         number_of_args = len(self._args)
 
         if number_of_args == 0:
-            return list(self.get_items(overview=False))
+            return list(self.get_items(sumarize=False))
 
         # if has custom methods, look for if this request matches any of them
         for cm in self.CUSTOM_METHODS:
@@ -309,7 +309,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
 
         match self._args:
             case []:  # Same as overview, but with all data
-                return [i.as_dict() for i in self.get_items(overview=False)]
+                return [i.as_dict() for i in self.get_items(sumarize=False)]
             case [consts.rest.OVERVIEW]:
                 return [i.as_dict() for i in self.get_items()]
             case [consts.rest.OVERVIEW, *_fails]:

@@ -37,7 +37,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext as _
-from django.db.models import Model
+from django.db.models import Model, QuerySet, OuterRef, Subquery
 
 import uds.core.types.permissions
 from uds import models
@@ -145,6 +145,28 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
 
         return val
 
+    def custom_sort(self, qs: QuerySet[typing.Any], order_by: list[str]) -> QuerySet[typing.Any]:
+        # TODO: Finish custom sorting
+
+        first_order_by = order_by[0]
+
+        sign = '-' if first_order_by[0] == '-' else ''
+        first_order_by_field = first_order_by.lstrip('-')
+
+        def annotated_sort(field: str, sign: str) -> QuerySet[typing.Any]:
+            prop_value_subquery = models.Properties.objects.filter(
+                owner_id=OuterRef('uuid'), owner_type='userservice', key=field
+            ).values('value')[:1]
+            return qs.annotate(prop_value=Subquery(prop_value_subquery)).order_by(f'{sign}prop_value')
+
+        # Currently, we only support a single field for sorting some fields
+        # We can fix this in a future, because we only need to locate the ip for example
+        # extract it, and then sort by prop_value + rest of fields
+        if first_order_by_field in ('ip', 'actor_version'):
+            return annotated_sort(first_order_by_field, sign)
+
+        return qs.order_by(*order_by)
+
     def get_items(
         self, parent: 'Model', item: typing.Optional[str]
     ) -> types.rest.ItemsResult['UserServiceItem']:
@@ -155,19 +177,19 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
                 # First, fetch all properties for all assigned services on this pool
                 # We can cache them, because they are going to be readed anyway...
                 properties: dict[str, typing.Any] = collections.defaultdict(dict)
-                for id, key, value in self.filter_queryset(
-                    models.Properties.objects.filter(
-                        owner_type='userservice',
-                        owner_id__in=parent.assigned_user_services().values_list('uuid', flat=True),
-                    )
+                for id, key, value in models.Properties.objects.filter(
+                    owner_type='userservice',
+                    owner_id__in=parent.assigned_user_services().values_list('uuid', flat=True),
                 ).values_list('owner_id', 'key', 'value'):
                     properties[id][key] = value
 
                 return [
                     AssignedUserService.userservice_item(k, properties.get(k.uuid, {}))
-                    for k in parent.assigned_user_services()
-                    .all()
-                    .prefetch_related('deployed_service', 'publication', 'user')
+                    for k in self.filter(
+                        parent.assigned_user_services()
+                        .all()
+                        .prefetch_related('deployed_service', 'publication', 'user')
+                    )
                 ]
             return AssignedUserService.userservice_item(
                 parent.assigned_user_services().get(process_uuid(uuid=process_uuid(item))),
@@ -202,6 +224,7 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
             .text_column(name='owner', title=_('Owner'))
             .text_column(name='actor_version', title=_('Actor version'))
             .row_style(prefix='row-state-', field='state')
+            .with_field_mappings(revision='deployed_service.publications.revision')
         ).build()
 
     def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
@@ -303,10 +326,19 @@ class CachedService(AssignedUserService):
 
         try:
             if not item:
+                # First, fetch all properties for all assigned services on this pool
+                # We can cache them, because they are going to be readed anyway...
+                properties: dict[str, typing.Any] = collections.defaultdict(dict)
+                for id, key, value in models.Properties.objects.filter(
+                    owner_type='userservice',
+                    owner_id__in=parent.assigned_user_services().values_list('uuid', flat=True),
+                ).values_list('owner_id', 'key', 'value'):
+                    properties[id][key] = value
+                
                 return [
-                    AssignedUserService.userservice_item(k, is_cache=True)
-                    for k in self.filter_queryset(parent.cached_users_services().all()).prefetch_related(
-                        'deployed_service', 'publication'
+                    AssignedUserService.userservice_item(k, properties.get(k.uuid, {}), is_cache=True)
+                    for k in self.filter(
+                        parent.cached_users_services().all().prefetch_related('deployed_service', 'publication')
                     )
                 ]
             cached_userservice: models.UserService = parent.cached_users_services().get(uuid=process_uuid(item))
@@ -327,6 +359,8 @@ class CachedService(AssignedUserService):
             .text_column(name='ip', title=_('IP'))
             .text_column(name='friendly_name', title=_('Friendly name'))
             .dict_column(name='state', title=_('State'), dct=State.literals_dict())
+            .with_field_mappings(revision='deployed_service.publications.revision')
+            .with_filter_fields('creation_date', 'unique_id', 'friendly_name', 'state')
         )
         if parent.state != State.LOCKED:
             table_info = table_info.text_column(name='cache_level', title=_('Cache level')).text_column(
@@ -381,7 +415,7 @@ class Groups(DetailHandler[GroupItem]):
                 auth_name=group.manager.name,
             )
             for group in typing.cast(
-                collections.abc.Iterable[models.Group], self.filter_queryset(parent.assignedGroups.all())
+                collections.abc.Iterable[models.Group], self.filter_odata_queryset(parent.assignedGroups.all())
             )
         ]
 
@@ -449,7 +483,7 @@ class Transports(DetailHandler[TransportItem]):
                 priority=trans.priority,
                 trans_type=trans.get_type().mod_name(),
             )
-            for trans in self.filter_queryset(parent.transports.all())
+            for trans in self.filter_odata_queryset(parent.transports.all())
         ]
 
     def get_table(self, parent: 'Model') -> TableInfo:
@@ -573,7 +607,7 @@ class Publications(DetailHandler[PublicationItem]):
                 reason=State.from_str(i.state).is_errored() and i.get_instance().error_reason() or '',
                 state_date=i.state_date,
             )
-            for i in self.filter_queryset(parent.publications.all())
+            for i in self.filter_odata_queryset(parent.publications.all())
         ]
 
     def get_table(self, parent: 'Model') -> TableInfo:
@@ -608,7 +642,7 @@ class Changelog(DetailHandler[ChangelogItem]):
                 stamp=i.stamp,
                 log=i.log,
             )
-            for i in self.filter_queryset(parent.changelog.all())
+            for i in self.filter_odata_queryset(parent.changelog.all())
         ]
 
     def get_table(self, parent: 'Model') -> types.rest.TableInfo:

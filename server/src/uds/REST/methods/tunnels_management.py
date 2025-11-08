@@ -72,7 +72,7 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
             multi = False
             if item is None:
                 multi = True
-                q = self.filter_queryset(parent.servers.all())
+                q = self.filter_odata_queryset(parent.servers.all())
             else:
                 q = parent.servers.filter(uuid=process_uuid(item))
             res: list[TunnelServerItem] = [

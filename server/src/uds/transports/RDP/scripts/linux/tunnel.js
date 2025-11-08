@@ -32,12 +32,9 @@ if (!executablePath) {
 // using Utils.expandVars, expand variables of data.freerdp_params (that is an array of strings)
 let parameters = data.freerdp_params.map((param) => Utils.expandVars(param));
 
-// Note: we use "script mode" of boa, and top level await is not allowed
-// So we need a helper function to use await inside, and use .then
-
 let tunnel = null;
 try {
-    tunnel = Tasks.startTunnel(data.tunHost, data.tunPort, data.ticket, null, data.tunChk);
+    tunnel = await Tasks.startTunnel(data.tunHost, data.tunPort, data.ticket, null, data.tunChk);
 } catch (error) {
     Logger.error(`Failed to start tunnel: ${error.message}`);
     throw new Error(`Failed to start tunnel: ${error.message}`);
@@ -49,9 +46,9 @@ let process = null;
 if (data.as_file) {
     Logger.debug('Has as_file property, creating temp RDP file');
     // Replace "{address}" with data.address in the as_file content
-    let content = data.as_file.replace(/{address}/g, `127.0.0.1:${tunnel.port}`);
+    let content = data.as_file.replace(/\{address\}/g, `127.0.0.1:${tunnel.port}`);
     // Create and save the temp file
-    rdpFilePath = File.createTempFile(File.getHomeDirectory(), content, '.rdp');
+    rdpFilePath = File.createTempFile(File.getHomeDtartirectory(), content, '.rdp');
     Logger.debug(`RDP temp file created at ${rdpFilePath}`);
 
     // Append to removable task to delete the file later

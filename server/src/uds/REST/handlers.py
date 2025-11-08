@@ -390,11 +390,27 @@ class Handler(abc.ABC):
             if name in self._params:
                 return self._params[name]
         return ''
+
     
-    def filter_queryset(self, qs: QuerySet[typing.Any]) -> list[typing.Any]:
+    def custom_sort(self, qs: QuerySet[typing.Any], order_by: list[str]) -> list[typing.Any]|QuerySet[typing.Any]:
+        """
+        Custom sorting function to apply to querysets.
+        Override this method in subclasses to provide custom sorting logic.
+
+        Args:
+            qs: The queryset to sort.
+            order_by: The field name to sort by.
+
+        Returns:
+            The sorted queryset.
+        """
+        return qs.order_by(order_by)
+
+
+    def filter_odata_queryset(self, qs: QuerySet[typing.Any]) -> list[typing.Any]:
         """
         Filters the queryset based on odata
-        
+
         Note: We return a list, because after applying slicing, querysets may be evaluated
               by using _result_cache, so we force evaluation here to avoid issues later.
         """
@@ -404,29 +420,37 @@ class Handler(abc.ABC):
                 qs = query_db_filter.exec_query(self.odata.filter, qs)
             except ValueError as e:
                 raise exceptions.rest.RequestError(f'Invalid odata filter: {e}') from e
+        
+        # Store total count before slicing
+        self.add_header('X-Total-Count', str(qs.count()))
 
         # order_by must be unique and all fields are summited by once
         if self.odata.orderby:
-            qs = qs.order_by(*self.odata.orderby)
-            
+            result = self.custom_sort(qs, self.odata.orderby)
+        else:
+            result = qs
+
         # If odata start/limit are set, apply them
         if self.odata.start is not None:
-            qs = qs[self.odata.start :]
+            result = result[self.odata.start :]
+        # Note that limit is AFTER start because of previous line
         if self.odata.limit is not None:
-            qs = qs[: self.odata.limit]
-            
-        result = list(qs)
+            result = result[: self.odata.limit]
 
-        # Get total items and set it on X-Total-Count
+        # After slicing, the qs may be a list, so we ensure it's a list
+        # to avoid issues later
+        result = list(result)
+
+        # Get total items and set it on X-Filtered-Count
         try:
             total_items = len(result)
-            self.add_header('X-Total-Count', total_items)
+            self.add_header('X-Filtered-Count', total_items)
         except Exception as e:
             raise exceptions.rest.RequestError(f'Invalid odata: {e}')
 
         return result
 
-    def filter_data(self, data: collections.abc.Iterable[T]) -> list[T]:
+    def filter_odata_data(self, data: collections.abc.Iterable[T]) -> list[T]:
         """
         Filters the dict base on the currnet odata
         """
@@ -446,8 +470,7 @@ class Handler(abc.ABC):
             raise exceptions.rest.RequestError(f'Invalid odata: {e}')
 
         return data
-    
-    
+
     @classmethod
     def api_components(cls: type[typing.Self]) -> types.rest.api.Components:
         """
@@ -456,7 +479,9 @@ class Handler(abc.ABC):
         return types.rest.api.Components()
 
     @classmethod
-    def api_paths(cls: type[typing.Self], path: str, tags: list[str], security: str) -> dict[str, types.rest.api.PathItem]:
+    def api_paths(
+        cls: type[typing.Self], path: str, tags: list[str], security: str
+    ) -> dict[str, types.rest.api.PathItem]:
         """
         Returns the API operations that should be registered
         """

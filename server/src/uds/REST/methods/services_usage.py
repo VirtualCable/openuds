@@ -117,7 +117,7 @@ class ServicesUsage(DetailHandler[ServicesUsageItem]):
         parent = ensure.is_instance(parent, Provider)
         try:
             if item is None:
-                userservices_query = self.filter_queryset(
+                userservices_query = self.filter_odata_queryset(
                     UserService.objects.filter(deployed_service__service__provider=parent)
                 )
             else:
