@@ -428,6 +428,7 @@ class Handler(abc.ABC):
         """
         return qs.order_by(*self.odata.orderby)
 
+    @typing.final
     def filter_odata_queryset(self, qs: QuerySet[typing.Any]) -> list[typing.Any]:
         """
         Filters the queryset based on odata
@@ -451,7 +452,7 @@ class Handler(abc.ABC):
             result = self.apply_sort(qs)
         else:
             result = qs
-
+            
         # If odata start/limit are set, apply them
         if self.odata.start is not None:
             result = result[self.odata.start :]

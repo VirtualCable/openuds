@@ -63,39 +63,31 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
     REST_API_INFO = types.rest.api.RestApiInfo(
         name='TunnelServers', description='Tunnel servers assigned to a tunnel'
     )
+    
+    @staticmethod
+    def as_tunnel_server_item(item: models.Server) -> TunnelServerItem:
+        return TunnelServerItem(
+            id=item.uuid,
+            hostname=item.hostname,
+            ip=item.ip,
+            mac=item.mac if item.mac != consts.NULL_MAC else '',
+            maintenance=item.maintenance_mode,
+        )
 
     def get_items(
-        self, parent: 'Model', item: typing.Optional[str]
+        self, parent: 'Model'
     ) -> types.rest.ItemsResult[TunnelServerItem]:
         parent = ensure.is_instance(parent, models.ServerGroup)
-        try:
-            multi = False
-            if item is None:
-                multi = True
-                q = self.filter_odata_queryset(parent.servers.all())
-            else:
-                q = parent.servers.filter(uuid=process_uuid(item))
-            res: list[TunnelServerItem] = [
-                TunnelServerItem(
-                    id=i.uuid,
-                    hostname=i.hostname,
-                    ip=i.ip,
-                    mac=i.mac if i.mac != consts.NULL_MAC else '',
-                    maintenance=i.maintenance_mode,
-                )
-                for i in q
+        return [
+            TunnelServers.as_tunnel_server_item(i)
+                for i in self.odata_filter(parent.servers.all())
             ]
 
-            if multi:
-                return res
-            if not res:
-                raise exceptions.rest.NotFound(f'Tunnel server {item} not found')
-            return res[0]
-        except exceptions.rest.HandlerError:
-            raise
-        except Exception as e:
-            logger.error('Error getting tunnel servers for %s: %s', parent, e)
-            raise exceptions.rest.ResponseError(_('Error getting tunnel servers')) from e
+    def get_item(
+        self, parent: 'Model', item: str
+    ) -> TunnelServerItem:
+        parent = ensure.is_instance(parent, models.ServerGroup)
+        return TunnelServers.as_tunnel_server_item(parent.servers.get(uuid=process_uuid(item)))
 
     def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.ServerGroup)

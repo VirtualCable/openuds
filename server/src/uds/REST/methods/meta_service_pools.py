@@ -92,18 +92,16 @@ class MetaServicesPool(DetailHandler[MetaItem]):
             user_services_in_preparation=item.pool.userServices.filter(state=State.PREPARING).count(),
         )
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult['MetaItem']:
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult['MetaItem']:
+        parent = ensure.is_instance(parent, models.MetaPool)
+        return [MetaServicesPool.as_dict(i) for i in self.filter_odata_queryset(parent.members.all())]
+
+    def get_item(self, parent: 'Model', item: str) -> 'MetaItem':
         parent = ensure.is_instance(parent, models.MetaPool)
         try:
-            if not item:
-                return [MetaServicesPool.as_dict(i) for i in self.filter_odata_queryset(parent.members.all())]
-            i = parent.members.get(uuid=process_uuid(item))
-            return MetaServicesPool.as_dict(i)
+            return MetaServicesPool.as_dict(parent.members.get(uuid=process_uuid(item)))
         except models.MetaPoolMember.DoesNotExist:
             raise exceptions.rest.NotFound(_('Meta pool member not found: {}').format(item)) from None
-        except Exception as e:
-            logger.exception('err: %s', item)
-            raise exceptions.rest.RequestError(f'Error retrieving meta pool member: {e}') from e
 
     def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, models.MetaPool)
@@ -171,67 +169,62 @@ class MetaAssignedService(DetailHandler[UserServiceItem]):
         element.pool_name = item.deployed_service.name
         return element
 
-    def _get_assigned_userservice(self, metapool: models.MetaPool, userservice_id: str) -> models.UserService:
+    @staticmethod
+    def _get_assigned_userservice(metapool: models.MetaPool, userservice_id: str) -> models.UserService:
         """
         Gets an assigned service and checks that it belongs to this metapool
         If not found, raises InvalidItemException
         """
-        try:
-            return models.UserService.objects.filter(
-                uuid=process_uuid(userservice_id),
-                cache_level=0,
-                deployed_service__in=[i.pool for i in metapool.members.all()],
-            )[0]
-        except IndexError:
+        found = models.UserService.objects.filter(
+            uuid=process_uuid(userservice_id),
+            cache_level=0,
+            deployed_service__in=[i.pool for i in metapool.members.all()],
+        ).first()
+        if found is None:
             raise exceptions.rest.NotFound(_('User service not found: {}').format(userservice_id)) from None
-        except Exception:
-            logger.error('Error getting assigned userservice %s for metapool %s', userservice_id, metapool.uuid)
-            raise exceptions.rest.RequestError(
-                _('Error retrieving assigned service: {}').format(userservice_id)
-            ) from None
+        return found
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[UserServiceItem]:
+    def _assigned_userservices_for_pools(
+        self, parent: 'models.MetaPool'
+    ) -> typing.Generator[tuple[models.UserService, typing.Optional[dict[str, typing.Any]]], None, None]:
+        for m in self.odata_filter(parent.members.filter(enabled=True)):
+            properties: dict[str, typing.Any] = {
+                k: v
+                for k, v in models.Properties.objects.filter(
+                    owner_type='userservice',
+                    owner_id__in=m.pool.assigned_user_services().values_list('uuid', flat=True),
+                ).values_list('key', 'value')
+            }
+            for u in (
+                m.pool.assigned_user_services()
+                .filter(state__in=State.VALID_STATES)
+                .prefetch_related('deployed_service', 'publication')
+            ):
+                yield u, properties.get(u.uuid, {})
+
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult[UserServiceItem]:
         parent = ensure.is_instance(parent, models.MetaPool)
 
-        def _assigned_userservices_for_pools() -> (
-            typing.Generator[tuple[models.UserService, typing.Optional[dict[str, typing.Any]]], None, None]
-        ):
-            for m in self.filter_odata_queryset(parent.members.filter(enabled=True)):
-                properties: dict[str, typing.Any] = {
-                    k: v
-                    for k, v in models.Properties.objects.filter(
-                        owner_type='userservice',
-                        owner_id__in=m.pool.assigned_user_services().values_list('uuid', flat=True),
-                    ).values_list('key', 'value')
-                }
-                for u in (
-                    m.pool.assigned_user_services()
-                    .filter(state__in=State.VALID_STATES)
-                    .prefetch_related('deployed_service', 'publication')
-                ):
-                    yield u, properties.get(u.uuid, {})
+        return list(
+            {
+                k.uuid: MetaAssignedService.item_as_dict(parent, k, props)
+                for k, props in self._assigned_userservices_for_pools(parent)
+            }.values()
+        )
 
-        try:
-            if not item:  # All items
-                result: dict[str, typing.Any] = {}
+    def get_item(self, parent: 'Model', item: str) -> UserServiceItem:
+        parent = ensure.is_instance(parent, models.MetaPool)
 
-                for k, props in _assigned_userservices_for_pools():
-                    result[k.uuid] = MetaAssignedService.item_as_dict(parent, k, props)
-                return list(result.values())
-
-            return MetaAssignedService.item_as_dict(
-                parent,
-                self._get_assigned_userservice(parent, item),
-                props={
-                    k: v
-                    for k, v in models.Properties.objects.filter(
-                        owner_type='userservice', owner_id=process_uuid(item)
-                    ).values_list('key', 'value')
-                },
-            )
-        except Exception as e:
-            logger.exception('get_items')
-            raise exceptions.rest.RequestError(f'Error retrieving meta pool member: {e}') from e
+        return MetaAssignedService.item_as_dict(
+            parent,
+            self._get_assigned_userservice(parent, item),
+            props={
+                k: v
+                for k, v in models.Properties.objects.filter(
+                    owner_type='userservice', owner_id=process_uuid(item)
+                ).values_list('key', 'value')
+            },
+        )
 
     def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.MetaPool)

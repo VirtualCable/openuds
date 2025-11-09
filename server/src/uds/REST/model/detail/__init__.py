@@ -34,6 +34,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import typing
 import collections.abc
+import abc
 
 from django.db import models
 from django.utils.translation import gettext as _
@@ -53,12 +54,12 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-T = typing.TypeVar('T', bound=models.Model)
-
 # Details do not have types at all
 # so, right now, we only process details petitions for Handling & tables info
 # noinspection PyMissingConstructor
-class DetailHandler(BaseModelHandler[types.rest.T_Item]):
+
+
+class DetailHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
     """
     Detail handler (for relations such as provider-->services, authenticators-->users,groups, deployed services-->cache,assigned, groups, transports
     Urls recognized for GET are:
@@ -143,8 +144,8 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
 
         parent: models.Model = self._parent_item
 
-        if num_args == 0:
-            return self.get_items(parent, None)
+        if num_args == 0:  # As overview, much more standard
+            return self.get_items(parent)
 
         # if has custom methods, look for if this request matches any of them
         r = self._check_is_custom_method(self._args[0], parent)
@@ -153,7 +154,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
 
         match self._args:
             case [consts.rest.OVERVIEW]:
-                return self.get_items(parent, None)
+                return self.get_items(parent)
             case [consts.rest.OVERVIEW, *_fails]:
                 raise exceptions.rest.RequestError('Invalid overview request') from None
             case [consts.rest.TYPES]:
@@ -178,8 +179,10 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
                 return self.get_logs(parent, item_id)
             case [consts.rest.LOG, *_fails]:
                 raise exceptions.rest.RequestError('Invalid log request') from None
+            case [consts.rest.POSITION, item_uuid]:
+                return self.get_item_position(item_uuid)
             case [one_arg]:
-                return self.get_items(parent, process_uuid(one_arg))
+                return self.get_item(parent, process_uuid(one_arg))
             case _:
                 # Maybe a custom method?
                 r = self._check_is_custom_method(self._args[1], parent, self._args[0])
@@ -246,20 +249,11 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         """
         raise exceptions.rest.RequestError('Invalid GET request') from None
 
-    def filter(self, qs: models.QuerySet[T]) -> list[T]:
-        """
-        Invoked to filter the queryset according to parameters received
-        Default implementation does not filter anything
-        :param qs: Queryset to filterasdf
-        :return: Filtered queryset
-        """
-        return self.filter_odata_queryset(qs)
-        
-
     # Override this to provide functionality
     # Default (as sample) get_items
+    @abc.abstractmethod
     def get_items(
-        self, parent: models.Model, item: typing.Optional[str]
+        self, parent: models.Model
     ) -> types.rest.ItemsResult[types.rest.T_Item]:
         """
         This MUST be overridden by derived classes
@@ -271,6 +265,16 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         #     return []
         # return {}  # Returns one item
         raise NotImplementedError(f'Must provide an get_items method for {self.__class__} class')
+
+    @abc.abstractmethod
+    def get_item(self, parent: models.Model, item: str) -> types.rest.T_Item:
+        """
+        Utility method to get a single item by uuid
+        :param parent: Parent model
+        :param item: Item uuid
+        :return: Item as dictionary
+        """
+        raise NotImplementedError(f'Must provide an get_item method for {self.__class__} class')
 
     # Default save
     def save_item(self, parent: models.Model, item: typing.Optional[str]) -> types.rest.T_Item:
@@ -339,15 +343,6 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         """
         return []  # Default is that details do not have types
 
-    @classmethod
-    def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[module.Module]]:
-        """
-        Note: This method returns ALL POSSIBLE TYPES for the specific model, not just those
-              related to the father. Is used for api composition.
-              enum_types, hear, is the one to filter types by parent, etc..
-        """
-        return []
-
     def get_logs(self, parent: models.Model, item: str) -> list[typing.Any]:
         """
         If the detail has any log associated with it items, provide it overriding this method
@@ -356,6 +351,23 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         :return: a list of log elements (normally got using "uds.core.util.log.get_logs" method)
         """
         raise exceptions.rest.InvalidMethodError('Object does not support logs')
+
+    def get_item_position(self, item_uuid: str) -> int:
+        """
+        Tries to get the position of an item in the default ordering of the detail items
+        :param item_uuid: UUID of the item to find
+        :return: Position of the item in the default ordering, -1 if not found
+        """
+        return -1
+
+    @classmethod
+    def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[module.Module]]:
+        """
+        Note: This method returns ALL POSSIBLE TYPES for the specific model, not just those
+              related to the father. Is used for api composition.
+              enum_types, hear, is the one to filter types by parent, etc..
+        """
+        return []
 
     @classmethod
     def api_components(cls: type[typing.Self]) -> types.rest.api.Components:
@@ -366,10 +378,12 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         return api_utils.get_component_from_type(cls)
 
     @classmethod
-    def api_paths(cls: type[typing.Self], path: str, tags: list[str], security: str) -> dict[str, types.rest.api.PathItem]:
+    def api_paths(
+        cls: type[typing.Self], path: str, tags: list[str], security: str
+    ) -> dict[str, types.rest.api.PathItem]:
         """
         Returns the API operations that should be registered
         """
         from .api_helpers import api_paths
- 
+
         return api_paths(cls, path, tags=tags, security=security)

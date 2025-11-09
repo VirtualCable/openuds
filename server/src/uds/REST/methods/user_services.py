@@ -145,12 +145,14 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
 
         return val
 
-    def apply_sort(self, qs: QuerySet[typing.Any]) -> list[typing.Any] |QuerySet[typing.Any]:
+    def apply_sort(self, qs: QuerySet[typing.Any]) -> list[typing.Any] | QuerySet[typing.Any]:
         def annotated_sort(field: str, descending: bool) -> QuerySet[typing.Any]:
             prop_value_subquery = models.Properties.objects.filter(
                 owner_id=OuterRef('uuid'), owner_type='userservice', key=field
             ).values('value')[:1]
-            return qs.annotate(prop_value=Subquery(prop_value_subquery)).order_by(f'{"-" if descending else ""}prop_value')
+            return qs.annotate(prop_value=Subquery(prop_value_subquery)).order_by(
+                f'{"-" if descending else ""}prop_value'
+            )
 
         if sort_info := self.get_sort_field_info('ip', 'actor_version'):
             return annotated_sort(*sort_info)
@@ -158,8 +160,33 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
 
         return super().apply_sort(qs)
 
+    def do_get_item(
+        self,
+        parent: 'Model',
+        item: str,
+        for_cached: bool,
+    ) -> 'UserServiceItem':
+        parent = ensure.is_instance(parent, models.ServicePool)
+
+        def get_qs() -> QuerySet[models.UserService]:
+            if for_cached:
+                return parent.cached_users_services()
+            return parent.assigned_user_services()
+
+        return AssignedUserService.userservice_item(
+            get_qs().get(uuid=process_uuid(item)),
+            props={
+                k: v
+                for k, v in models.Properties.objects.filter(
+                    owner_type='userservice', owner_id=process_uuid(item)
+                ).values_list('key', 'value')
+            },
+            is_cache=for_cached,
+        )
+
     def do_get_items(
-        self, parent: 'Model', item: typing.Optional[str],
+        self,
+        parent: 'Model',
         for_cached: bool,
     ) -> types.rest.ItemsResult['UserServiceItem']:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -169,43 +196,31 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
                 return parent.cached_users_services()
             return parent.assigned_user_services()
 
-        try:
-            if not item:
-                # First, fetch all properties for all assigned services on this pool
-                # We can cache them, because they are going to be readed anyway...
-                properties: dict[str, typing.Any] = collections.defaultdict(dict)
-                for id, key, value in models.Properties.objects.filter(
-                    owner_type='userservice',
-                    owner_id__in=get_qs().values_list('uuid', flat=True),
-                ).values_list('owner_id', 'key', 'value'):
-                    properties[id][key] = value
+        # First, fetch all properties for all assigned services on this pool
+        # We can cache them, because they are going to be readed anyway...
+        properties: dict[str, typing.Any] = collections.defaultdict(dict)
+        for id, key, value in models.Properties.objects.filter(
+            owner_type='userservice',
+            owner_id__in=get_qs().values_list('uuid', flat=True),
+        ).values_list('owner_id', 'key', 'value'):
+            properties[id][key] = value
 
-                return [
-                    AssignedUserService.userservice_item(k, properties.get(k.uuid, {}))
-                    for k in self.filter(
-                        get_qs()
-                        .all()
-                        .prefetch_related('deployed_service', 'publication', 'user')
-                    )
-                ]
-            return AssignedUserService.userservice_item(
-                get_qs().get(process_uuid(uuid=process_uuid(item))),
-                props={
-                    k: v
-                    for k, v in models.Properties.objects.filter(
-                        owner_type='userservice', owner_id=process_uuid(item)
-                    ).values_list('key', 'value')
-                },
+        return [
+            AssignedUserService.userservice_item(k, properties.get(k.uuid, {}))
+            for k in self.odata_filter(
+                get_qs().all().prefetch_related('deployed_service', 'publication', 'user')
             )
-        except Exception as e:
-            logger.error('Error getting user service %s: %s', item, e)
-            raise exceptions.rest.ResponseError(_('Error getting user service')) from e
-        
-    def get_items(
-        self, parent: 'Model', item: typing.Optional[str]
-    ) -> types.rest.ItemsResult['UserServiceItem']:
-        return self.do_get_items(parent, item, for_cached=False)
-        
+        ]
+
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult['UserServiceItem']:
+        return self.do_get_items(parent, for_cached=False)
+
+    def get_item(
+        self,
+        parent: 'Model',
+        item: str,
+    ) -> 'UserServiceItem':
+        return self.do_get_item(parent, item, for_cached=False)
 
     def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -323,10 +338,15 @@ class CachedService(AssignedUserService):
 
     CUSTOM_METHODS = []  # Remove custom methods from assigned services
 
-    def get_items(
-        self, parent: 'Model', item: typing.Optional[str]
-    ) -> types.rest.ItemsResult['UserServiceItem']:
-        return self.do_get_items(parent, item, for_cached=True)
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult['UserServiceItem']:
+        return self.do_get_items(parent, for_cached=True)
+
+    def get_item(
+        self,
+        parent: 'Model',
+        item: str,
+    ) -> 'UserServiceItem':
+        return self.do_get_item(parent, item, for_cached=True)
 
     def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -379,7 +399,7 @@ class Groups(DetailHandler[GroupItem]):
     Processes the groups detail requests of a Service Pool
     """
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> list['GroupItem']:
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult['GroupItem']:
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
 
         return [
@@ -397,6 +417,9 @@ class Groups(DetailHandler[GroupItem]):
                 collections.abc.Iterable[models.Group], self.filter_odata_queryset(parent.assignedGroups.all())
             )
         ]
+
+    def get_item(self, parent: Model, item: str) -> GroupItem:
+        raise exceptions.rest.NotSupportedError('Single group retrieval not implemented inside assigned groups')
 
     def get_table(self, parent: 'Model') -> TableInfo:
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
@@ -450,7 +473,7 @@ class Transports(DetailHandler[TransportItem]):
     Processes the transports detail requests of a Service Pool
     """
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> list['TransportItem']:
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult['TransportItem']:
         parent = ensure.is_instance(parent, models.ServicePool)
 
         return [
@@ -464,6 +487,11 @@ class Transports(DetailHandler[TransportItem]):
             )
             for trans in self.filter_odata_queryset(parent.transports.all())
         ]
+
+    def get_item(self, parent: 'Model', item: str) -> TransportItem:
+        raise exceptions.rest.NotSupportedError(
+            'Single transport retrieval not implemented inside assigned transports'
+        )
 
     def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -575,7 +603,7 @@ class Publications(DetailHandler[PublicationItem]):
 
         return self.success()
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> list['PublicationItem']:
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult['PublicationItem']:
         parent = ensure.is_instance(parent, models.ServicePool)
         return [
             PublicationItem(
@@ -588,6 +616,11 @@ class Publications(DetailHandler[PublicationItem]):
             )
             for i in self.filter_odata_queryset(parent.publications.all())
         ]
+
+    def get_item(self, parent: 'Model', item: str) -> PublicationItem:
+        raise exceptions.rest.NotSupportedError(
+            'Single publication retrieval not implemented inside assigned publications'
+        )
 
     def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -613,7 +646,7 @@ class Changelog(DetailHandler[ChangelogItem]):
     Processes the transports detail requests of a Service Pool
     """
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> list['ChangelogItem']:
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult['ChangelogItem']:
         parent = ensure.is_instance(parent, models.ServicePool)
         return [
             ChangelogItem(
@@ -623,6 +656,9 @@ class Changelog(DetailHandler[ChangelogItem]):
             )
             for i in self.filter_odata_queryset(parent.changelog.all())
         ]
+
+    def get_item(self, parent: 'Model', item: str) -> ChangelogItem:
+        raise exceptions.rest.NotSupportedError('Single changelog retrieval not implemented inside changelog')
 
     def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, models.ServicePool)

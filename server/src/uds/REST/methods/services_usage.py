@@ -33,7 +33,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 
 import dataclasses
 import logging
-import typing
 import datetime
 
 from django.utils.translation import gettext as _
@@ -111,30 +110,25 @@ class ServicesUsage(DetailHandler[ServicesUsageItem]):
             in_use=item.in_use,
         )
 
-    def get_items(
-        self, parent: 'Model', item: typing.Optional[str]
-    ) -> types.rest.ItemsResult[ServicesUsageItem]:
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult[ServicesUsageItem]:
         parent = ensure.is_instance(parent, Provider)
         try:
-            if item is None:
-                userservices = self.filter(
-                    UserService.objects.filter(deployed_service__service__provider=parent).order_by('creation_date').prefetch_related(
-                        'deployed_service', 'deployed_service__service', 'user', 'user__manager'
-                    )
-                )
-            else:
-                userservices = list(UserService.objects.filter(
-                    deployed_service__service_uuid=process_uuid(item)
-                ))
-
-            return [
-                ServicesUsage.item_as_dict(k)
-                for k in userservices
-            ]
+            userservices = self.odata_filter(
+                UserService.objects.filter(deployed_service__service__provider=parent)
+                .order_by('creation_date')
+                .prefetch_related('deployed_service', 'deployed_service__service', 'user', 'user__manager')
+            )
+            return [ServicesUsage.item_as_dict(k) for k in userservices]
 
         except Exception as e:
             logger.error('Error getting services usage for %s: %s', parent.uuid, e)
             raise exceptions.rest.ResponseError(_('Error getting services usage')) from None
+
+    def get_item(self, parent: 'Model', item: str) -> ServicesUsageItem:
+        parent = ensure.is_instance(parent, Provider)
+        return ServicesUsage.item_as_dict(
+            UserService.objects.filter(deployed_service__service_uuid=process_uuid(item)).get()
+        )
 
     def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, Provider)

@@ -51,6 +51,9 @@ from ..handlers import Handler
 if typing.TYPE_CHECKING:
     pass
 
+T = typing.TypeVar('T', bound=models.Model)
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -131,7 +134,23 @@ class BaseModelHandler(Handler, abc.ABC, typing.Generic[types.rest.T_Item]):
             raise exceptions.rest.RequestError(f'needed parameter not found in data {e}')
 
         return args
-    
+
+    def odata_filter(self, qs: models.QuerySet[T]) -> list[T]:
+        """
+        Invoked to filter the queryset according to parameters received
+        Default implementation does not filter anything
+        
+        Args:
+            qs: Queryset to filter
+            
+        Returns:
+            Filtered queryset as a list
+            
+        Note:
+            This is not final, so we can override it in subclasses if needed
+        """
+        return self.filter_odata_queryset(qs)
+
     # Success methods
     def success(self) -> str:
         """

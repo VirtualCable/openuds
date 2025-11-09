@@ -148,38 +148,25 @@ class ServersServers(DetailHandler[ServerItem]):
         typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
     )
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[ServerItem]:
+    def as_server_item(self, item: 'models.Server') -> ServerItem:
+        return ServerItem(
+            id=item.uuid,
+            hostname=item.hostname,
+            ip=item.ip,
+            listen_port=item.listen_port,
+            mac=item.mac if item.mac != consts.NULL_MAC else '',
+            maintenance_mode=item.maintenance_mode,
+            register_username=item.register_username,
+            stamp=item.stamp,
+        )
+
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult[ServerItem]:
         parent = typing.cast('models.ServerGroup', parent)  # We will receive for sure
-        try:
-            if item is None:
-                q = self.filter_odata_queryset(parent.servers.all())
-            else:
-                q = parent.servers.filter(uuid=process_uuid(item))
-            res: list[ServerItem] = []
-            i = None
-            for i in q:
-                res.append(
-                    ServerItem(
-                        id=i.uuid,
-                        hostname=i.hostname,
-                        ip=i.ip,
-                        listen_port=i.listen_port,
-                        mac=i.mac if i.mac != consts.NULL_MAC else '',
-                        maintenance_mode=i.maintenance_mode,
-                        register_username=i.register_username,
-                        stamp=i.stamp,
-                    )
-                )
-            if item is None:
-                return res
-            if not i:
-                raise exceptions.rest.NotFound(f'Server not found: {item}')
-            return res[0]
-        except exceptions.rest.HandlerError:
-            raise
-        except Exception:
-            logger.exception('Error getting server')
-            raise exceptions.rest.ResponseError(_('Error getting server')) from None
+        return [self.as_server_item(i) for i in self.filter_odata_queryset(parent.servers.all())]
+
+    def get_item(self, parent: 'Model', item: str) -> ServerItem:
+        parent = typing.cast('models.ServerGroup', parent)  # We will receive for sure
+        return self.as_server_item(parent.servers.get(uuid=process_uuid(item)))
 
     def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.ServerGroup)

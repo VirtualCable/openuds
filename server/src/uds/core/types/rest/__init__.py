@@ -162,7 +162,7 @@ class ManagedObjectItem(BaseRestItem, typing.Generic[T_Model]):
 
 
 # Alias for get_items return type
-ItemsResult: typing.TypeAlias = list[T_Item] | BaseRestItem | typing.Iterator[T_Item]
+ItemsResult: typing.TypeAlias = list[T_Item] | typing.Iterator[T_Item]
 
 
 @dataclasses.dataclass

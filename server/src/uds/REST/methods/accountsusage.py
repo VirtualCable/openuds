@@ -70,7 +70,7 @@ class AccountsUsage(DetailHandler[AccountItem]):  # pylint: disable=too-many-pub
     """
 
     @staticmethod
-    def usage_to_dict(item: 'AccountUsage', perm: int) -> AccountItem:
+    def as_dict(item: 'AccountUsage', perm: int) -> AccountItem:
         """
         Convert an account usage to a dictionary
         :param item: Account usage item (db)
@@ -90,18 +90,18 @@ class AccountsUsage(DetailHandler[AccountItem]):  # pylint: disable=too-many-pub
             permission=perm,
         )
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[AccountItem]:
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult[AccountItem]:
         parent = ensure.is_instance(parent, Account)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
-        try:
-            if not item:
-                return [AccountsUsage.usage_to_dict(k, perm) for k in self.filter_odata_queryset(parent.usages.all())]
-            k = parent.usages.get(uuid=process_uuid(item))
-            return AccountsUsage.usage_to_dict(k, perm)
-        except Exception:
-            logger.exception('itemId %s', item)
-            raise exceptions.rest.NotFound(_('Account usage not found: {}').format(item)) from None
+        return [AccountsUsage.as_dict(k, perm) for k in self.odata_filter(parent.usages.all())]
+
+    def get_item(self, parent: 'Model', item: str) -> AccountItem:
+        parent = ensure.is_instance(parent, Account)
+        # Check what kind of access do we have to parent provider
+        return AccountsUsage.as_dict(
+            parent.usages.get(uuid=process_uuid(item)), permissions.effective_permissions(self._user, parent)
+        )
 
     def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, Account)

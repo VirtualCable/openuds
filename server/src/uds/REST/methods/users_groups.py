@@ -100,41 +100,37 @@ class Users(DetailHandler[UserItem]):
         'enable_client_logging',
     ]
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[UserItem]:
+    @staticmethod
+    def as_user_item(user: 'User') -> UserItem:
+        return UserItem(
+            id=user.uuid,
+            name=user.name,
+            real_name=user.real_name,
+            comments=user.comments,
+            state=user.state,
+            staff_member=user.staff_member,
+            is_admin=user.is_admin,
+            last_access=user.last_access,
+            mfa_data=user.mfa_data,
+            parent=user.parent,
+            groups=[i.uuid for i in user.get_groups()],
+            role=user.get_role().as_str(),
+        )
+
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult[UserItem]:
         parent = ensure.is_instance(parent, Authenticator)
 
-        def as_user_item(user: 'User') -> UserItem:
-            return UserItem(
-                id=user.uuid,
-                name=user.name,
-                real_name=user.real_name,
-                comments=user.comments,
-                state=user.state,
-                staff_member=user.staff_member,
-                is_admin=user.is_admin,
-                last_access=user.last_access,
-                mfa_data=user.mfa_data,
-                parent=user.parent,
-                groups=[i.uuid for i in user.get_groups()],
-                role=user.get_role().as_str(),
-            )
-
         # Extract authenticator
-        try:
-            if item is None:  # All users
-                return [as_user_item(i) for i in self.filter_odata_queryset(parent.users.all())]
+        return [self.as_user_item(i) for i in self.odata_filter(parent.users.all())]
 
-            u = parent.users.get(uuid__iexact=process_uuid(item))
-            res = as_user_item(u)
-            usr = AUser(u)
-            res.groups = [g.db_obj().uuid for g in usr.groups()]
-            logger.debug('Item: %s', res)
-            return res
-        except User.DoesNotExist:
-            raise exceptions.rest.NotFound(_('User not found')) from None
-        except Exception as e:
-            logger.error('Error getting user %s: %s', item, e)
-            raise exceptions.rest.ResponseError(_('Error getting user')) from e
+    def get_item(self, parent: 'Model', item: str) -> UserItem:
+        parent = ensure.is_instance(parent, Authenticator)
+
+        db_usr = parent.users.get(uuid__iexact=process_uuid(item))
+        user_item = self.as_user_item(db_usr)
+        auth_usr = AUser(db_usr)
+        user_item.groups = [g.db_obj().uuid for g in auth_usr.groups()]
+        return user_item
 
     def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, Authenticator)
@@ -350,44 +346,34 @@ class GroupItem(types.rest.BaseRestItem):
 class Groups(DetailHandler[GroupItem]):
     CUSTOM_METHODS = ['services_pools', 'users']
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult['GroupItem']:
+    @staticmethod
+    def as_group_item(group: 'Group') -> GroupItem:
+        val = GroupItem(
+            id=group.uuid,
+            name=group.name,
+            comments=group.comments,
+            state=group.state,
+            type=group.is_meta and 'meta' or 'group',
+            meta_if_any=group.meta_if_any,
+            skip_mfa=group.skip_mfa,
+        )
+        if group.is_meta:
+            val.groups = list(x.uuid for x in group.groups.all().order_by('name'))
+        return val
+
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult['GroupItem']:
         parent = ensure.is_instance(parent, Authenticator)
-        try:
-            multi = False
-            if item is None:
-                multi = True
-                q = self.filter_odata_queryset(parent.groups.all())
-            else:
-                q = parent.groups.filter(uuid=process_uuid(item))
-            res: list[GroupItem] = []
-            i = None
-            for i in q:
-                val = GroupItem(
-                    id=i.uuid,
-                    name=i.name,
-                    comments=i.comments,
-                    state=i.state,
-                    type=i.is_meta and 'meta' or 'group',
-                    meta_if_any=i.meta_if_any,
-                    skip_mfa=i.skip_mfa,
-                )
-                if i.is_meta:
-                    val.groups = list(x.uuid for x in i.groups.all().order_by('name'))
-                res.append(val)
+        q = self.odata_filter(parent.groups.all())
+        return [self.as_group_item(i) for i in q]
 
-            if multi:
-                return res
-
-            if not i:
-                raise exceptions.rest.NotFound(_('Group not found')) from None
-            # Add pools field if 1 item only
-            res[0].pools = [v.uuid for v in get_service_pools_for_groups([i])]
-            return res[0]
-        except exceptions.rest.HandlerError:
-            raise  # Re-raise
-        except Exception as e:
-            logger.error('Group item not found: %s.%s: %s', parent.name, item, e)
-            raise exceptions.rest.ResponseError(_('Error getting group')) from e
+    def get_item(self, parent: 'Model', item: str) -> 'GroupItem':
+        parent = ensure.is_instance(parent, Authenticator)
+        db_grp = parent.groups.filter(uuid=process_uuid(item)).first()
+        if not db_grp:
+            raise exceptions.rest.NotFound(_('Group not found')) from None
+        grp = self.as_group_item(db_grp)
+        grp.pools = [v.uuid for v in get_service_pools_for_groups([db_grp])]
+        return grp
 
     def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, Authenticator)

@@ -44,7 +44,7 @@ from uds.core import consts
 from uds.core import exceptions
 from uds.core import types
 from uds.core.module import Module
-from uds.core.util import log, permissions, api as api_utils
+from uds.core.util import log, permissions, model as model_utils, api as api_utils
 from uds.models import ManagedObjectModel, Tag, TaggingMixin
 
 from uds.REST.model.base import BaseModelHandler
@@ -222,6 +222,26 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
         default behavior is return item_as_dict
         """
         return self.get_item(item)
+    
+    def filter_model_queryset(self, qs: QuerySet[T]|None = None) -> QuerySet[T]:
+        qs = typing.cast('QuerySet[T]', self.MODEL.objects.all()) if qs is None else qs
+        
+        if self.FILTER is not None:
+            qs = qs.filter(**self.FILTER)
+        if self.EXCLUDE is not None:
+            qs = qs.exclude(**self.EXCLUDE)
+            
+        return qs
+
+    def get_item_position(self, item_uuid: str, query: QuerySet[T] | None = None) -> int:
+        qs = self.filter_model_queryset(query)
+        
+        # Find item in qs, may be none, then return -1
+        obj = qs.filter(uuid__iexact=item_uuid).first()
+        if obj:
+            return model_utils.get_position_in_queryset(obj, qs)
+        return -1
+        
 
     def get_items(
         self, *, sumarize: bool = False, query: QuerySet[T] | None = None
@@ -236,16 +256,10 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
         """
 
         # Basic model filter
-        if query:
-            qs = query
-        else:
-            qs = self.MODEL.objects.all()
-        if self.FILTER is not None:
-            qs = qs.filter(**self.FILTER)
-        if self.EXCLUDE is not None:
-            qs = qs.exclude(**self.EXCLUDE)
+        qs = self.filter_model_queryset(query)
 
-        qs = self.filter_odata_queryset(qs)
+        # Custom filtering from params (odata, etc)
+        qs = self.odata_filter(qs)
 
         for item in qs:
             try:
@@ -330,6 +344,8 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
                 return self.get_processed_gui(for_type)
             case [consts.rest.GUI, for_type, *_fails]:
                 raise exceptions.rest.RequestError('Invalid GUI request') from None
+            case [consts.rest.POSITION, item_uuid]:
+                return self.get_item_position(item_uuid)
             case _:  # Maybe an item or a detail
                 if number_of_args == 1:
                     try:

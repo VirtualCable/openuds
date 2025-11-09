@@ -74,21 +74,17 @@ class AccessCalendars(DetailHandler[AccessCalendarItem]):
             priority=item.priority,
         )
 
-    def get_items(
-        self, parent: 'Model', item: typing.Optional[str]
-    ) -> types.rest.ItemsResult[AccessCalendarItem]:
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult[AccessCalendarItem]:
         # parent can be a ServicePool or a metaPool
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
 
-        try:
-            if not item:
-                return [AccessCalendars.as_item(i) for i in self.filter_odata_queryset(parent.calendarAccess.all())]
-            return AccessCalendars.as_item(parent.calendarAccess.get(uuid=process_uuid(item)))
-        except models.CalendarAccess.DoesNotExist:
-            raise exceptions.rest.NotFound(_('Access calendar not found: {}').format(item)) from None
-        except Exception as e:
-            logger.exception('err: %s', item)
-            raise exceptions.rest.RequestError(f'Error retrieving access calendar: {e}') from e
+        return [AccessCalendars.as_item(i) for i in self.filter_odata_queryset(parent.calendarAccess.all())]
+
+    def get_item(self, parent: 'Model', item: str) -> AccessCalendarItem:
+        # parent can be a ServicePool or a metaPool
+        parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
+
+        return AccessCalendars.as_item(parent.calendarAccess.get(uuid=process_uuid(item)))
 
     def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         return (
@@ -191,20 +187,15 @@ class ActionsCalendars(DetailHandler[ActionCalendarItem]):
             last_execution=item.last_execution,
         )
 
-    def get_items(
-        self, parent: 'Model', item: typing.Optional[str]
-    ) -> types.rest.ItemsResult[ActionCalendarItem]:
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult[ActionCalendarItem]:
         parent = ensure.is_instance(parent, models.ServicePool)
-        try:
-            if item is None:
-                return [ActionsCalendars.as_dict(i) for i in self.filter_odata_queryset(parent.calendaraction_set.all())]
-            i = parent.calendaraction_set.get(uuid=process_uuid(item))
-            return ActionsCalendars.as_dict(i)
-        except models.CalendarAction.DoesNotExist:
-            raise exceptions.rest.NotFound(_('Scheduled action not found: {}').format(item)) from None
-        except Exception as e:
-            logger.error('Error retrieving scheduled action %s: %s', item, e)
-            raise exceptions.rest.RequestError(f'Error retrieving scheduled action: {e}') from e
+        return [
+            ActionsCalendars.as_dict(i) for i in self.filter_odata_queryset(parent.calendaraction_set.all())
+        ]
+
+    def get_item(self, parent: 'Model', item: str) -> ActionCalendarItem:
+        parent = ensure.is_instance(parent, models.ServicePool)
+        return ActionsCalendars.as_dict(parent.calendaraction_set.get(uuid=process_uuid(item)))
 
     def get_table(self, parent: 'Model') -> TableInfo:
         return (

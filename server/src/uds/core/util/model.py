@@ -181,3 +181,18 @@ def get_my_ip_from_db() -> str:
         logger.error('Error getting my IP: %s', e)
 
     return '0.0.0.0'
+
+
+# Tries to get the position of an object in the default queryset ordering
+def get_position_in_queryset(obj: typing.Any, queryset: typing.Any) -> int:
+    """
+    Tries to get the position of an object in the default queryset ordering
+    :param obj: Object to find
+    :param queryset: Queryset to search in
+    :return: Position in the queryset (0 based). -1 if not found
+    """
+    try:
+        lst = list(queryset.values_list('pk', flat=True))
+        return lst.index(obj.pk)
+    except ValueError:
+        return -1
