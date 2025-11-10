@@ -73,6 +73,10 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
             mac=item.mac if item.mac != consts.NULL_MAC else '',
             maintenance=item.maintenance_mode,
         )
+        
+    def get_item_position(self, parent: Model, item_uuid: str) -> int:
+        parent = ensure.is_instance(parent, models.ServerGroup)
+        return self.calc_item_position(item_uuid, parent.servers.all())
 
     def get_items(
         self, parent: 'Model'

@@ -41,16 +41,21 @@ from django.utils.translation import gettext as _
 
 from uds.core import consts, exceptions, types, module
 from uds.core.util.model import process_uuid
-from uds.core.util import api as api_utils
+from uds.core.util import api as api_utils, model as model_utils
 from uds.REST.utils import rest_result
 
 from uds.REST.model.base import BaseModelHandler
 from uds.REST.utils import camel_and_snake_case_from
 
+T = typing.TypeVar('T', bound=models.Model)
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
+    from django.db.models.query import QuerySet
+    
     from uds.models import User
     from uds.REST.model.master import ModelHandler
+
 
 logger = logging.getLogger(__name__)
 
@@ -178,7 +183,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
             case [consts.rest.LOG, *_fails]:
                 raise exceptions.rest.RequestError('Invalid log request') from None
             case [consts.rest.POSITION, item_uuid]:
-                return self.get_item_position(item_uuid)
+                return self.get_item_position(parent, item_uuid)
             case [one_arg]:
                 return self.get_item(parent, process_uuid(one_arg))
             case _:
@@ -342,17 +347,45 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
     def get_logs(self, parent: models.Model, item: str) -> list[typing.Any]:
         """
         If the detail has any log associated with it items, provide it overriding this method
-        :param parent:
-        :param item:
-        :return: a list of log elements (normally got using "uds.core.util.log.get_logs" method)
+        
+        Args:
+            parent: Parent model
+            item: Item id (uuid)
+            
+        Returns:
+            A list of log elements (normally got using "uds.core.util.log.get_logs" method)
         """
         raise exceptions.rest.InvalidMethodError('Object does not support logs')
+    
+    def calc_item_position(self, item_uuid: str, qs: 'QuerySet[T]') -> int:
+        """
+        Helper method to get the position of an item in a queryset
+        
+        Args:
+            item_uuid (str): UUID of the item to find
+            qs (QuerySet[T]): Queryset to search into
+            
+        Returns:
+            int: Position of the item in the default ordering, -1 if not found
+        """
+        # Find item in qs, may be none, then return -1
+        obj = qs.filter(uuid__iexact=item_uuid).first()
+        if obj:
+            return model_utils.get_position_in_queryset(obj, qs)
+        return -1
+        
 
-    def get_item_position(self, item_uuid: str) -> int:
+    def get_item_position(self, parent: models.Model, item_uuid: str) -> int:
         """
         Tries to get the position of an item in the default ordering of the detail items
-        :param item_uuid: UUID of the item to find
-        :return: Position of the item in the default ordering, -1 if not found
+        
+        Args:
+            item_uuid (str): UUID of the item to find
+        Returns:
+            int: Position of the item in the default ordering, -1 if not found
+            
+        Note:
+            Override this method if the detail can provide item position
         """
         return -1
 

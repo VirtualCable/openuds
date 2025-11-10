@@ -73,6 +73,15 @@ class AccessCalendars(DetailHandler[AccessCalendarItem]):
             access=item.access,
             priority=item.priority,
         )
+        
+    def get_item_position(self, parent: 'Model', item_uuid: str) -> int:
+        # parent can be a ServicePool or a metaPool
+        if isinstance(parent, models.ServicePool):
+            parent = ensure.is_instance(parent, models.ServicePool)
+            return self.calc_item_position(item_uuid, parent.calendarAccess.all())
+        
+        parent = ensure.is_instance(parent, models.MetaPool)
+        return self.calc_item_position(item_uuid, parent.calendarAccess.all())
 
     def get_items(self, parent: 'Model') -> types.rest.ItemsResult[AccessCalendarItem]:
         # parent can be a ServicePool or a metaPool
@@ -186,6 +195,10 @@ class ActionsCalendars(DetailHandler[ActionCalendarItem]):
             next_execution=item.next_execution,
             last_execution=item.last_execution,
         )
+        
+    def get_item_position(self, parent: 'Model', item_uuid: str) -> int:
+        parent = ensure.is_instance(parent, models.ServicePool)
+        return self.calc_item_position(item_uuid, parent.calendaraction_set.all())
 
     def get_items(self, parent: 'Model') -> types.rest.ItemsResult[ActionCalendarItem]:
         parent = ensure.is_instance(parent, models.ServicePool)

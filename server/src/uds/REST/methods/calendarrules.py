@@ -93,6 +93,10 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
             duration_unit=item.duration_unit,
             permission=perm,
         )
+        
+    def get_item_position(self, parent: 'models.Model', item_uuid: str) -> int:
+        parent = ensure.is_instance(parent, Calendar)
+        return self.calc_item_position(item_uuid, parent.rules.all())
 
     def get_items(self, parent: 'models.Model') -> types.rest.ItemsResult[CalendarRuleItem]:
         parent = ensure.is_instance(parent, Calendar)

@@ -117,6 +117,11 @@ class Users(DetailHandler[UserItem]):
             role=user.get_role().as_str(),
         )
 
+    def get_item_position(self, parent: 'Model', item_uuid: str) -> int:
+        parent = ensure.is_instance(parent, Authenticator)
+
+        return self.calc_item_position(item_uuid, parent.users.all())
+
     def get_items(self, parent: 'Model') -> types.rest.ItemsResult[UserItem]:
         parent = ensure.is_instance(parent, Authenticator)
 
@@ -360,6 +365,10 @@ class Groups(DetailHandler[GroupItem]):
         if group.is_meta:
             val.groups = list(x.uuid for x in group.groups.all().order_by('name'))
         return val
+
+    def get_item_position(self, parent: 'Model', item_uuid: str) -> int:
+        parent = ensure.is_instance(parent, Authenticator)
+        return self.calc_item_position(item_uuid, parent.groups.all())
 
     def get_items(self, parent: 'Model') -> types.rest.ItemsResult['GroupItem']:
         parent = ensure.is_instance(parent, Authenticator)

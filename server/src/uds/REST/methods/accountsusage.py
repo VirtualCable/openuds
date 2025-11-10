@@ -89,6 +89,10 @@ class AccountsUsage(DetailHandler[AccountItem]):  # pylint: disable=too-many-pub
             elapsed_timemark=item.elapsed_timemark,
             permission=perm,
         )
+        
+    def get_item_position(self, parent: 'Model', item_uuid: str) -> int:
+        parent = ensure.is_instance(parent, Account)
+        return self.calc_item_position(item_uuid, parent.usages.all())
 
     def get_items(self, parent: 'Model') -> types.rest.ItemsResult[AccountItem]:
         parent = ensure.is_instance(parent, Account)

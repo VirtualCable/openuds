@@ -159,6 +159,19 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
             first_order_by_field, is_descending = sort_info
 
         return super().apply_sort(qs)
+    
+    def get_qs(self, for_cached: bool) -> QuerySet[models.UserService]:
+        parent = ensure.is_instance(self._parent, models.ServicePool)
+        if for_cached:
+            return parent.cached_users_services()
+        return parent.assigned_user_services()
+
+    def do_get_item_position(self, for_cached: bool, parent: 'Model', item_uuid: str) -> int:
+        parent = ensure.is_instance(parent, models.ServicePool)
+        return self.calc_item_position(item_uuid, self.get_qs(for_cached).all())
+    
+    def get_item_position(self, parent: Model, item_uuid: str) -> int:
+        return self.do_get_item_position(for_cached=False, parent=parent, item_uuid=item_uuid)
 
     def do_get_item(
         self,
@@ -168,13 +181,8 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
     ) -> 'UserServiceItem':
         parent = ensure.is_instance(parent, models.ServicePool)
 
-        def get_qs() -> QuerySet[models.UserService]:
-            if for_cached:
-                return parent.cached_users_services()
-            return parent.assigned_user_services()
-
         return AssignedUserService.userservice_item(
-            get_qs().get(uuid=process_uuid(item)),
+            self.get_qs(for_cached).get(uuid=process_uuid(item)),
             props={
                 k: v
                 for k, v in models.Properties.objects.filter(
@@ -337,6 +345,9 @@ class CachedService(AssignedUserService):
     """
 
     CUSTOM_METHODS = []  # Remove custom methods from assigned services
+    
+    def get_item_position(self, parent: Model, item_uuid: str) -> int:
+        return self.do_get_item_position(for_cached=True, parent=parent, item_uuid=item_uuid)
 
     def get_items(self, parent: 'Model') -> types.rest.ItemsResult['UserServiceItem']:
         return self.do_get_items(parent, for_cached=True)

@@ -109,6 +109,13 @@ class ServicesUsage(DetailHandler[ServicesUsageItem]):
             source_ip=item.src_ip,
             in_use=item.in_use,
         )
+        
+    def get_item_position(self, parent: 'Model', item_uuid: str) -> int:
+        parent = ensure.is_instance(parent, Provider)
+        return self.calc_item_position(
+            item_uuid,
+            UserService.objects.filter(deployed_service__service__provider=parent).order_by('creation_date'),
+        )
 
     def get_items(self, parent: 'Model') -> types.rest.ItemsResult[ServicesUsageItem]:
         parent = ensure.is_instance(parent, Provider)

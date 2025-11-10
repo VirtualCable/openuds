@@ -155,6 +155,10 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
             ret_value.info = Services.service_info(item)
 
         return ret_value
+    
+    def get_item_position(self, parent: Model, item_uuid: str) -> int:
+        parent = ensure.is_instance(parent, models.Provider)
+        return self.calc_item_position(item_uuid, parent.services.all())
 
     def get_items(self, parent: 'Model') -> types.rest.ItemsResult[ServiceItem]:
         parent = ensure.is_instance(parent, models.Provider)

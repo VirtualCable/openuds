@@ -91,6 +91,10 @@ class MetaServicesPool(DetailHandler[MetaItem]):
             user_services_count=item.pool.userServices.exclude(state__in=State.INFO_STATES).count(),
             user_services_in_preparation=item.pool.userServices.filter(state=State.PREPARING).count(),
         )
+        
+    def get_item_position(self, parent: 'Model', item_uuid: str) -> int:
+        parent = ensure.is_instance(parent, models.MetaPool)
+        return self.calc_item_position(item_uuid, parent.members.all())
 
     def get_items(self, parent: 'Model') -> types.rest.ItemsResult['MetaItem']:
         parent = ensure.is_instance(parent, models.MetaPool)
@@ -201,7 +205,7 @@ class MetaAssignedService(DetailHandler[UserServiceItem]):
                 .prefetch_related('deployed_service', 'publication')
             ):
                 yield u, properties.get(u.uuid, {})
-
+                
     def get_items(self, parent: 'Model') -> types.rest.ItemsResult[UserServiceItem]:
         parent = ensure.is_instance(parent, models.MetaPool)
 
