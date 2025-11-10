@@ -140,12 +140,8 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
         """
         # Process args
         logger.debug('Detail args for GET: %s', self._args)
-        num_args = len(self._args)
 
         parent: models.Model = self._parent_item
-
-        if num_args == 0:  # As overview, much more standard
-            return self.get_items(parent)
 
         # if has custom methods, look for if this request matches any of them
         r = self._check_is_custom_method(self._args[0], parent)
@@ -153,6 +149,8 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
             return r
 
         match self._args:
+            case []:  # same as overview
+                return self.get_items(parent)
             case [consts.rest.OVERVIEW]:
                 return self.get_items(parent)
             case [consts.rest.OVERVIEW, *_fails]:
@@ -252,9 +250,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
     # Override this to provide functionality
     # Default (as sample) get_items
     @abc.abstractmethod
-    def get_items(
-        self, parent: models.Model
-    ) -> types.rest.ItemsResult[types.rest.T_Item]:
+    def get_items(self, parent: models.Model) -> types.rest.ItemsResult[types.rest.T_Item]:
         """
         This MUST be overridden by derived classes
         Excepts to return a list of dictionaries or a single dictionary, depending on "item" param

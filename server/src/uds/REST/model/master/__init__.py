@@ -282,9 +282,6 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
         logger.debug('method GET for %s, %s', self.__class__.__name__, self._args)
         number_of_args = len(self._args)
 
-        if number_of_args == 0:
-            return list(self.get_items(sumarize=False))
-
         # if has custom methods, look for if this request matches any of them
         for cm in self.CUSTOM_METHODS:
             # Convert to snake case
