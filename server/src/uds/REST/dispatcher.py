@@ -206,7 +206,12 @@ class Dispatcher(View):
         except exceptions.rest.HandlerError as e:
             log.log_operation(handler, 500, types.log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(f'{{"error": "{e}"}}'.encode(), content_type="application/json")
-        except django.db.models.Model.DoesNotExist as e:   # All DoesNotExist exceptions are not found
+        except exceptions.services.generics.Error as e:
+            log.log_operation(handler, 503, types.log.LogLevel.ERROR)
+            return http.HttpResponseServerError(
+                f'{{"error": "{e}"}}'.encode(), content_type="application/json", code=503
+            )
+        except django.db.models.Model.DoesNotExist as e:  # All DoesNotExist exceptions are not found
             log.log_operation(handler, 404, types.log.LogLevel.ERROR)
             return http.HttpResponseNotFound(f'{{"error": "{e}"}}'.encode(), content_type="application/json")
         except Exception as e:
