@@ -198,15 +198,10 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
             method = getattr(detail_handler, self._operation)
 
             return method()
-        except self.MODEL.DoesNotExist:
-            raise exceptions.rest.NotFound('Item not found on model {self.MODEL.__name__}')
         except (KeyError, AttributeError) as e:
             raise exceptions.rest.InvalidMethodError(f'Invalid method {self._operation}') from e
         except exceptions.rest.HandlerError:
             raise
-        except Exception as e:
-            logger.error('Exception processing detail: %s', e)
-            raise exceptions.rest.RequestError(f'Error processing detail: {e}') from e
 
     # Data related
     def get_item(self, item: models.Model) -> types.rest.T_Item:
