@@ -125,18 +125,6 @@ class OpenshiftProvider(ServiceProvider):
     # Utility
     def sanitized_name(self, name: str) -> str:
         """
-        Sanitizes the VM name to comply with RFC 1123:
-        - Converts to lowercase
-        - Replaces any character not in [a-z0-9.-] with '-'
-        - Collapses multiple '-' into one
-        - Removes leading/trailing non-alphanumeric characters
-        - Limits length to 63 characters
+        OpenShift only allows machine names with [a-zA-Z0-9_-]
         """
-        name = name.lower()
-        # Replace any character not allowed with '-'
-        name = re.sub(r'[^a-z0-9.-]', '-', name)
-        # Collapse multiple '-' into one
-        name = re.sub(r'-{2,}', '-', name)
-        # Remove leading/trailing non-alphanumeric characters
-        name = re.sub(r'^[^a-z0-9]+|[^a-z0-9]+$', '', name)
-        return name[:63]
+        return re.sub(r'[^a-zA-Z0-9-]', '-', name).lower()[:63]
