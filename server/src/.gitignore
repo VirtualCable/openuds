@@ -1,8 +1,0 @@
-/log/
-/static/
-.coverage
-/uds/static/clients/
-/*.sqlite3*
-.hypothesis
-htmlcov
-docs
