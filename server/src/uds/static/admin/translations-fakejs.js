@@ -66,6 +66,8 @@ gettext("Change owner");
 gettext("Assign service");
 gettext("Cancel");
 gettext("Changelog");
+gettext("Fallback: Allow");
+gettext("Fallback: Deny");
 gettext("Delete assigned service");
 gettext("Delete cached service");
 gettext("Service pool is locked");

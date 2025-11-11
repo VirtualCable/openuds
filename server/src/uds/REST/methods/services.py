@@ -155,23 +155,25 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
             ret_value.info = Services.service_info(item)
 
         return ret_value
+    
+    def get_item_position(self, parent: Model, item_uuid: str) -> int:
+        parent = ensure.is_instance(parent, models.Provider)
+        return self.calc_item_position(item_uuid, parent.services.all())
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[ServiceItem]:
+    def get_items(self, parent: 'Model') -> types.rest.ItemsResult[ServiceItem]:
         parent = ensure.is_instance(parent, models.Provider)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
-        try:
-            if item is None:
-                return [Services.service_item(k, perm) for k in self.filter_queryset(parent.services.all())]
-            k = parent.services.get(uuid=process_uuid(item))
-            val = Services.service_item(k, perm, full=True)
-            # On detail, ne wee to fill the instance fields by hand
-            return val
-        except models.Service.DoesNotExist:
-            raise exceptions.rest.NotFound(_('Service not found')) from None
-        except Exception as e:
-            logger.error('Error getting services for %s: %s', parent, e)
-            raise exceptions.rest.ResponseError(_('Error getting services')) from None
+        return [Services.service_item(k, perm) for k in self.odata_filter(parent.services.all())]
+
+    def get_item(self, parent: 'Model', item: str) -> ServiceItem:
+        parent = ensure.is_instance(parent, models.Provider)
+        # Check what kind of access do we have to parent provider
+        return Services.service_item(
+            parent.services.get(uuid=process_uuid(item)),
+            permissions.effective_permissions(self._user, parent),
+            full=True,
+        )
 
     def _delete_incomplete_service(self, service: models.Service) -> None:
         """

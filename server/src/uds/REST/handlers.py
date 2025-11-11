@@ -58,6 +58,7 @@ logger = logging.getLogger(__name__)
 
 T = typing.TypeVar('T')
 
+
 class Handler(abc.ABC):
     """
     REST requests handler base class
@@ -390,11 +391,48 @@ class Handler(abc.ABC):
             if name in self._params:
                 return self._params[name]
         return ''
+
+    def get_sort_field_info(self, *args: str) -> tuple[str, bool]|None:
+        """
+        Returns sorting information for the first sorting if it is contained in the odata orderby list.
+
+        Args:
+            args: The  possible name of the field name to check for sorting information.
+            
+        Returns:
+            A tuple containing the clean field name found and a boolean indicating if the sorting is descending,
+            
+        Note:
+            We only use the first in case of table sort translations, so this only returns info for the first field
+        """
+        if self.odata.orderby:
+            order_field = self.odata.orderby[0]
+            clean_field = order_field.lstrip('-')
+            for field_name in args:
+                if clean_field == field_name:
+                    is_descending = order_field.startswith('-')
+                    return (clean_field, is_descending)
+        return None
     
-    def filter_queryset(self, qs: QuerySet[typing.Any]) -> list[typing.Any]:
+    def apply_sort(self, qs: QuerySet[typing.Any]) -> list[typing.Any] | QuerySet[typing.Any]:
+        """
+        Custom sorting function to apply to querysets.
+        Override this method in subclasses to provide custom sorting logic.
+
+        Args:
+            qs: The queryset to sort.
+            order_by: The field name to sort by.
+
+        Returns:
+            The sorted queryset.
+        """
+        return qs.order_by(*self.odata.orderby)
+
+    @typing.final
+    def filter_odata_queryset(self, qs: QuerySet[typing.Any]) -> list[typing.Any]:
         """
         Filters the queryset based on odata
-        
+
         Note: We return a list, because after applying slicing, querysets may be evaluated
               by using _result_cache, so we force evaluation here to avoid issues later.
         """
@@ -405,28 +443,37 @@ class Handler(abc.ABC):
             except ValueError as e:
                 raise exceptions.rest.RequestError(f'Invalid odata filter: {e}') from e
 
+        # Store total count before slicing
+        self.add_header('X-Total-Count', str(qs.count()))
+
         # order_by must be unique and all fields are summited by once
+        # As after slicing we can have a list, we may use list result from sorting
         if self.odata.orderby:
-            qs = qs.order_by(*self.odata.orderby)
+            result = self.apply_sort(qs)
+        else:
+            result = qs
             
         # If odata start/limit are set, apply them
         if self.odata.start is not None:
-            qs = qs[self.odata.start :]
+            result = result[self.odata.start :]
+        # Note that limit is AFTER start because of previous line
         if self.odata.limit is not None:
-            qs = qs[: self.odata.limit]
-            
-        result = list(qs)
+            result = result[: self.odata.limit]
 
-        # Get total items and set it on X-Total-Count
+        # After slicing, the qs may be a list, so we ensure it's a list
+        # to avoid issues later
+        result = list(result)
+
+        # Get total items and set it on X-Filtered-Count
         try:
             total_items = len(result)
-            self.add_header('X-Total-Count', total_items)
+            self.add_header('X-Filtered-Count', total_items)
         except Exception as e:
             raise exceptions.rest.RequestError(f'Invalid odata: {e}')
 
         return result
 
-    def filter_data(self, data: collections.abc.Iterable[T]) -> list[T]:
+    def filter_odata_data(self, data: collections.abc.Iterable[T]) -> list[T]:
         """
         Filters the dict base on the currnet odata
         """
@@ -446,8 +493,7 @@ class Handler(abc.ABC):
             raise exceptions.rest.RequestError(f'Invalid odata: {e}')
 
         return data
-    
-    
+
     @classmethod
     def api_components(cls: type[typing.Self]) -> types.rest.api.Components:
         """
@@ -456,7 +502,9 @@ class Handler(abc.ABC):
         return types.rest.api.Components()
 
     @classmethod
-    def api_paths(cls: type[typing.Self], path: str, tags: list[str], security: str) -> dict[str, types.rest.api.PathItem]:
+    def api_paths(
+        cls: type[typing.Self], path: str, tags: list[str], security: str
+    ) -> dict[str, types.rest.api.PathItem]:
         """
         Returns the API operations that should be registered
         """

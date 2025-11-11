@@ -34,30 +34,37 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import typing
 import collections.abc
+import abc
 
 from django.db import models
 from django.utils.translation import gettext as _
 
 from uds.core import consts, exceptions, types, module
 from uds.core.util.model import process_uuid
-from uds.core.util import api as api_utils
+from uds.core.util import api as api_utils, model as model_utils
 from uds.REST.utils import rest_result
 
 from uds.REST.model.base import BaseModelHandler
 from uds.REST.utils import camel_and_snake_case_from
 
+T = typing.TypeVar('T', bound=models.Model)
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
+    from django.db.models.query import QuerySet
+    
     from uds.models import User
     from uds.REST.model.master import ModelHandler
 
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 
 # Details do not have types at all
 # so, right now, we only process details petitions for Handling & tables info
 # noinspection PyMissingConstructor
-class DetailHandler(BaseModelHandler[types.rest.T_Item]):
+
+
+class DetailHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
     """
     Detail handler (for relations such as provider-->services, authenticators-->users,groups, deployed services-->cache,assigned, groups, transports
     Urls recognized for GET are:
@@ -138,12 +145,8 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         """
         # Process args
         logger.debug('Detail args for GET: %s', self._args)
-        num_args = len(self._args)
 
         parent: models.Model = self._parent_item
-
-        if num_args == 0:
-            return self.get_items(parent, None)
 
         # if has custom methods, look for if this request matches any of them
         r = self._check_is_custom_method(self._args[0], parent)
@@ -151,8 +154,10 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
             return r
 
         match self._args:
+            case []:  # same as overview
+                return self.get_items(parent)
             case [consts.rest.OVERVIEW]:
-                return self.get_items(parent, None)
+                return self.get_items(parent)
             case [consts.rest.OVERVIEW, *_fails]:
                 raise exceptions.rest.RequestError('Invalid overview request') from None
             case [consts.rest.TYPES]:
@@ -177,8 +182,10 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
                 return self.get_logs(parent, item_id)
             case [consts.rest.LOG, *_fails]:
                 raise exceptions.rest.RequestError('Invalid log request') from None
+            case [consts.rest.POSITION, item_uuid]:
+                return self.get_item_position(parent, item_uuid)
             case [one_arg]:
-                return self.get_items(parent, process_uuid(one_arg))
+                return self.get_item(parent, process_uuid(one_arg))
             case _:
                 # Maybe a custom method?
                 r = self._check_is_custom_method(self._args[1], parent, self._args[0])
@@ -247,9 +254,8 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
 
     # Override this to provide functionality
     # Default (as sample) get_items
-    def get_items(
-        self, parent: models.Model, item: typing.Optional[str]
-    ) -> types.rest.ItemsResult[types.rest.T_Item]:
+    @abc.abstractmethod
+    def get_items(self, parent: models.Model) -> types.rest.ItemsResult[types.rest.T_Item]:
         """
         This MUST be overridden by derived classes
         Excepts to return a list of dictionaries or a single dictionary, depending on "item" param
@@ -260,6 +266,16 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         #     return []
         # return {}  # Returns one item
         raise NotImplementedError(f'Must provide an get_items method for {self.__class__} class')
+
+    @abc.abstractmethod
+    def get_item(self, parent: models.Model, item: str) -> types.rest.T_Item:
+        """
+        Utility method to get a single item by uuid
+        :param parent: Parent model
+        :param item: Item uuid
+        :return: Item as dictionary
+        """
+        raise NotImplementedError(f'Must provide an get_item method for {self.__class__} class')
 
     # Default save
     def save_item(self, parent: models.Model, item: typing.Optional[str]) -> types.rest.T_Item:
@@ -328,6 +344,51 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         """
         return []  # Default is that details do not have types
 
+    def get_logs(self, parent: models.Model, item: str) -> list[typing.Any]:
+        """
+        If the detail has any log associated with it items, provide it overriding this method
+        
+        Args:
+            parent: Parent model
+            item: Item id (uuid)
+            
+        Returns:
+            A list of log elements (normally got using "uds.core.util.log.get_logs" method)
+        """
+        raise exceptions.rest.InvalidMethodError('Object does not support logs')
+    
+    def calc_item_position(self, item_uuid: str, qs: 'QuerySet[T]') -> int:
+        """
+        Helper method to get the position of an item in a queryset
+        
+        Args:
+            item_uuid (str): UUID of the item to find
+            qs (QuerySet[T]): Queryset to search into
+            
+        Returns:
+            int: Position of the item in the default ordering, -1 if not found
+        """
+        # Find item in qs, may be none, then return -1
+        obj = qs.filter(uuid__iexact=item_uuid).first()
+        if obj:
+            return model_utils.get_position_in_queryset(obj, qs)
+        return -1
+        
+
+    def get_item_position(self, parent: models.Model, item_uuid: str) -> int:
+        """
+        Tries to get the position of an item in the default ordering of the detail items
+        
+        Args:
+            item_uuid (str): UUID of the item to find
+        Returns:
+            int: Position of the item in the default ordering, -1 if not found
+            
+        Note:
+            Override this method if the detail can provide item position
+        """
+        return -1
+
     @classmethod
     def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[module.Module]]:
         """
@@ -336,15 +397,6 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
               enum_types, hear, is the one to filter types by parent, etc..
         """
         return []
-
-    def get_logs(self, parent: models.Model, item: str) -> list[typing.Any]:
-        """
-        If the detail has any log associated with it items, provide it overriding this method
-        :param parent:
-        :param item:
-        :return: a list of log elements (normally got using "uds.core.util.log.get_logs" method)
-        """
-        raise exceptions.rest.InvalidMethodError('Object does not support logs')
 
     @classmethod
     def api_components(cls: type[typing.Self]) -> types.rest.api.Components:
@@ -355,10 +407,12 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         return api_utils.get_component_from_type(cls)
 
     @classmethod
-    def api_paths(cls: type[typing.Self], path: str, tags: list[str], security: str) -> dict[str, types.rest.api.PathItem]:
+    def api_paths(
+        cls: type[typing.Self], path: str, tags: list[str], security: str
+    ) -> dict[str, types.rest.api.PathItem]:
         """
         Returns the API operations that should be registered
         """
         from .api_helpers import api_paths
- 
+
         return api_paths(cls, path, tags=tags, security=security)

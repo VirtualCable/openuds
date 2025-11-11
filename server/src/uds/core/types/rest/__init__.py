@@ -162,7 +162,7 @@ class ManagedObjectItem(BaseRestItem, typing.Generic[T_Model]):
 
 
 # Alias for get_items return type
-ItemsResult: typing.TypeAlias = list[T_Item] | BaseRestItem | typing.Iterator[T_Item]
+ItemsResult: typing.TypeAlias = list[T_Item] | typing.Iterator[T_Item]
 
 
 @dataclasses.dataclass
@@ -279,6 +279,8 @@ class TableInfo:
     fields: list[TableField]  # List of fields in the table
     row_style: 'RowStyleInfo'
     subtitle: typing.Optional[str] = None
+    filter_fields: list[str] = dataclasses.field(default_factory=list[str])
+    field_mappings: dict[str, str] = dataclasses.field(default_factory=dict[str, str])
 
     def as_dict(self) -> dict[str, typing.Any]:
         return {
@@ -286,6 +288,8 @@ class TableInfo:
             'fields': [field.as_dict() for field in self.fields],
             'row_style': self.row_style.as_dict(),
             'subtitle': self.subtitle or '',
+            'filter_fields': self.filter_fields,
+            'field_mappings': self.field_mappings,
         }
 
     @staticmethod

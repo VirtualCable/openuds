@@ -54,6 +54,9 @@ from .users_groups import Groups, Users
 
 from uds.core.module import Module
 
+if typing.TYPE_CHECKING:
+    from django.db.models.query import QuerySet
+
 logger = logging.getLogger(__name__)
 
 
@@ -110,9 +113,9 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
         .icon(name='name', title=_('Name'), visible=True)
         .text_column(name='type_name', title=_('Type'))
         .text_column(name='comments', title=_('Comments'))
-        .numeric_column(name='priority', title=_('Priority'), width='5rem')
+        .numeric_column(name='priority', title=_('Priority'), width='8rem')
         .text_column(name='small_name', title=_('Label'))
-        .numeric_column(name='users_count', title=_('Users'), width='1rem')
+        .numeric_column(name='users_count', title=_('Users'), width='6rem')
         .text_column(name='mfa_name', title=_('MFA'))
         .text_column(name='tags', title=_('tags'), visible=False)
         .row_style(prefix='row-state-', field='state')
@@ -217,6 +220,29 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
             item=item,
             type_info=type(self).as_typeinfo(item.get_type()),
         )
+
+    def apply_sort(self, qs: 'QuerySet[typing.Any]') -> 'list[typing.Any] | QuerySet[typing.Any]':
+        if field_info := self.get_sort_field_info('users_count'):
+            field_name, is_descending = field_info
+            order_by_field = f"-{field_name}" if is_descending else field_name
+            return qs.annotate(users_count=models.Count('users')).order_by(order_by_field)
+
+        if field_info := self.get_sort_field_info('type_name'):
+            _, is_descending = field_info
+            order_by_field = f'-data_type' if is_descending else 'data_type'
+            return qs.order_by(order_by_field)
+
+        if field_info := self.get_sort_field_info('numeric_id'):
+            _, is_descending = field_info
+            order_by_field = f'-pk' if is_descending else 'pk'
+            return qs.order_by(order_by_field)
+
+        if field_info := self.get_sort_field_info('mfa_name'):
+            _, is_descending = field_info
+            order_by_field = f'-mfa__name' if is_descending else 'mfa__name'
+            return qs.order_by(order_by_field)
+
+        return super().apply_sort(qs)
 
     def post_save(self, item: 'models.Model') -> None:
         item = ensure.is_instance(item, Authenticator)

@@ -176,7 +176,7 @@ class DjangoQueryTransformer(lark.Transformer[typing.Any, Q | AnnotatedField]):
         if func_name not in _FUNCTIONS_PARAMS_NUM:
             raise ValueError(f"Unknown function: {func_name}")
 
-        if func_name in ('substringof', 'startswith', 'endswith'):
+        if func_name in ('substringof', 'contains', 'startswith', 'endswith'):
             if len(func_args) != 2:
                 raise ValueError(f"{func_name} requires 2 arguments")
             field, value = func_args
@@ -186,6 +186,8 @@ class DjangoQueryTransformer(lark.Transformer[typing.Any, Q | AnnotatedField]):
                 raise ValueError(f"Function '{func_name}' does not support field-to-field comparison")
             match func_name:
                 case 'substringof':
+                    return Q(**{f"{value}__icontains": field})  # Note the order swap
+                case 'contains':
                     return Q(**{f"{field}__icontains": value})
                 case 'startswith':
                     return Q(**{f"{field}__istartswith": value})

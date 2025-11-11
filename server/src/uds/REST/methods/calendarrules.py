@@ -82,30 +82,34 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
             name=item.name,
             comments=item.comments,
             start=item.start,
-            end=timezone.make_aware(datetime.datetime.combine(item.end, datetime.time.max)) if item.end else None,
+            end=(
+                timezone.make_aware(datetime.datetime.combine(item.end, datetime.time.max))
+                if item.end
+                else None
+            ),
             frequency=item.frequency,
             interval=item.interval,
             duration=item.duration,
             duration_unit=item.duration_unit,
             permission=perm,
         )
+        
+    def get_item_position(self, parent: 'models.Model', item_uuid: str) -> int:
+        parent = ensure.is_instance(parent, Calendar)
+        return self.calc_item_position(item_uuid, parent.rules.all())
 
-    def get_items(
-        self, parent: 'models.Model', item: typing.Optional[str]
-    ) -> types.rest.ItemsResult[CalendarRuleItem]:
+    def get_items(self, parent: 'models.Model') -> types.rest.ItemsResult[CalendarRuleItem]:
         parent = ensure.is_instance(parent, Calendar)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
-        try:
-            if item is None:
-                return [CalendarRules.rule_as_dict(k, perm) for k in self.filter_queryset(parent.rules.all())]
-            k = parent.rules.get(uuid=process_uuid(item))
-            return CalendarRules.rule_as_dict(k, perm)
-        except CalendarRule.DoesNotExist:
-            raise exceptions.rest.NotFound(_('Calendar rule not found: {}').format(item)) from None
-        except Exception as e:
-            logger.exception('itemId %s', item)
-            raise exceptions.rest.RequestError(f'Error retrieving calendar rule: {e}') from e
+        return [CalendarRules.rule_as_dict(k, perm) for k in self.filter_odata_queryset(parent.rules.all())]
+
+    def get_item(self, parent: 'models.Model', item: str) -> CalendarRuleItem:
+        parent = ensure.is_instance(parent, Calendar)
+        # Check what kind of access do we have to parent provider
+        return CalendarRules.rule_as_dict(
+            parent.rules.get(uuid=process_uuid(item)), permissions.effective_permissions(self._user, parent)
+        )
 
     def get_table(self, parent: 'models.Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, Calendar)
