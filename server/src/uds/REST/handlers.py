@@ -392,16 +392,16 @@ class Handler(abc.ABC):
                 return self._params[name]
         return ''
 
-    def get_sort_field_info(self, *args: str) -> tuple[str, bool]|None:
+    def get_sort_field_info(self, *args: str) -> tuple[str, bool] | None:
         """
         Returns sorting information for the first sorting if it is contained in the odata orderby list.
 
         Args:
             args: The  possible name of the field name to check for sorting information.
-            
+
         Returns:
             A tuple containing the clean field name found and a boolean indicating if the sorting is descending,
-            
+
         Note:
             We only use the first in case of table sort translations, so this only returns info for the first field
         """
@@ -413,7 +413,7 @@ class Handler(abc.ABC):
                     is_descending = order_field.startswith('-')
                     return (clean_field, is_descending)
         return None
-    
+
     def apply_sort(self, qs: QuerySet[typing.Any]) -> list[typing.Any] | QuerySet[typing.Any]:
         """
         Custom sorting function to apply to querysets.
@@ -452,7 +452,7 @@ class Handler(abc.ABC):
             result = self.apply_sort(qs)
         else:
             result = qs
-            
+
         # If odata start/limit are set, apply them
         if self.odata.start is not None:
             result = result[self.odata.start :]
@@ -463,13 +463,6 @@ class Handler(abc.ABC):
         # After slicing, the qs may be a list, so we ensure it's a list
         # to avoid issues later
         result = list(result)
-
-        # Get total items and set it on X-Filtered-Count
-        try:
-            total_items = len(result)
-            self.add_header('X-Filtered-Count', total_items)
-        except Exception as e:
-            raise exceptions.rest.RequestError(f'Invalid odata: {e}')
 
         return result
 
