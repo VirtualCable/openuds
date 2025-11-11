@@ -14,3 +14,7 @@
 	path = client
 	url = git@github.com:VirtualCable/uds-client.git
 	branch = master
+[submodule "server"]
+	path = server
+    url = git@github.com:VirtualCable/uds-broker.git
+    branch = master
