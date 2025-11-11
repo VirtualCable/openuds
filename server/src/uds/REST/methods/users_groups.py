@@ -53,6 +53,8 @@ from uds.REST.model import DetailHandler
 
 from .user_services import AssignedUserService, UserServiceItem
 
+if typing.TYPE_CHECKING:
+    from django.db.models.query import QuerySet
 
 logger = logging.getLogger(__name__)
 
@@ -116,6 +118,13 @@ class Users(DetailHandler[UserItem]):
             groups=[i.uuid for i in user.get_groups()],
             role=user.get_role().as_str(),
         )
+        
+    def apply_sort(self, qs: 'QuerySet[typing.Any]') -> 'list[typing.Any] | QuerySet[typing.Any]':
+        if field_info := self.get_sort_field_info('role'):
+            descending = '-' if field_info[1] else ''
+            return qs.order_by(f'{descending}is_admin', f'{descending}staff_member')
+
+        return super().apply_sort(qs)
 
     def get_item_position(self, parent: 'Model', item_uuid: str) -> int:
         parent = ensure.is_instance(parent, Authenticator)

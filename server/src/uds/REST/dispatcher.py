@@ -37,10 +37,8 @@ import collections.abc
 import traceback
 
 from django import http
-import django
-import django.db
-import django.db.models
 from django.utils.decorators import method_decorator
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
 
@@ -209,9 +207,9 @@ class Dispatcher(View):
         except exceptions.services.generics.Error as e:
             log.log_operation(handler, 503, types.log.LogLevel.ERROR)
             return http.HttpResponseServerError(
-                f'{{"error": "{e}"}}'.encode(), content_type="application/json", code=503
+                f'{{"error": "{e}"}}'.encode(), content_type="application/json", status=503
             )
-        except django.db.models.Model.DoesNotExist as e:  # All DoesNotExist exceptions are not found
+        except ObjectDoesNotExist as e:  # All DoesNotExist exceptions are not found
             log.log_operation(handler, 404, types.log.LogLevel.ERROR)
             return http.HttpResponseNotFound(f'{{"error": "{e}"}}'.encode(), content_type="application/json")
         except Exception as e:

@@ -36,7 +36,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext, gettext_lazy as _
-from django.db.models import Model
+from django.db.models import Model, Count
 
 import uds.core.types.permissions
 from uds.core import exceptions, services, types
@@ -50,6 +50,9 @@ from .services import Services as DetailServices
 from .services_usage import ServicesUsage
 
 logger = logging.getLogger(__name__)
+
+if typing.TYPE_CHECKING:
+    from django.db.models.query import QuerySet
 
 
 # Helper class for Provider offers
@@ -96,12 +99,22 @@ class Providers(ModelHandler[ProviderItem]):
         .numeric_column(name='user_services_count', title=_('User Services'))
         .text_column(name='tags', title=_('Tags'), visible=False)
         .row_style(prefix='row-maintenance-', field='maintenance_mode')
+        .with_field_mappings(type_name='data_type')
+        .with_filter_fields('name', 'data_type', 'comments', 'maintenance_mode')
     ).build()
 
     # Rest api related information to complete the auto-generated API
     REST_API_INFO = types.rest.api.RestApiInfo(
         typed=types.rest.api.RestApiInfoGuiType.MULTIPLE_TYPES,
     )
+
+    def apply_sort(self, qs: 'QuerySet[typing.Any]') -> 'list[typing.Any] | QuerySet[typing.Any]':
+        if field_info := self.get_sort_field_info('services_count'):
+            field_name, is_descending = field_info
+            order_by_field = f"-{field_name}" if is_descending else field_name
+            return qs.annotate(services_count=Count('services')).order_by(order_by_field)
+
+        return super().apply_sort(qs)
 
     def get_item(self, item: 'Model') -> ProviderItem:
         item = ensure.is_instance(item, Provider)
