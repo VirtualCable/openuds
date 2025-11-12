@@ -258,8 +258,8 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     uuid, counter = assignation
                     # uuid shuld be one on registered servers
                     self.assertTrue(uuid in self.all_uuids)
-                    # And only one assignment, so counter is 1
-                    self.assertTrue(counter, 1)
+                    # And only assignements so counter is assignations + 1
+                    self.assertTrue(counter, assignations + 1)
                     # Server locked should be None
                     self.assertIsNotNone(models.Server.objects.get(uuid=uuid).locked_until)
 
