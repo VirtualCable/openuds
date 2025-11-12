@@ -201,12 +201,12 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
                 Operation.FINISH,
             ]
 
-    def _check_machine_state(self, state: on.types.VmState) -> types.states.TaskState:
+    def _check_machine_state(self, check_state: on.types.VmState) -> types.states.TaskState:
         logger.debug(
             'Checking that state of machine %s (%s) is %s',
             self._vmid,
             self._name,
-            state,
+            check_state,
         )
         state = self.service().get_machine_state(self._vmid)
 
@@ -219,12 +219,8 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
 
         ret = types.states.TaskState.RUNNING
 
-        if isinstance(state, (list, tuple)):
-            if state in state:
-                ret = types.states.TaskState.FINISHED
-        else:
-            if state == state:
-                ret = types.states.TaskState.FINISHED
+        if state == check_state:
+            ret = types.states.TaskState.FINISHED
 
         return ret
 
