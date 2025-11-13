@@ -144,7 +144,7 @@ class StorageInfo:
             type=StorageType.from_str(storage.type.value),
             available=storage.available,
             used=storage.used,
-            status=StorageStatus.from_str(storage.status.value),
+            status=StorageStatus.from_str(storage.status.value if storage.status else 'unknown'),
         )
 
 
