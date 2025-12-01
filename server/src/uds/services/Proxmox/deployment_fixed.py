@@ -113,3 +113,8 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
         Checks if machine has started
         """
         return self._check_task_finished()
+
+    def get_console_connection(
+        self,
+    ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+        return self.service().get_console_connection(self._vmid)

@@ -114,6 +114,9 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
     def provider(self) -> 'ProxmoxProvider':
         return typing.cast('ProxmoxProvider', super().provider())
+    
+    def get_console_connection(self, vmid: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+        return self.provider().api.get_console_connection(int(vmid))
 
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
