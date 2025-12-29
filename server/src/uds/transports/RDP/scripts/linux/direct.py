@@ -102,20 +102,27 @@ for thincast in thincast_list:
     if os.path.isfile(thincast) and os.access(thincast, os.X_OK):
         executable = thincast
         kind = 'thincast'
+        logger.debug('Found Thincast executable: %s', thincast)
         break
 
 # If you don't find Thincast, search UDSRDP and XFREERDP
 if not executable:
+    logger.debug('Thincast not found. Searching for UDSRDP and XFREERDP.')
     udsrdp: typing.Optional[str] = tools.findApp('udsrdp')
     xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp') or tools.findApp('xfreerdp2')
+    logger.debug('UDSRDP found: %s', udsrdp)
+    logger.debug('XFREERDP found: %s', xfreerdp)
     if udsrdp:
         executable = udsrdp
         kind = 'udsrdp'
+        logger.debug('Selected UDSRDP as executable.')
     elif xfreerdp:
         executable = xfreerdp
         kind = 'xfreerdp'
+        logger.debug('Selected XFREERDP as executable.')
 
 if not executable:
+    logger.error('No suitable RDP client found. Thincast, UDSRDP, or XFREERDP are required.')
     raise Exception(
         '''<p>You need to have Thincast Remote Desktop Client or xfreerdp (>= 2.0) installed on your system, and have it in your PATH in order to connect to this UDS service.</p>
     <p>Please, install the proper package for your system.</p>
