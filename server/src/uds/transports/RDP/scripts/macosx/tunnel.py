@@ -184,9 +184,17 @@ if kind == 'thincast':
             'open',
             '-a',
             executable,
-            filename + '.rdp', # type: ignore
         ]
-        logger.debug('Opening Thincast with RDP file with params: %s', ' '.join(params)) # type: ignore
+
+        if sp.get('password', ''):  # type: ignore
+            params.append('--args') # type: ignore
+            params.append('/p:{}'.format(sp['password']))  # type: ignore
+        else:
+            logger.debug('No password provided for Thincast RDP file')
+
+        params.append(filename + '.rdp')  # type: ignore
+
+        #logger.debug('Opening Thincast with RDP file with params: %s', ' '.join(params)) # type: ignore
         tools.addTaskToWait( # type: ignore
             subprocess.Popen(params) # type: ignore
         )
