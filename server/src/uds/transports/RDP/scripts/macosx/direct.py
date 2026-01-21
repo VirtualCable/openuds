@@ -170,10 +170,10 @@ if kind == 'thincast':
         # filename_handle.close()
 
         # add to file the password without encryption (Thincast will encrypt it)
-        filename_handle = open(filename, 'a') # type: ignore
-        if sp.get('password', ''):  # type: ignore
-            filename_handle.write(f'password 51:b:{sp["password"]}\n')  # type: ignore
-        filename_handle.close()
+        # filename_handle = open(filename, 'a') # type: ignore
+        # if sp.get('password', ''):  # type: ignore
+        #     filename_handle.write(f'password 51:b:{sp["password"]}\n')  # type: ignore
+        # filename_handle.close()
 
         # Rename as .rdp, so open recognizes it
         shutil.move(filename, filename + '.rdp') # type: ignore
@@ -181,9 +181,17 @@ if kind == 'thincast':
             'open',
             '-a',
             executable,
-            filename + '.rdp', # type: ignore
         ]
-        logger.debug('Opening Thincast with RDP file with params: %s', ' '.join(params)) # type: ignore
+
+        if sp.get('password', ''):  # type: ignore
+            params.append('--args') # type: ignore
+            params.append('/p:{}'.format(sp['password']))  # type: ignore
+        else:
+            logger.debug('No password provided for Thincast RDP file')
+
+        params.append(filename + '.rdp')  # type: ignore
+
+        # logger.debug('Opening Thincast with RDP file with params: %s', ' '.join(params)) # type: ignore
         tools.addTaskToWait( # type: ignore
             subprocess.Popen(params) # type: ignore
         )
@@ -196,14 +204,19 @@ if kind == 'thincast':
         except Exception as e:
             xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
 
-        params = [ # type: ignore
+        params = [  # type: ignore
             'open',
             '-a',
             executable,
             '--args',
         ] + [os.path.expandvars(i) for i in xfparms + ['/v:{}'.format(sp['address'])]]  # type: ignore
+
+        # Add password argument if present
+        if sp.get('password', ''):  # type: ignore
+            params.append('/p:{}'.format(sp['password']))  # type: ignore
+
         #logger.debug('Executing: %s', ' '.join(params))
-        subprocess.Popen(params) # type: ignore
+        subprocess.Popen(params)  # type: ignore
 else:  # for now, both xfreerdp or udsrdp
     # Fix resolution...
     try:
