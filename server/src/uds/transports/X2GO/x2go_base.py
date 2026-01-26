@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2016-2019 Virtual Cable S.L.
+# Copyright (c) 2016-2026 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -109,6 +109,7 @@ class BaseX2GOTransport(transports.Transport):
     custom_cmd = gui.TextField(
         order=12,
         label=_('vAPP'),
+        length=500,
         tooltip=_(
             'If UDS vAPP is selected as "Desktop", the FULL PATH of the app to be executed. If UDS vAPP is not selected, this field will be ignored.'
         ),
