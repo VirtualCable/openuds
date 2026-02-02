@@ -203,7 +203,6 @@ class TestXenClient(UDSTransactionTestCase):
             'start_delay': 0,
             'shutdown_delay': 0,
             'order': 0,
-            'ha_restart_priority': '',
             'ha_always_run': False,
             'ha_restart_priority': '',
             'recommendations': '',
