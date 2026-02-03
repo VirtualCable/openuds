@@ -558,7 +558,7 @@ class ServicePool(UUIDModel, TaggingMixin):
 
     @staticmethod
     def get_pools_for_groups(
-        groups: collections.abc.Iterable['Group'], user: typing.Optional['User'] = None
+        groups: collections.abc.Iterable['Group'], user: typing.Optional['User'] = None, *, visible_only: bool = True
     ) -> collections.abc.Iterable['ServicePool']:
         """
         Return deployed services with publications for the groups requested.
@@ -574,13 +574,14 @@ class ServicePool(UUIDModel, TaggingMixin):
         services_not_needing_publication = [
             t.mod_type() for t in services.factory().services_not_needing_publication()
         ]
+        visible_kwargs = { 'visible': True } if visible_only else {}
         # Get services that HAS publications
         query = (
             ServicePool.objects.filter(
                 assignedGroups__in=groups,
                 assignedGroups__state=types.states.State.ACTIVE,
                 state__in=types.states.State.PROCESABLE_STATES,
-                visible=True,
+                **visible_kwargs,
             )
             .annotate(
                 pubs_active=models.Count(

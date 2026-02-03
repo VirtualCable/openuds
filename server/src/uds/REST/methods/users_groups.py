@@ -71,7 +71,7 @@ def get_groups_from_metagroup(groups: collections.abc.Iterable[Group]) -> collec
 def get_service_pools_for_groups(
     groups: collections.abc.Iterable[Group],
 ) -> collections.abc.Iterable[ServicePool]:
-    for servicepool in ServicePool.get_pools_for_groups(groups):
+    for servicepool in ServicePool.get_pools_for_groups(groups, visible_only=False):
         yield servicepool
 
 
