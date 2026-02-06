@@ -155,7 +155,7 @@ def tunnel_ticket_validity_field(
 
 # Tunnel wait time (for uds client related tunnels)
 def tunnel_wait_time_field(
-    order: int = 2, tab: 'types.ui.Tab|None' = types.ui.Tab.TUNNEL,default: int = 30
+    order: int = 2, tab: 'types.ui.Tab|None' = types.ui.Tab.TUNNEL, default: int = 30
 ) -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=3,
@@ -177,7 +177,7 @@ def get_certificates_from_field(
 ) -> list['Certificate']:
     # Get certificates in self.publicKey.value, encoded as PEM
     # Return a list of certificates in DER format
-    
+
     # Allows empty certificates list, returns empty list
     value = (field_value or field.value).strip()
     if value == '':
