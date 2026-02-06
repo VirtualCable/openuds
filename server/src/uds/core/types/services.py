@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2023 Virtual Cable S.L.U.
+# Copyright (c) 2023 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -162,6 +162,10 @@ class Operation(enum.IntEnum):
     NOP = 1101
     RETRY = 1102  # Do not have executors, inserted to retry operation and recognize it
 
+    # Back to cache snapshot control
+    BACK_TO_CACHE_SNAPSHOT_CREATE = 1150
+    BACK_TO_CACHE_SNAPSHOT_RECOVER = 1151
+
     # Custom validations 2000-2999
     DESTROY_VALIDATOR = 2000  # Check if the userservice has an vmid to stop destroying it if needed
 
@@ -214,7 +218,7 @@ class Operation(enum.IntEnum):
 
 @dataclasses.dataclass
 class ServicePoolStats:
-    servicepool: typing.Optional['models.ServicePool']
+    servicepool: 'models.ServicePool | None'
     l1_cache_count: int
     l2_cache_count: int
     assigned_count: int
@@ -283,6 +287,6 @@ class ServicePoolStats:
 @dataclasses.dataclass
 class UserServiceInfo:
     # Ip is unknown if not requested test
-    ip: typing.Optional[str]
+    ip: str | None
     userservice: 'models.UserService'
     transport: 'models.Transport'

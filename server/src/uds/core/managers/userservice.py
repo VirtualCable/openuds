@@ -346,6 +346,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         user_service.src_hostname = user_service.src_ip = ''
         user_service.save()
 
+        user_service.move_to_level(types.services.CacheLevel.L1)
+
     def get_cache_servicepool_stats(
         self,
         servicepool: ServicePool,

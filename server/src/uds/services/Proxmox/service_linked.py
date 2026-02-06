@@ -40,7 +40,6 @@ from uds.core.services.generics.dynamic.publication import DynamicPublication
 from uds.core.services.generics.dynamic.service import DynamicService
 from uds.core.services.generics.dynamic.userservice import DynamicUserService
 from uds.core.ui import gui
-from uds.core.util import validators
 
 from . import helpers
 from .deployment_linked import ProxmoxUserserviceLinked
@@ -155,11 +154,11 @@ class ProxmoxServiceLinked(DynamicService):
         label=_("GPU Availability"),
         readonly=False,
         order=112,
-        choices={
-            '0': _('Do not check'),
-            '1': _('Only if available'),
-            '2': _('Only if NOT available'),
-        },
+        choices=[
+            gui.choice_item('0', _('Do not check')),
+            gui.choice_item('1', _('Only if available')),
+            gui.choice_item('2', _('Only if NOT available')),
+        ],
         tooltip=_('Checking method for GPU availability'),
         tab=types.ui.Tab.MACHINE,
         required=True,
@@ -169,14 +168,6 @@ class ProxmoxServiceLinked(DynamicService):
     lenname = DynamicService.lenname
 
     prov_uuid = gui.HiddenField(value=None)
-
-    def initialize(self, values: 'types.core.ValuesType') -> None:
-        if values:
-            self.basename.value = validators.validate_basename(
-                self.basename.value, length=self.lenname.as_int()
-            )
-            # if int(self.memory.value) < 128:
-            #     raise exceptions.ValidationException(_('The minimum allowed memory is 128 Mb'))
 
     def init_gui(self) -> None:
         # Here we have to use "default values", cause values aren't used at form initialization
@@ -318,6 +309,35 @@ class ProxmoxServiceLinked(DynamicService):
                 caller_instance._task = ''
         else:
             self.provider().api.shutdown_vm(int(vmid))  # Just shutdown it, do not stores anything
+
+    def snapshot_creation(self, userservice_instance: DynamicUserService) -> None:
+        userservice_instance = typing.cast(ProxmoxUserserviceLinked, userservice_instance)
+        vmid = int(userservice_instance._vmid)
+        logger.debug('Using snapshots')
+        # If no snapshot exists for this vm, try to create one for it on background
+        # Lauch an snapshot. We will not wait for it to finish, but instead let it run "as is"
+        try:
+            if not self.provider().api.get_current_vm_snapshot(vmid):
+                logger.debug('No current snapshot')
+                self.provider().api.create_snapshot(
+                    vmid,
+                    name='UDS_Snapshot',
+                )
+        except Exception as e:
+            self.do_log(types.log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
+
+    def snapshot_recovery(self, userservice_instance: DynamicUserService) -> None:
+        userservice_instance = typing.cast(ProxmoxUserserviceLinked, userservice_instance)
+        vmid = int(userservice_instance._vmid)
+        try:
+            # try to revert to snapshot
+            snapshot = self.provider().api.get_current_vm_snapshot(vmid)
+            if snapshot:
+                userservice_instance._store_task(
+                    self.provider().api.restore_snapshot(vmid, name=snapshot.name)
+                )
+        except Exception as e:
+            self.do_log(types.log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
 
     def is_running(
         self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str

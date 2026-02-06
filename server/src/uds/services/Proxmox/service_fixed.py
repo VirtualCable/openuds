@@ -166,7 +166,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
                     logger.debug('No current snapshot')
                     self.provider().api.create_snapshot(
                         vmid,
-                        name='UDS Snapshot',
+                        name='UDS_Snapshot',
                     )
             except Exception as e:
                 self.do_log(types.log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))

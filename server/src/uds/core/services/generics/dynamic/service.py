@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2012-2022 Virtual Cable S.L.U.
+# Copyright (c) 2012-2022 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -10,7 +10,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -34,7 +34,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core import services, types
+from uds.core import exceptions, services, types
 from uds.core.ui import gui
 from uds.core.util import fields, validators
 from uds.workers.deferred_deleter import DeferredDeletionWorker
@@ -99,10 +99,22 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         """
         if values:
             validators.validate_basename(self.basename.value, self.lenname.value)
+            if self.has_field('put_back_to_cache') and self.put_back_to_cache.value == 'snapshot':
+                if not self.has_field('try_soft_shutdown'):
+                    raise exceptions.ui.ValidationError(_('Snapshot on back to cache is not supported'))
+                if not self.try_soft_shutdown.value:
+                    raise exceptions.ui.ValidationError(
+                        _('Snapshot on back to cache is not supported if try soft shutdown is not enabled')
+                    )
 
     def allow_putting_back_to_cache(self) -> bool:
         if self.has_field('put_back_to_cache'):
-            return self.put_back_to_cache.value == 'yes'
+            return self.put_back_to_cache.value != 'no'
+        return False
+
+    def restore_snapshot_on_back_to_cache(self) -> bool:
+        if self.has_field('put_back_to_cache'):
+            return self.put_back_to_cache.value == 'snapshot'
         return False
 
     def get_basename(self) -> str:
@@ -163,9 +175,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         return []
 
     @abc.abstractmethod
-    def get_ip(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
-    ) -> str:
+    def get_ip(self, caller_instance: 'DynamicUserService | DynamicPublication | None', vmid: str) -> str:
         """
         Returns the ip of the machine
         If cannot be obtained, MUST raise an exception
@@ -175,7 +185,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
     @abc.abstractmethod
     def get_mac(
         self,
-        caller_instance: typing.Optional['DynamicUserService | DynamicPublication'],
+        caller_instance: 'DynamicUserService | DynamicPublication | None',
         vmid: str,
         *,
         for_unique_id: bool = False,
@@ -201,18 +211,26 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         ...
 
     @abc.abstractmethod
-    def is_running(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
-    ) -> bool:
+    def is_running(self, caller_instance: 'DynamicUserService | DynamicPublication | None', vmid: str) -> bool:
         """
         Returns if the machine is ready and running
         """
         ...
 
+    def snapshot_creation(self, userservice_instance: 'DynamicUserService') -> None:
+        """
+        Creates a snapshot for the machine
+        """
+        return
+
+    def snapshot_recovery(self, userservice_instance: 'DynamicUserService') -> None:
+        """
+        Removes the snapshot for the machine
+        """
+        return
+
     @abc.abstractmethod
-    def start(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
-    ) -> None:
+    def start(self, caller_instance: 'DynamicUserService | DynamicPublication | None', vmid: str) -> None:
         """
         Starts the machine
         Returns None. If a task is needed for anything, use the caller_instance to notify
@@ -220,27 +238,21 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         ...
 
     @abc.abstractmethod
-    def stop(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
-    ) -> None:
+    def stop(self, caller_instance: 'DynamicUserService | DynamicPublication | None', vmid: str) -> None:
         """
         Stops the machine
         Returns None. If a task is needed for anything, use the caller_instance to notify
         """
         ...
 
-    def shutdown(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
-    ) -> None:
+    def shutdown(self, caller_instance: 'DynamicUserService | DynamicPublication | None', vmid: str) -> None:
         """
         Shutdowns the machine.  Defaults to stop
         Returns None. If a task is needed for anything, use the caller_instance to notify
         """
         return self.stop(caller_instance, vmid)
 
-    def reset(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
-    ) -> None:
+    def reset(self, caller_instance: 'DynamicUserService | DynamicPublication | None', vmid: str) -> None:
         """
         Resets the machine
         Returns None. If a task is needed for anything, use the caller_instance to notify
@@ -248,9 +260,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         # Default is to stop "hard"
         return self.stop(caller_instance, vmid)
 
-    def delete(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
-    ) -> None:
+    def delete(self, caller_instance: 'DynamicUserService | DynamicPublication | None', vmid: str) -> None:
         """
         Removes the machine, or queues it for removal, or whatever :)
         Use the caller_instance to notify anything if needed, or to identify caller
@@ -296,7 +306,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
             storage[f'deleting_{vmid}'] = True
 
     def is_deletion_in_progress(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+        self, caller_instance: 'DynamicUserService | DynamicPublication | None', vmid: str
     ) -> bool:
         """
         Checks if the deferred deletion of a machine is running

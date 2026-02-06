@@ -500,6 +500,8 @@ def put_back_to_cache_field(
         choices=[
             {'id': 'no', 'text': _('No. Never put it back to cache')},
             {'id': 'yes', 'text': _('Yes, try to put it back to cache')},
+            #types.ui.ChoiceItem(id='snapshot', text=_('Yes, try to put it back to cache and recover snapshot')),
+           {'id': 'snapshot', 'text': _('Yes, try to put it back to cache and recover snapshot')}, 
         ],
         tab=tab,
     )
