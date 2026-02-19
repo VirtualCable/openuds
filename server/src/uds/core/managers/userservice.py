@@ -884,6 +884,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             logger.debug('State: %s', state)
             if state == types.states.TaskState.FINISHED:
                 userservice.update_data(userservice_instance)
+                ip = userservice_instance.get_ip()
+                if ip:
+                    userservice.log_ip(ip)
                 logger.debug('Service is now ready')
             elif userservice.state in (
                 State.USABLE,
@@ -892,6 +895,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 userservice.set_state(State.PREPARING)
                 # Make unique will make sure that we do not have same machine twice
                 UserServiceOpChecker.make_unique(userservice, state)
+
+                
             userservice.save(update_fields=['os_state'])
         except Exception as e:
             logger.exception('Unhandled exception on notyfyready: %s', e)
