@@ -61,12 +61,15 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
             userservice = self.db_obj()
             if userservice:
                 userservice.set_in_use(True)
-                
+
     def update_ip(self) -> None:
         # Update ip & mac, as they can be changed
         # i.e. hostname instead of an ip and ip changed
         # or mac changed (this last one is not expected, but just in case...)
-        self._ip, self._mac = self.service().get_host_mac(self._vmid)
+        try:
+            self._ip, self._mac = self.service().get_host_mac(self._vmid)
+        except Exception:
+            pass  # Maybe the server is already unassigned, so just ignore errors here
 
     def set_ip(self, ip: str) -> None:
         logger.debug('Setting IP to %s (ignored)', ip)
@@ -79,7 +82,7 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
         return self._ip
 
     def get_name(self) -> str:
-        return self.get_ip()
+        return self.get_unique_id()
 
     def get_unique_id(self) -> str:
         # Generate a 16 chars string mixing up all _vmid chars
