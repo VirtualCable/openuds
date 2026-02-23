@@ -61,11 +61,21 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
             userservice = self.db_obj()
             if userservice:
                 userservice.set_in_use(True)
+                
+    def update_ip(self) -> None:
+        # Update ip & mac, as they can be changed
+        # i.e. hostname instead of an ip and ip changed
+        # or mac changed (this last one is not expected, but just in case...)
+        self._ip, self._mac = self.service().get_host_mac(self._vmid)
 
     def set_ip(self, ip: str) -> None:
         logger.debug('Setting IP to %s (ignored)', ip)
 
     def get_ip(self) -> str:
+        # Always update ip & mac, as they can be changed
+        # i.e. hostname instead of an ip and ip changed
+        # or mac changed (this last one is not expected, but just in case...)
+        self.update_ip()
         return self._ip
 
     def get_name(self) -> str:
@@ -83,8 +93,7 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
         logger.debug("Starting deploy of %s for user %s", self._ip, user)
         self._vmid = self.service().get_unassigned()
 
-        self._ip, self._mac = self.service().get_host_mac(self._vmid)
-
+        self.update_ip()
         self._set_in_use()
 
         return types.states.TaskState.FINISHED
@@ -96,7 +105,7 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
         logger.debug('Assigning from assignable with id %s', vmid)
         self._vmid = vmid
         # Update ip & mac
-        self._ip, self._mac = self.service().get_host_mac(vmid)
+        self.update_ip()
 
         self._set_in_use()
 
