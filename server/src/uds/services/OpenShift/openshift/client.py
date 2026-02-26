@@ -272,6 +272,17 @@ class OpenshiftClient:
         logger.debug(f"VM info for '{vm_name}': {response}")
         return types.VM.from_dict(response)
 
+    def get_vm_exists(self, vm_name: str) -> bool:
+        """
+        Checks if a VM exists by name in the current namespace.
+        Returns True if the VM exists, False otherwise.
+        """
+        try:
+            self.do_request('GET', f'/apis/kubevirt.io/v1/namespaces/{self.namespace}/virtualmachines/{vm_name}')
+            return True
+        except exceptions.OpenshiftNotFoundError:
+            return False
+
     def get_vm_pvc_or_dv_name(self, api_url: str, namespace: str, vm_name: str) -> tuple[str, str]:
         """
         Returns the name of the PVC or DataVolume used by the VM.

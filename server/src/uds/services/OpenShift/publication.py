@@ -140,12 +140,21 @@ class OpenshiftTemplatePublication(DynamicPublication, autoserializable.AutoSeri
     def op_create_completed_checker(self) -> TaskState:
         """
         Checks if the create operation has been completed successfully.
-        If the VM is stopped, we can consider the publication as completed.
+        Handles the case where the VM exists but the VMI does not (halted state).
         """
         logger.info(f"Checking if VM '{self._name}' is stopped after publication.")
-        vmi = self.service().api.get_vm_info(self._name)
+        try:
+            vmi = self.service().api.get_vm_info(self._name)
+        except Exception as e:
+            from uds.services.OpenShift.openshift import exceptions
+            # Handle OpenshiftNotFoundError for VMI
+            if isinstance(e, exceptions.OpenshiftNotFoundError) and "virtualmachineinstances" in str(e):
+                if self.service().api.get_vm_exists(self._name):
+                    logger.info(f"VM '{self._name}' halted (no VMI), publication finished.")
+                    return TaskState.FINISHED
+            raise
         status = getattr(vmi, 'status', None)
-        if status and hasattr(status, 'is_running') and not status.is_running() and not status == None:
+        if status and hasattr(status, 'is_running') and not status.is_running() and status is not None:
             logger.info(f"VM '{self._name}' is stopped, publication finished.")
             return TaskState.FINISHED
         logger.info(f"VM '{self._name}' still running, waiting.")
