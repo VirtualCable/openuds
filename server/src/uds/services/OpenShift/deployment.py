@@ -14,6 +14,8 @@ from uds.core import types
 from uds.core.services.generics.dynamic.userservice import DynamicUserService
 from uds.core.util import autoserializable
 
+from .openshift import types as otypes
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .service import OpenshiftService
@@ -85,7 +87,6 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
         """
         Starts the deployment process for a user or cache, cloning the template publication.
         """
-        logger.info("Starting publication process: template cloning.")
         self._waiting_name = True
         api = self.service().api
         publication_vm_name = self.publication()._name
@@ -93,18 +94,11 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
         api_url = api.api_url
         self._name = self.service().sanitized_name(self._name)
 
-        logger.info(f"Getting template PVC/DataVolume '{publication_vm_name}'.")
-        source_pvc_name, vol_type = api.get_vm_pvc_or_dv_name(api_url, namespace, publication_vm_name)
-        logger.info(f"Source PVC/DataVolume: {source_pvc_name}, type: {vol_type}.")
-
-        logger.info(f"Getting PVC size '{source_pvc_name}'.")
-        size = api.get_pvc_size(api_url, namespace, source_pvc_name)
-        logger.info(f"PVC size: {size}.")
+        source_pvc_name, _vol_type = api.get_vm_pvc_or_dv_name(api_url, namespace, publication_vm_name)
 
         new_pvc_name = f"{self._name}-disk"
 
-        logger.info(f"Creating new VM '{self._name}' from cloned PVC '{new_pvc_name}'.")
-        ok = api.create_vm_from_pvc(
+        api.create_vm_from_pvc(
             api_url=api_url,
             namespace=namespace,
             source_vm_name=publication_vm_name,
@@ -112,11 +106,6 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
             new_dv_name=new_pvc_name,
             source_pvc_name=source_pvc_name,
         )
-        if not ok:
-            logger.error(f"Error creating VM {self._name} from cloned PVC.")
-            return
-        else:
-            logger.info(f"VM '{self._name}' creation initiated successfully.")
 
     # In fact, we probably don't need to check task status, but this way we can include the error
     def op_create_checker(self) -> types.states.TaskState:
@@ -129,14 +118,12 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
         new_pvc_name = f"{self._name}-disk"
 
         logger.info(f"Waiting for DataVolume '{new_pvc_name}' to be ready.")
-        dv_status = api.get_datavolume_phase(new_pvc_name)
-        if dv_status == 'Succeeded':
-            logger.info(f"DataVolume '{new_pvc_name}' clone completed.")
-        elif dv_status == 'Failed':
+        dv_state = api.get_datavolume_phase(new_pvc_name)
+        if dv_state == otypes.State.FAILED:
             logger.error(f"DataVolume clone {new_pvc_name} failed.")
             return types.states.TaskState.ERROR
-        else:
-            logger.info(f"Waiting for DataVolume clone {new_pvc_name}, status: {dv_status}.")
+        elif dv_state != otypes.State.SUCCEEDED:
+            logger.info(f"Waiting for DataVolume clone {new_pvc_name}, status: {dv_state}.")
             return types.states.TaskState.RUNNING
 
         logger.info(f"VM '{self._name}' created successfully.")
@@ -144,27 +131,15 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
         self._waiting_name = False
 
         api = self.service().api
-        new_dv_name = f"{self._name}-disk"
 
         # Wait for the DataVolume to be Succeeded
-        dv_status = api.get_datavolume_phase(new_dv_name)
-        if dv_status != 'Succeeded':
+        dv_state = api.get_datavolume_phase(new_pvc_name)
+        if dv_state != otypes.State.SUCCEEDED:
             return types.states.TaskState.RUNNING
 
-        # Find the VM by name
-        vm = api.get_vm_info(self._name)
-        if not vm:
-            # VM not found, consider it deleted and finish
-            logger.info(f"VM '{self._name}' not found, considering as deleted. Finishing operation.")
-            return types.states.TaskState.FINISHED
+        # Wait for interfaces to be available
+        interfaces = api.get_vm_interfaces(self._name)
 
-        # Check that the VM has interfaces and MAC address
-        vmi = api.get_vm_info(self._name)
-        if (
-            not vmi
-            or not getattr(vmi, 'interfaces', None)
-            or getattr(vmi.interfaces[0], 'mac_address', '') == ''
-        ):
+        if not interfaces or not interfaces[0].mac_address:
             return types.states.TaskState.RUNNING
         return types.states.TaskState.FINISHED
-

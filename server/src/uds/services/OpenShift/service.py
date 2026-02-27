@@ -25,7 +25,6 @@ from .publication import OpenshiftTemplatePublication
 
 from .deployment import OpenshiftUserService
 from .openshift import exceptions as oshift_exceptions
-from .openshift import types as oshift_types
 
 logger = logging.getLogger(__name__)
 
@@ -150,14 +149,10 @@ class OpenshiftService(DynamicService):
         Tries up to 3 times with 5 seconds delay if not found.
         """
         logger.debug('Getting IP for VM ID: %s', vmid)
-        try:
-            vm_info = self.api.get_vm_info(vmid)
-            logger.debug(f"The vm info is:{vm_info}")
-            if vm_info.interfaces and vm_info.interfaces:
-                logger.info(f"IP address found: {vm_info.interfaces[0].ip_address}")
-                return vm_info.interfaces[0].ip_address
-        except oshift_exceptions.OpenshiftNotFoundError:
-            pass
+        interfaces = self.api.get_vm_interfaces(vmid)
+        if interfaces and interfaces[0].ip_address:
+            logger.info(f"IP address found: {interfaces[0].ip_address}")
+            return interfaces[0].ip_address
         return ''
 
     def get_mac(
@@ -178,14 +173,10 @@ class OpenshiftService(DynamicService):
         if vmid == '':
             return ''
         logger.debug('Getting MAC for VM ID: %s', vmid)
-        try:
-            vm_info = self.api.get_vm_info(vmid)
-            logger.debug(f"The vm info is:{vm_info}")
-            if vm_info.interfaces and vm_info.interfaces:
-                logger.info(f"MAC address found: {vm_info.interfaces[0].mac_address}")
-                return vm_info.interfaces[0].mac_address
-        except oshift_exceptions.OpenshiftNotFoundError:
-            pass
+        interfaces = self.api.get_vm_interfaces(vmid)
+        if interfaces and interfaces[0].mac_address:
+            logger.info(f"MAC address found: {interfaces[0].mac_address}")
+            return interfaces[0].mac_address
         return ''
 
     def is_running(self, caller_instance: 'DynamicUserService | DynamicPublication | None', vmid: str) -> bool:
@@ -194,9 +185,7 @@ class OpenshiftService(DynamicService):
         """
         vmi_info = self.api.get_vm_info(vmid)
         # Use both status and phase to determine if running
-        return (
-            vmi_info.status == oshift_types.VMStatus.RUNNING or vmi_info.phase == oshift_types.VMStatus.RUNNING
-        )
+        return vmi_info.status.is_running()
 
     def start(self, caller_instance: 'DynamicUserService | DynamicPublication | None', vmid: str) -> None:
         """

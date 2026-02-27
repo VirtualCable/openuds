@@ -52,9 +52,5 @@ class OpenshiftPermissionError(OpenshiftError, exceptions.services.generics.Fata
     pass
 
 
-class OpenshiftDoesNotExists(OpenshiftError):
-    pass
-
-
-class OpenshiftNotFoundError(OpenshiftDoesNotExists, exceptions.services.generics.NotFoundError):
+class OpenshiftNotFoundError(OpenshiftError, exceptions.services.generics.NotFoundError):
     pass

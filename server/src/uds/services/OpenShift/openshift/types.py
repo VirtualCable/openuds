@@ -14,7 +14,7 @@ from . import exceptions
 logger = logging.getLogger(__name__)
 
 
-class VMStatus(enum.StrEnum):
+class State(enum.StrEnum):
     """
     Represents the state of a Openshift vm.
     """
@@ -63,27 +63,33 @@ class VMStatus(enum.StrEnum):
     # We do not support multinode instances, and will not support them because it's a nonsense for UDS
     # but we will find for sure. We also do not support emtpy instances, so we will not use them
 
+    def is_succeeded(self) -> bool:
+        """
+        Check if the instance is in a successful state.
+        """
+        return self == State.SUCCEEDED
+
     def is_cloneable(self) -> bool:
         """
         Check if the instance is in a state that allows cloning.
         """
         return self in {
-            VMStatus.RUNNING,
-            VMStatus.STOPPED,
-            VMStatus.SUSPENDED,
+            State.RUNNING,
+            State.STOPPED,
+            State.SUSPENDED,
         }
 
     def is_cloning(self) -> bool:
         """
         Check if the instance is currently being cloned.
         """
-        return self == VMStatus.CLONING
+        return self == State.CLONING
 
     def is_running(self) -> bool:
         """
         Check if the instance is running.
         """
-        return self == VMStatus.RUNNING
+        return self == State.RUNNING
 
     def is_provisioning(self) -> bool:
         """
@@ -91,61 +97,61 @@ class VMStatus(enum.StrEnum):
         """
         # OpenShift does not have a 'PROVISIONING' status; adjust as needed
         return self in {
-            VMStatus.PENDING,
-            VMStatus.SCHEDULING,
-            VMStatus.SCHEDULED,
-            VMStatus.STARTING,
-            VMStatus.WAITING_FOR_VMI,
-            VMStatus.WAITING_FOR_VOLUME_BIND,
-            VMStatus.WAITING_FOR_NETWORK,
-            VMStatus.WAITING_FOR_LAUNCHER_POD,
-            VMStatus.WAITING_FOR_IMAGE,
-            VMStatus.WAITING_FOR_DATA_VOLUME,
-            VMStatus.WAITING_FOR_USER_DATA,
-            VMStatus.WAITING_FOR_CLOUD_INIT,
-            VMStatus.WAITING_FOR_GUEST_AGENT,
-            VMStatus.RESTORING,
-            VMStatus.CLONING,
-            VMStatus.MIGRATING,
+            State.PENDING,
+            State.SCHEDULING,
+            State.SCHEDULED,
+            State.STARTING,
+            State.WAITING_FOR_VMI,
+            State.WAITING_FOR_VOLUME_BIND,
+            State.WAITING_FOR_NETWORK,
+            State.WAITING_FOR_LAUNCHER_POD,
+            State.WAITING_FOR_IMAGE,
+            State.WAITING_FOR_DATA_VOLUME,
+            State.WAITING_FOR_USER_DATA,
+            State.WAITING_FOR_CLOUD_INIT,
+            State.WAITING_FOR_GUEST_AGENT,
+            State.RESTORING,
+            State.CLONING,
+            State.MIGRATING,
         }
 
     def is_stopped(self) -> bool:
         """
         Check if the instance is stopped.
         """
-        return self == VMStatus.STOPPED
+        return self == State.STOPPED
 
     def is_off(self) -> bool:
         """
         Check if the instance is off (stopped or suspended).
         """
-        return self in {VMStatus.STOPPED, VMStatus.SUSPENDED}
+        return self in {State.STOPPED, State.SUSPENDED}
 
     def is_error(self) -> bool:
         """
         Check if the instance is in an error state.
         """
         return self in {
-            VMStatus.FAILED,
-            VMStatus.DENIED,
+            State.FAILED,
+            State.DENIED,
         }
 
     def is_usable(self) -> bool:
         """
         Check if the instance is usable.
         """
-        return self not in (VMStatus.NOT_USABLE, VMStatus.UNKNOWN)
+        return self not in (State.NOT_USABLE, State.UNKNOWN)
 
     @staticmethod
-    def from_string(state: str) -> 'VMStatus':
+    def from_string(state: str) -> 'State':
         """
         Convert a string to a OpenshiftState.
         """
         try:
-            return VMStatus(state)
+            return State(state)
         except ValueError:
             logger.warning(f'Unknown instance state: {state}, defaulting to UNKNOWN')
-            return VMStatus.UNKNOWN
+            return State.UNKNOWN
 
 
 @dataclasses.dataclass
@@ -230,12 +236,11 @@ class VM:
     name: str
     namespace: str
     uid: str
-    status: VMStatus
+    status: State
     volume_template: VolumeTemplate
     disks: list[DeviceDisk]
     volumes: list[Volume]
-    interfaces: list[Interface]
-    phase: VMStatus = VMStatus.UNKNOWN  # Use InstanceStatus for phase
+    # phase: State = State.UNKNOWN  # Use InstanceStatus for phase
 
     def validate(self) -> 'VM':
         if not self.is_usable():
@@ -246,25 +251,25 @@ class VM:
     def is_usable(self) -> bool:
         return self.status.is_usable()
 
+    def is_running(self) -> bool:
+        return self.status.is_running()
+
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VM':
         try:
             metadata = dictionary.get('metadata', {})
-            status_data: dict[str, typing.Any] = dictionary.get('status', {})
-            phase_str = status_data.get('phase', '')
-            status_str = status_data.get('printableStatus', 'UNKNOWN')
-            spec:dict[str, typing.Any] = dictionary.get('spec', {})
+            status = dictionary.get('status', {}).get('printableStatus', 'UNKNOWN')
+            spec: dict[str, typing.Any] = dictionary.get('spec', {})
             template = spec.get('template', {}).get('spec', {})
             return VM(
                 name=metadata.get('name', ''),
                 namespace=metadata.get('namespace', ''),
                 uid=metadata.get('uid', ''),
-                status=VMStatus.from_string(status_str),
+                status=State.from_string(status),
                 volume_template=VolumeTemplate.from_dict(spec.get('dataVolumeTemplates', [{}])[0]),
-                interfaces=[Interface.from_dict(iface) for iface in status_data.get('interfaces', [])],
                 disks=[DeviceDisk.from_dict(disk) for disk in template.get('devices', {}).get('disks', [])],
                 volumes=[Volume.from_dict(vol) for vol in template.get('volumes', [])],
-                phase=VMStatus.from_string(phase_str) if phase_str else VMStatus.UNKNOWN,
+                # phase=State.from_string(phase_str) if phase_str else State.UNKNOWN,
             )
         except Exception as e:
             logger.error(f'Error creating Definition from dict: {e}')
