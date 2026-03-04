@@ -211,38 +211,22 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
         Returns the IP address of the machine.
         If cannot be obtained, raises an exception.
         """
-        vms = self.api.list_vms()
-        # get vm name by vmuid
-        for vm in vms:
-            if vm.uid == vmid:
-                vm_name = vm.name
-                break
-        else:
-            raise oshift_exceptions.OpenshiftNotFoundError(f'No VM found for VM ID {vmid}')
-
-        vmi_info = self.api.get_vm_info(vm_name)
-        if not vmi_info or not vmi_info.interfaces:
-            raise oshift_exceptions.OpenshiftNotFoundError(f'No interfaces found for VM {vm_name}')
-        return vmi_info.interfaces[0].ip_address
+        interfaces = self.api.get_vm_interfaces(vmid)
+        if interfaces and interfaces[0].ip_address:
+            logger.info(f"IP address found: {interfaces[0].ip_address}")
+            return interfaces[0].ip_address
+        return ''
 
     def get_mac(self, vmid: str) -> str:
         """
         Returns the MAC address of the machine.
         If cannot be obtained, raises an exception.
         """
-        vms = self.api.list_vms()
-        # get vm name by vmuid
-        for vm in vms:
-            if vm.uid == vmid:
-                vm_name = vm.name
-                break
-        else:
-            raise oshift_exceptions.OpenshiftNotFoundError(f'No VM found for VM ID {vmid}')
-
-        vmi_info = self.api.get_vm_info(vm_name)
-        if not vmi_info or not vmi_info.interfaces:
-            raise oshift_exceptions.OpenshiftNotFoundError(f'No interfaces found for VM {vm_name}')
-        return vmi_info.interfaces[0].mac_address
+        interfaces = self.api.get_vm_interfaces(vmid)
+        if interfaces and interfaces[0].mac_address:
+            logger.info(f"MAC address found: {interfaces[0].mac_address}")
+            return interfaces[0].mac_address
+        return ''
 
     def get_name(self, vmid: str) -> str:
         """

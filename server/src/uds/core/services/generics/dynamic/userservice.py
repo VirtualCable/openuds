@@ -79,6 +79,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     # Some customization fields
     # If ip can be manually overriden, normally True... (set by actor, for example)
     can_set_ip: typing.ClassVar[bool] = True
+    # If true, the IP will be cached on the user service
+    can_cache_ip: typing.ClassVar[bool] = True
     # If store_error_as_finished is true, and an error occurs, the machine is set to FINISHED instead of ERROR
     store_error_as_finished: typing.ClassVar[bool] = False
     # If must wait untill finish queue for destroying the machine
@@ -369,7 +371,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
     @typing.final
     def get_ip(self) -> str:
-        if self._ip == '':
+        if self._ip == '' or not self.can_cache_ip:
             try:
                 if self._vmid:
                     # Provide self to the service, so it can use some of our methods for whaterever it needs

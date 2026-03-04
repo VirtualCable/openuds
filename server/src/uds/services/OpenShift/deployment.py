@@ -42,7 +42,8 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
 
     _waiting_name = autoserializable.BoolField(default=False)
 
-    can_set_ip = False  # We cannot set IP on Openshift, so we disable this option in the UI
+    can_set_ip = False  # We cannot set IP on Openshift
+    can_cache_ip = False  # We cannot cache IP on Openshift
 
     # Custom queue
     _create_queue = [
@@ -143,3 +144,4 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
         if not interfaces or not interfaces[0].mac_address:
             return types.states.TaskState.RUNNING
         return types.states.TaskState.FINISHED
+

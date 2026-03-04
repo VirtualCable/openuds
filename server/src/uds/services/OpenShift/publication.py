@@ -88,7 +88,7 @@ class OpenshiftTemplatePublication(DynamicPublication, autoserializable.AutoSeri
 
         logger.info(f"VM '{self._name}' created successfully.")
         self._vmid = self._name  # Assign the VM identifier for future operations (deletion, etc.)
-        api.stop_vm_instance(self._name)
+        api.stop_vm(self._name)
 
         # If we are still waiting, we try to get the VM by name
         if self._waiting_name:
@@ -112,7 +112,7 @@ class OpenshiftTemplatePublication(DynamicPublication, autoserializable.AutoSeri
         logger.info(f"Checking if VM '{self._name}' is running to stop it.")
         if self.service().api.get_vm_info(self._name).is_running():
             logger.info(f"Stopping VM '{self._name}'.")
-            self.service().api.stop_vm_instance(self._name)
+            self.service().api.stop_vm(self._name)
         else:
             logger.info(f"VM '{self._name}' is not running or VM not found.")
 

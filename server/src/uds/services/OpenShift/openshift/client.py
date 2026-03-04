@@ -316,8 +316,8 @@ class OpenshiftClient:
         try:
             response = self.do_request('GET', path)
             return types.State.from_string(response.get('status', {}).get('phase', ''))
-        except Exception:
-            pass
+        except exceptions.OpenshiftNotFoundError:
+            return types.State.ERROR
         return types.State.UNKNOWN
 
     def get_datavolume_size(self, namespace: str, datavolume_name: str) -> str:
@@ -464,7 +464,7 @@ class OpenshiftClient:
         create_path = f"/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines"
         self.do_request('POST', create_path, data=vm_obj)
 
-    def delete_vm(self, api_url: str, namespace: str, vm_name: str) -> bool:
+    def delete_vm(self, vm_name: str) -> bool:
         """
         Delete a VM by name.
         Returns True if the VM was deleted successfully, else False.
@@ -505,14 +505,14 @@ class OpenshiftClient:
 
         return True
 
-    def start_vm(self, api_url: str, namespace: str, vm_name: str) -> bool:
+    def start_vm(self, vm_name: str) -> bool:
         """
         Start a VM by name.
         Returns True if the VM was started successfully, else False.
         """
 
         # Get Vm info
-        path = f"/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{vm_name}"
+        path = f"/apis/kubevirt.io/v1/namespaces/{self.namespace}/virtualmachines/{vm_name}"
         try:
             vm_obj = self.do_request('GET', path)
         except Exception as e:
@@ -529,13 +529,13 @@ class OpenshiftClient:
             logging.info(f"Error starting VM {vm_name}: {e}")
             return False
 
-    def stop_vm(self, api_url: str, namespace: str, vm_name: str) -> bool:
+    def stop_vm(self, vm_name: str) -> bool:
         """
         Stop a VM by name.
         Returns True if the VM was stopped successfully, else False.
         """
         # Get Vm info
-        path = f"/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{vm_name}"
+        path = f"/apis/kubevirt.io/v1/namespaces/{self.namespace}/virtualmachines/{vm_name}"
         try:
             vm_obj = self.do_request('GET', path)
         except Exception as e:
@@ -584,39 +584,11 @@ class OpenshiftClient:
             logger.error(f"Error testing Openshift by enumerating VMs: {e}")
             raise exceptions.OpenshiftConnectionError(str(e)) from e
 
-    def enumerate_vms(self) -> collections.abc.Iterator[types.VM]:
+    @cached('vms', consts.CACHE_INFO_DURATION)
+    def list_vms(self) -> collections.abc.Iterator[types.VM]:
         """
         Fetch all VMs from KubeVirt API in the current namespace as VMDefinition objects using do_request.
         """
         response = self.do_request('GET', f'/apis/kubevirt.io/v1/namespaces/{self.namespace}/virtualmachines')
         vms = response.get('items', [])
         yield from (types.VM.from_dict(vm) for vm in vms)
-
-    @cached('vms', consts.CACHE_INFO_DURATION)
-    def list_vms(self) -> list[types.VM]:
-        """
-        List all VMs in the current namespace as VMDefinition objects.
-        """
-        return list(self.enumerate_vms())
-
-    def start_vm_instance(self, vm_name: str) -> bool:
-        """
-        Start a specific VM by name.
-        Returns True if started successfully, False otherwise.
-        """
-        return self.start_vm(self.api_url, self.namespace, vm_name)
-
-    def stop_vm_instance(self, vm_name: str) -> bool:
-        """
-        Stop a specific VM by name.
-        Returns True if stopped successfully, False otherwise.
-        """
-        return self.stop_vm(self.api_url, self.namespace, vm_name)
-
-    def delete_vm_instance(self, vm_name: str) -> bool:
-        """
-        Delete a specific VM by name.
-        Returns True if deleted successfully, False otherwise.
-        Treats 404 (not found) as success (idempotent delete).
-        """
-        return self.delete_vm(self.api_url, self.namespace, vm_name)

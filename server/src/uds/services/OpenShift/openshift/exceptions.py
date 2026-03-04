@@ -30,27 +30,14 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 
 
 from uds.core import exceptions
-
-
 class OpenshiftError(exceptions.services.generics.Error):
     pass
-
-
 class OpenshiftConnectionError(OpenshiftError, exceptions.services.generics.RetryableError):
     pass
-
-
 class OpenshiftAuthError(OpenshiftError, exceptions.services.generics.FatalError):
     pass
-
-
 class OpenshiftPermissionError(OpenshiftError, exceptions.services.generics.FatalError):
-    """
-    Raised when the user does not have permission to perform an action
-    """
-
     pass
-
 
 class OpenshiftNotFoundError(OpenshiftError, exceptions.services.generics.NotFoundError):
     pass
