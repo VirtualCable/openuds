@@ -17,7 +17,7 @@ try:
 except ImportError:
     logger = logging.getLogger(__name__)  # For UDS Clients 4.0
 
-# También asegura logger en globales
+# Also ensures logger in globals
 globals()['logger'] = logger
 
 # Avoid type checking annoing errors
@@ -42,15 +42,11 @@ def _prepare_rdp_file(theFile: str, extension: str = '.rdp') -> str:
     base_name = os.path.basename(filename)
     dest_filename = os.path.join(home_dir, base_name + extension)
     temp_rdp_filename = filename + extension
-    logger.debug(f'Renaming temp file {filename} to {temp_rdp_filename}')
     os.rename(filename, temp_rdp_filename)
-    logger.debug(f'Moving temp file {temp_rdp_filename} to {dest_filename}')
     shutil.move(temp_rdp_filename, dest_filename)
-    logger.debug(f'RDP file content (forced): {theFile}')
     return dest_filename
 
 def _exec_client_with_params(executable: str, params: typing.List[str], unlink_file: typing.Optional[str] = None) -> None:
-    logger.info(f'Executing {executable} with params: {params}')
     tools.addTaskToWait(subprocess.Popen(params))
     if unlink_file:
         tools.addFileToUnlink(unlink_file)
@@ -102,20 +98,27 @@ for thincast in thincast_list:
     if os.path.isfile(thincast) and os.access(thincast, os.X_OK):
         executable = thincast
         kind = 'thincast'
+        logger.debug('Found Thincast executable: %s', thincast)
         break
 
 # If you don't find Thincast, search UDSRDP and XFREERDP
 if not executable:
+    logger.debug('Thincast not found. Searching for UDSRDP and XFREERDP.')
     udsrdp: typing.Optional[str] = tools.findApp('udsrdp')
     xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp') or tools.findApp('xfreerdp2')
+    logger.debug('UDSRDP found: %s', udsrdp)
+    logger.debug('XFREERDP found: %s', xfreerdp)
     if udsrdp:
         executable = udsrdp
         kind = 'udsrdp'
+        logger.debug('Selected UDSRDP as executable.')
     elif xfreerdp:
         executable = xfreerdp
         kind = 'xfreerdp'
+        logger.debug('Selected XFREERDP as executable.')
 
 if not executable:
+    logger.error('No suitable RDP client found. Thincast, UDSRDP, or XFREERDP are required.')
     raise Exception(
         '''<p>You need to have Thincast Remote Desktop Client or xfreerdp (>= 2.0) installed on your system, and have it in your PATH in order to connect to this UDS service.</p>
     <p>Please, install the proper package for your system.</p>

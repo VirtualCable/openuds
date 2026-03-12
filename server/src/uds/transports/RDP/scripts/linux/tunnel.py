@@ -44,22 +44,16 @@ def _prepare_rdp_file(theFile: str, port: int, extension: str = '.rdp') -> str:
     theFile = theFile.format(
         address='127.0.0.1:{}'.format(port)
     )
-    logger.info(f'Preparing RDP file with address 127.0.0.1:{port}')
-    logger.debug(f'RDP file content (forced): {theFile}')
     filename = tools.saveTempFile(theFile)
     home_dir = os.path.expanduser("~")
     base_name = os.path.basename(filename)
     dest_filename = os.path.join(home_dir, base_name + extension)
     temp_rdp_filename = filename + extension
-    logger.debug(f'Renaming temp file {filename} to {temp_rdp_filename}')
     os.rename(filename, temp_rdp_filename)
-    logger.debug(f'Moving temp file {temp_rdp_filename} to {dest_filename}')
     shutil.move(temp_rdp_filename, dest_filename)
-    logger.debug(f'RDP file content (forced): {theFile}')
     return dest_filename
 
 def _exec_client_with_params(executable: str, params: typing.List[str], unlink_file: typing.Optional[str] = None) -> None:
-    logger.info(f'Executing {executable} with params: {params}')
     tools.addTaskToWait(subprocess.Popen(params))
     if unlink_file:
         tools.addFileToUnlink(unlink_file)
@@ -121,14 +115,18 @@ if thincast_executable:
     logger.debug('Thincast client found, using it')
     fnc, app = exec_thincast, thincast_executable
 else:
+    logger.debug('Thincast not found, searching for xfreerdp and udsrdp')
     xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp') or tools.findApp('xfreerdp2')
     udsrdp = tools.findApp('udsrdp')
     fnc, app = None, None
     if xfreerdp:
+        logger.debug('xfreerdp found: %s', xfreerdp)
         fnc, app = exec_new_xfreerdp, xfreerdp
     if udsrdp:
+        logger.debug('udsrdp found: %s', udsrdp)
         fnc, app = exec_udsrdp, udsrdp
     if app is None or fnc is None:
+        logger.error('No suitable RDP client found (Thincast, xfreerdp, udsrdp)')
         raise Exception(
             '''<p>You need to have Thincast Remote Desktop Client o xfreerdp (>= 2.0) installed on your system, y tenerlo en tu PATH para conectar con este servicio UDS.</p>
         <p>Please install the right package for your system.</p>
