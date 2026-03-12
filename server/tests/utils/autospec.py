@@ -34,22 +34,29 @@ import functools
 import dataclasses
 from unittest import mock
 
+
 @dataclasses.dataclass
 class AutoSpecMethodInfo:
-    name: str|typing.Callable[..., typing.Any]
+    name: str | typing.Callable[..., typing.Any]
     returns: typing.Any = None  # Can be a callable or a value
     partial_args: typing.Tuple[typing.Any, ...] = ()
     partial_kwargs: dict[str, typing.Any] = dataclasses.field(default_factory=dict[str, typing.Any])
-    
-    
-def autospec(cls: type, metods_info: collections.abc.Iterable[AutoSpecMethodInfo], **kwargs: typing.Any) -> mock.Mock:
+    needs_self: bool = False  # If the method needs self as first argument (for side_effect callables)
+
+
+def autospec(
+    cls: type,
+    metods_info: collections.abc.Iterable[AutoSpecMethodInfo],
+    test_data: dict[str, typing.Any]|None = None,
+    **kwargs: typing.Any
+) -> mock.Mock:
     """
     This is a helper function that will create a mock object with the same methods as the class passed as parameter.
     This is useful for testing purposes, where you want to mock a class and still have the same methods available.
-    
+
     Take some care when using decorators and methods instead of string for its name. Ensure decorator do not hide the original method.
     (using functools.wraps or similar will do the trick, but take care of it)
-    
+
     The returned value is in fact a mock object, but with the same methods as the class passed as parameter.
     """
     obj = mock.create_autospec(cls, **kwargs)
@@ -58,9 +65,27 @@ def autospec(cls: type, metods_info: collections.abc.Iterable[AutoSpecMethodInfo
         name = method_info.name if isinstance(method_info.name, str) else method_info.name.__name__
         mck = getattr(obj, name)
         if callable(method_info.returns):
-            mck.side_effect = functools.partial(method_info.returns, *method_info.partial_args, **method_info.partial_kwargs)
-            #mck.side_effect = method_info.returns
+            if method_info.needs_self:
+                def side_effect_with_self(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
+                    return method_info.returns(obj, *args, **kwargs)
+                mck.side_effect = side_effect_with_self
+            else:
+                mck.side_effect = functools.partial(
+                    method_info.returns, *method_info.partial_args, **method_info.partial_kwargs
+                )
+            # mck.side_effect = method_info.returns
         else:
             mck.return_value = method_info.returns
-            
+
+    obj._test_data = dict() if test_data is None else test_data
+    
+    def get_test_data(attr: str) -> typing.Any:
+        return obj._test_data.get(attr)
+    
+    def set_test_data(attr: str, data: typing.Any) -> None:
+        obj._test_data[attr] = data
+
+    obj.get_test_data = get_test_data
+    obj.set_test_data = set_test_data
+
     return obj

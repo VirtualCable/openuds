@@ -330,7 +330,9 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         name = self.get_name()
         if name == consts.NO_MORE_NAMES:
-            return consts.NO_MORE_NAMES
+            raise Exception(
+                'No more names available for this service. (Increase digits for this service to fix)'
+            )
 
         return self.service().sanitized_name(f'UDS_{name}')  # Default implementation
 

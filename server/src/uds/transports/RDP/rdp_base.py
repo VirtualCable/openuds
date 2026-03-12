@@ -297,6 +297,14 @@ class BaseRDPTransport(transports.Transport):
         tab='Linux Client',
         old_field_name='alsa',
     )
+    lnx_use_rdp_file = gui.CheckBoxField(
+        label=_('Use RDP file for connections'),
+        order=42,
+        tooltip=_('If marked, an RDP file will be used for connections with Thincast or xfreerdp on Linux.'),
+        tab='Linux Client',
+        default=True,
+        old_field_name='lnx_thincastRdpFile',
+    )
     lnx_printer_string = gui.TextField(
         label=_('Printer string'),
         order=43,
@@ -333,9 +341,18 @@ class BaseRDPTransport(transports.Transport):
         old_field_name='allowMacMSRDC',
     )
 
+    mac_use_rdp_file = gui.CheckBoxField(
+        label=_('Use RDP file for connections'),
+        order=51,
+        tooltip=_('If marked, an RDP file will be used for connections with Thincast or xfreerdp on Mac OS X.'),
+        tab='Mac OS X',
+        default=True,
+        old_field_name='mac_thincastRdpFile',
+    )
+
     mac_custom_parameters = gui.TextField(
         label=_('Custom parameters'),
-        order=51,
+        order=52,
         tooltip=_(
             'If not empty, extra parameter to include for Mac OS X Freerdp Client (for example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)'
         ),

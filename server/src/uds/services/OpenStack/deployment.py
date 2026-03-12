@@ -35,7 +35,7 @@ import logging
 import pickle  # nosec: not insecure, we are loading our own data
 import typing
 
-from uds.core import consts, types
+from uds.core import types
 from uds.core.services.generics.dynamic.userservice import DynamicUserService
 from uds.core.util import autoserializable
 
@@ -154,10 +154,6 @@ class OpenStackLiveUserService(DynamicUserService, autoserializable.AutoSerializ
         """
         template_id = self.publication().get_template_id()
         name = self.get_vmname()
-        if name == consts.NO_MORE_NAMES:
-            raise Exception(
-                'No more names available for this service. (Increase digits for this service to fix)'
-            )
 
         self._vmid = self.service().deploy_from_template(name, template_id).id
         if not self._vmid:

@@ -316,12 +316,24 @@ class Register(ActorV3Action):
 
         # Actors does not support any SERVER API version in fact, they has their own interfaces on UserServices
         # This means that we can invoke its API from user_service, but not from server (The actor token is transformed as soon as initialized to a user service token)
-        data = {
-            'pre_command': self._params['pre_command'],
-            'post_command': self._params['post_command'],
-            'run_once_command': self._params['run_once_command'],
-            'custom': self._params.get('custom', ''),
-        }
+        
+        # New model has "commands" field in data, old one not
+        if 'commands' in self._params:
+            commands = self._params['commands']
+            data = {
+                'pre_command': commands.get('pre_command') or '',
+                'post_command': commands.get('post_command') or '',
+                'run_once_command': commands.get('run_once_command') or '',
+                'custom': self._params.get('custom') or '',
+            }
+        else:
+            data = {
+                'pre_command': self._params['pre_command'],
+                'post_command': self._params['post_command'],
+                'run_once_command': self._params['run_once_command'],
+                'custom': self._params.get('custom', ''),
+            }
+        
         if actor_token:
             # Update parameters
             # type is already set
@@ -774,11 +786,13 @@ class Ticket(ActorV3Action):
                 token=self._params['token'], type=types.servers.ServerType.ACTOR
             )  # Not assigned, because only needs check
         except Server.DoesNotExist:
+            logger.error('Actor token not found (params: %s)', self._params)
             raise exceptions.rest.BlockAccess() from None  # If too many blocks...
 
         try:
             return ActorV3Action.actor_result(TicketStore.get(self._params['ticket'], invalidate=True))
         except TicketStore.DoesNotExist:
+            logger.error('Actor ticket not found (params: %s)', self._params)
             return ActorV3Action.actor_result(error='Invalid ticket')
 
 

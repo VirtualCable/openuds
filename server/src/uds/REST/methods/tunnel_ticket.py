@@ -153,7 +153,7 @@ class TunnelRegister(ServerRegisterBase):
     name = 'register'
 
     # Just a compatibility method for old tunnel servers
-    def post(self) -> collections.abc.MutableMapping[str, typing.Any]:
+    def post(self) -> dict[str, typing.Any]:
         self._params['type'] = types.servers.ServerType.TUNNEL
         self._params['os'] = self._params.get(
             'os', types.os.KnownOS.LINUX.os_name()

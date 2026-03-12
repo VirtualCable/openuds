@@ -92,11 +92,15 @@ def _process_response(
     response: 'HttpResponse',
 ) -> 'HttpResponse':
     if GlobalConfig.ENHANCED_SECURITY.as_bool():
-        # Legacy browser support for X-XSS-Protection
-        response['X-XSS-Protection'] = '1; mode=block'
+        # Legacy browser support for X-XSS-Protection: Nginx already set this header
+        # kept here for reference, but not set anymore
+        # response['X-XSS-Protection'] = '1; mode=block'
         # Add Content-Security-Policy, see https://www.owasp.org/index.php/Content_Security_Policy
         response['Content-Security-Policy'] = (
-            "default-src 'self' 'unsafe-inline' 'unsafe-eval' uds: udss:; img-src 'self' https: data:; frame-ancestors 'none';"
+            "default-src 'self' 'unsafe-inline' 'unsafe-eval' uds: udss:; "
+            "style-src 'self' 'unsafe-inline'; "
+            "img-src 'self' https: data:; object-src 'none'; base-uri 'self'; "
+            "frame-ancestors 'none'; form-action 'self';"
         )
     return response
 
