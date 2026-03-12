@@ -44,22 +44,16 @@ def _prepare_rdp_file(theFile: str, port: int, extension: str = '.rdp') -> str:
     theFile = theFile.format(
         address='127.0.0.1:{}'.format(port)
     )
-    logger.info(f'Preparing RDP file with address 127.0.0.1:{port}')
-    logger.debug(f'RDP file content (forced): {theFile}')
     filename = tools.saveTempFile(theFile)
     home_dir = os.path.expanduser("~")
     base_name = os.path.basename(filename)
     dest_filename = os.path.join(home_dir, base_name + extension)
     temp_rdp_filename = filename + extension
-    logger.debug(f'Renaming temp file {filename} to {temp_rdp_filename}')
     os.rename(filename, temp_rdp_filename)
-    logger.debug(f'Moving temp file {temp_rdp_filename} to {dest_filename}')
     shutil.move(temp_rdp_filename, dest_filename)
-    logger.debug(f'RDP file content (forced): {theFile}')
     return dest_filename
 
 def _exec_client_with_params(executable: str, params: typing.List[str], unlink_file: typing.Optional[str] = None) -> None:
-    logger.info(f'Executing {executable} with params: {params}')
     tools.addTaskToWait(subprocess.Popen(params))
     if unlink_file:
         tools.addFileToUnlink(unlink_file)
