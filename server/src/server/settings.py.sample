@@ -81,9 +81,11 @@ LANGUAGES = (
     ('pt', gettext('Portuguese')),
     ('it', gettext('Italian')),
     ('ar', gettext('Arabic')),
-    ('eu', gettext('Basque')),
+    ('ja', gettext('Japanese')),
+    ('nl', gettext('Dutch')),
     ('ar', gettext('Arabian')),
     ('ca', gettext('Catalan')),
+    ('eu', gettext('Basque')),
     ('zh-hans', gettext('Chinese')),
 )
 # LANGUAGE_SECTION_END
