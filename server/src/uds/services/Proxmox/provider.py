@@ -10,7 +10,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -39,7 +39,7 @@ from uds.core.util.decorators import cached
 from uds.core.util.unique_id_generator import UniqueIDGenerator
 
 from .proxmox import client, types as prox_types, exceptions as prox_exceptions
-from .service_linked import ProxmoxServiceLinked
+from .service import ProxmoxService
 from .service_fixed import ProxmoxServiceFixed
 
 # Not imported at runtime, just for type checking
@@ -64,7 +64,7 @@ class ProxmoxProvider(services.ServiceProvider):
     type_description = _('Proxmox platform service provider')
     icon_file = 'provider.png'
 
-    offers = [ProxmoxServiceLinked, ProxmoxServiceFixed]
+    offers = [ProxmoxService, ProxmoxServiceFixed]
 
     host = gui.TextField(
         length=64,
@@ -161,6 +161,7 @@ class ProxmoxProvider(services.ServiceProvider):
 
         if values is not None:
             self.timeout.value = validators.validate_timeout(self.timeout.value)
+            self.macs_range.value = validators.validate_mac_range(self.macs_range.value)
             logger.debug(self.host.value)
 
         # All proxmox use same UniqueId generator, even if they are different servers

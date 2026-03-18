@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2021 Virtual Cable S.L.U.
+# Copyright (c) 2019-2021 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -10,7 +10,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -383,9 +383,18 @@ class ProxmoxClient:
         # Ensure exists target pool, (id is in fact the name of the pool)
         if target_pool and not any(p.id == target_pool for p in self.list_pools()):
             raise exceptions.ProxmoxDoesNotExists(f'Pool "{target_pool}" does not exist')
-        
+
         logger.debug('Cloning VM %s to %s', vmid, new_vmid)
-        logger.debug('Parameters: %s %s %s %s %s %s %s', name, description, as_linked_clone, target_node, target_storage, target_pool, must_have_vgpus)
+        logger.debug(
+            'Parameters: %s %s %s %s %s %s %s',
+            name,
+            description,
+            as_linked_clone,
+            target_node,
+            target_storage,
+            target_pool,
+            must_have_vgpus,
+        )
 
         src_node = vminfo.node
 
@@ -403,13 +412,13 @@ class ProxmoxClient:
                 target_node = node.name
             else:
                 target_node = src_node
-                
-        logger.debug('Target node: %s', target_node)    
+
+        logger.debug('Target node: %s', target_node)
 
         # Ensure exists target node
         if not any(n.name == target_node for n in self.get_cluster_info().nodes):
             raise exceptions.ProxmoxDoesNotExists(f'Node "{target_node}" does not exist')
-        
+
         logger.debug('VM info: %s', vminfo)
         logger.debug('Type of vminfo.vgpu_type: %s', type(vminfo.vgpu_type))
         logger.debug('Value of vminfo.vgpu_type: %s', vminfo.vgpu_type)
@@ -537,7 +546,7 @@ class ProxmoxClient:
             if found_ips:
                 sorted_ips = sorted(found_ips, key=lambda x: ':' in x)
                 return sorted_ips[0]
-            
+
         except Exception as e:
             logger.warning('Error getting guest ip address for machine %s: %s', vmid, e)
             raise exceptions.ProxmoxError(f'No ip address for vm {vmid}: {e}')
@@ -822,9 +831,10 @@ class ProxmoxClient:
             case collections.abc.Iterable():
                 node_list = set(node)
 
+        version = self.get_version()
         return sorted(
             [
-                types.StorageInfo.from_dict(st_info)
+                types.StorageInfo.from_dict(st_info, version=version)
                 for st_info in self.get_cluster_resources('storage')
                 if st_info['node'] in node_list and (content is None or content in st_info['content'])
             ],
