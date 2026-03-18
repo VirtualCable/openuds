@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -78,13 +78,13 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
                 self.service().provider().api.reset_vm(int(self._vmid))
             except Exception:  # nosec: if cannot reset, ignore it
                 pass  # If could not reset, ignore it...
-            
+
         return types.states.TaskState.FINISHED
 
     def op_start(self) -> None:
         vminfo = self.service().get_vm_info(int(self._vmid)).validate()
 
-        if  not vminfo.status.is_running():
+        if not vminfo.status.is_running():
             self._store_task(self.service().provider().api.start_vm(int(self._vmid)))
 
     # Check methods
@@ -113,3 +113,8 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
         Checks if machine has started
         """
         return self._check_task_finished()
+
+    def get_console_connection(
+        self,
+    ) -> types.services.ConsoleConnectionInfo | None:
+        return self.service().get_console_connection(self._vmid)

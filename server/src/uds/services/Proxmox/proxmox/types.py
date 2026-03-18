@@ -5,6 +5,8 @@ import enum
 import re
 import typing
 
+from django.utils import timezone
+
 from . import exceptions as prox_exceptions
 
 NETWORK_RE: typing.Final[typing.Pattern[str]] = re.compile(r'([a-zA-Z0-9]+)=([^,]+)')  # May have vla id at end
@@ -169,7 +171,7 @@ class ExecResult:
             node=d[1],
             pid=int(d[2], 16),
             pstart=int(d[3], 16),
-            starttime=datetime.datetime.fromtimestamp(int(d[4], 16)),
+            starttime=timezone.make_aware(datetime.datetime.fromtimestamp(int(d[4], 16))),
             type=d[5],
             vmid=int(d[6]),
             user=d[7],
@@ -182,7 +184,7 @@ class ExecResult:
             node='',
             pid=0,
             pstart=0,
-            starttime=datetime.datetime.now(),
+            starttime=timezone.localtime(),
             type='',
             vmid=0,
             user='',
@@ -210,7 +212,7 @@ class TaskStatus:
             node=data['node'],
             pid=data['pid'],
             pstart=data['pstart'],
-            starttime=datetime.datetime.fromtimestamp(data['starttime']),
+            starttime=timezone.make_aware(datetime.datetime.fromtimestamp(data['starttime'])),
             type=data['type'],
             status=data['status'],
             exitstatus=data.get('exitstatus', ''),
@@ -225,7 +227,7 @@ class TaskStatus:
             node='',
             pid=0,
             pstart=0,
-            starttime=datetime.datetime.now(),
+            starttime=timezone.localtime(),
             type='',
             status='stopped',
             exitstatus='OK',
@@ -454,12 +456,15 @@ class StorageInfo:
     used: int
     avail: int
     total: int
+    _version: str = dataclasses.field(repr=False, compare=False, default='')
 
     def is_null(self) -> bool:
         return self.node == '' and self.storage == ''
 
     @staticmethod
-    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'StorageInfo':
+    def from_dict(
+        dictionary: collections.abc.MutableMapping[str, typing.Any], version: str = ''
+    ) -> 'StorageInfo':
         if 'maxdisk' in dictionary:  # From cluster/resources
             total = int(dictionary['maxdisk'])
             used = int(dictionary['disk'])
@@ -482,6 +487,7 @@ class StorageInfo:
             used=used,
             avail=avail,
             total=total,
+            _version=version,
         )
 
     @staticmethod
@@ -497,6 +503,16 @@ class StorageInfo:
             avail=0,
             total=0,
         )
+
+    def supports_snapshots(self) -> bool:
+        # Only storage types that support snapshots are those that allow differential storage
+        # Note: On Promxmox 9, lvm allows snapshots
+        return self.type not in ('iscsi', 'iscsidirect', 'lvm') or (self._version >= '9' and self.type == 'lvm')
+
+    def supports_linked_clone(self) -> bool:
+        # Only storage types that support snapshots are those that allow differential storage
+        # Note: On Promxmox 9, lvm allows snapshots
+        return self.type not in ('iscsi', 'iscsidirect', 'lvm')
 
 
 @dataclasses.dataclass
@@ -527,7 +543,9 @@ class PoolInfo:
     members: list[PoolMemberInfo]
 
     @staticmethod
-    def from_dict(data: collections.abc.MutableMapping[str, typing.Any], *, poolid: typing.Optional[str] = None) -> 'PoolInfo':
+    def from_dict(
+        data: collections.abc.MutableMapping[str, typing.Any], *, poolid: typing.Optional[str] = None
+    ) -> 'PoolInfo':
         if 'members' in data:
             members: list[PoolMemberInfo] = [PoolMemberInfo.from_dict(i) for i in data['members']]
         else:
