@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2012-2024 Virtual Cable S.L.U.
+# Copyright (c) 2012-2024 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -10,7 +10,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -39,7 +39,7 @@ from uds.core.util import autoserializable
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .service_linked import ProxmoxServiceLinked
+    from .service import ProxmoxService
 
 logger = logging.getLogger(__name__)
 
@@ -55,8 +55,8 @@ class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
     _task = autoserializable.StringField(default='')
 
     # Utility overrides for type checking...
-    def service(self) -> 'ProxmoxServiceLinked':
-        return typing.cast('ProxmoxServiceLinked', super().service())
+    def service(self) -> 'ProxmoxService':
+        return typing.cast('ProxmoxService', super().service())
 
     def unmarshal(self, data: bytes) -> None:
         """

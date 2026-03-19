@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -37,7 +37,6 @@ import typing
 
 from uds.core import types
 from uds.core.services.generics.dynamic.userservice import DynamicUserService
-from uds.core.managers.userservice import UserServiceManager
 from uds.core.util import autoserializable
 import uds.services.Proxmox.proxmox.exceptions
 
@@ -46,7 +45,7 @@ from .proxmox import types as prox_types
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .service_linked import ProxmoxServiceLinked
+    from .service import ProxmoxService
     from .publication import ProxmoxPublication
 
 logger = logging.getLogger(__name__)
@@ -144,8 +143,8 @@ class ProxmoxUserserviceLinked(DynamicUserService):
 
         return types.states.TaskState.RUNNING
 
-    def service(self) -> 'ProxmoxServiceLinked':
-        return typing.cast('ProxmoxServiceLinked', super().service())
+    def service(self) -> 'ProxmoxService':
+        return typing.cast('ProxmoxService', super().service())
 
     def publication(self) -> 'ProxmoxPublication':
         pub = super().publication()
@@ -204,22 +203,3 @@ class ProxmoxUserserviceLinked(DynamicUserService):
         self,
     ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         return self.service().get_console_connection(self._vmid)
-
-    def desktop_login(
-        self,
-        username: str,
-        password: str,
-        domain: str = '',
-    ) -> None:
-        script = (
-            'import sys\n'
-            'if sys.platform == "win32":\n'
-            'from uds import operations\n'
-            f'''operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", struct.pack('!IsIs', 1, '{username}'.encode('utf8'), 2, '{password}'.encode('utf8')), True)'''
-        )
-        # Post script to service
-        #         operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
-        try:
-            UserServiceManager.manager().send_script(self.db_obj(), script)
-        except Exception as e:
-            logger.info('Exception sending loggin to %s: %s', self.db_obj(), e)

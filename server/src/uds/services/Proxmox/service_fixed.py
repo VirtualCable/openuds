@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2012-2022 Virtual Cable S.L.U.
+# Copyright (c) 2012-2022 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -10,7 +10,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -93,7 +93,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
     machines = FixedService.machines
     use_snapshots = FixedService.use_snapshots
-    
+
     maintain_on_error = FixedService.maintain_on_error
 
     prov_uuid = gui.HiddenField(value=None)
@@ -115,12 +115,15 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
     def provider(self) -> 'ProxmoxProvider':
         return typing.cast('ProxmoxProvider', super().provider())
 
-    def is_avaliable(self) -> bool:
+    def get_console_connection(self, vmid: str) -> types.services.ConsoleConnectionInfo | None:
+        return self.provider().api.get_console_connection(int(vmid))
+
+    def is_available(self) -> bool:
         return self.provider().is_available()
 
     def get_vm_info(self, vmid: int) -> 'prox_types.VMInfo':
         return self.provider().api.get_vm_info(vmid).validate()
-    
+
     def is_ready(self, vmid: str) -> bool:
         return self.provider().api.get_vm_info(int(vmid)).validate().status.is_running()
 
@@ -129,7 +132,9 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
         # Only machines that already exists on proxmox and are not already assigned
         vms: dict[int, str] = {}
 
-        for member in self.provider().api.get_pool_info(self.pool.value.strip(), retrieve_vm_names=True).members:
+        for member in (
+            self.provider().api.get_pool_info(self.pool.value.strip(), retrieve_vm_names=True).members
+        ):
             vms[member.vmid] = member.vmname
 
         with self._assigned_access() as assigned_vms:
@@ -180,7 +185,9 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
                         self.provider().api.restore_snapshot(vmid, name=snapshot.name)
                     )
             except Exception as e:
-                self.do_log(types.log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
+                self.do_log(
+                    types.log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e)
+                )
 
     def get_and_assign(self) -> str:
         found_vmid: typing.Optional[str] = None

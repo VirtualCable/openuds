@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2012-2023 Virtual Cable S.L.U.
+# Copyright (c) 2012-2023 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -10,7 +10,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -41,10 +41,12 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 def get_provider(parameters: typing.Any) -> 'ProxmoxProvider':
     return typing.cast(
         'ProxmoxProvider', models.Provider.objects.get(uuid=parameters['prov_uuid']).get_instance()
     )
+
 
 def get_storage(parameters: typing.Any) -> types.ui.CallbackResultType:
     logger.debug('Parameters received by getResources Helper: %s', parameters)
@@ -59,8 +61,6 @@ def get_storage(parameters: typing.Any) -> types.ui.CallbackResultType:
     res: list[types.ui.ChoiceItem] = []
     # Get storages for that datacenter
     for storage in sorted(provider.api.list_storages(node=vm_info.node), key=lambda x: int(not x.shared)):
-        if storage.type in ('lvm', 'iscsi', 'iscsidirect'):  # does not allow differential storage (snapshots, etc.)
-            continue
         space, free = (
             storage.avail / 1024 / 1024 / 1024,
             (storage.avail - storage.used) / 1024 / 1024 / 1024,
