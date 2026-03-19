@@ -37,8 +37,10 @@ import collections.abc
 
 from django.utils.translation import gettext_noop as _, gettext
 from uds.core import services, types, exceptions
+from uds.core.types.connections import ConnectionData
 from uds.core.ui import gui
 from uds.core.util import fields
+from uds.models.user_service import UserService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -292,3 +294,11 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         if self.has_field('token') and self.token.value:
             return self.token.value
         return None
+
+    def notify_preconnect(self, userservice: UserService, info: ConnectionData) -> bool:
+        """
+        Notifies a preconnect to an user service. Fixed userservices does not need it
+        so simple return "True" as done
+        """
+        return True
+        
