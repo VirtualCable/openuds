@@ -302,7 +302,7 @@ class BaseRDPTransport(transports.Transport):
         order=42,
         tooltip=_('If marked, an RDP file will be used for connections with Thincast or xfreerdp on Linux.'),
         tab='Linux Client',
-        default=True,
+        default=False,
         old_field_name='lnx_thincastRdpFile',
     )
     lnx_printer_string = gui.TextField(
@@ -346,7 +346,7 @@ class BaseRDPTransport(transports.Transport):
         order=51,
         tooltip=_('If marked, an RDP file will be used for connections with Thincast or xfreerdp on Mac OS X.'),
         tab='Mac OS X',
-        default=True,
+        default=False,
         old_field_name='mac_thincastRdpFile',
     )
 
