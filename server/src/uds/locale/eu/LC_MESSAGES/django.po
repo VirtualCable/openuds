@@ -31,6 +31,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2015
 # Javier <jgonzalez@virtualcable.es>, 2025
 # Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017,2020
@@ -38,7 +39,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-26 23:09+0100\n"
+"POT-Creation-Date: 2026-04-09 16:47+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2025\n"
 "Language-Team: Basque (http://app.transifex.com/openuds/openuds/language/"
@@ -240,7 +241,7 @@ msgstr "Ezkutuan"
 
 #: REST/methods/authenticators.py:125 REST/methods/users_groups.py:183
 #: REST/methods/users_groups.py:422 REST/methods/users_groups.py:429
-#: core/types/pools.py:83 services/Proxmox/service_linked.py:201
+#: core/types/pools.py:83 services/Proxmox/service.py:220
 msgid "Disabled"
 msgstr "Desgaituta"
 
@@ -269,7 +270,7 @@ msgstr "Pantaila"
 #: core/services/service.py:169 core/types/permissions.py:16
 #: core/types/permissions.py:20 mfas/Email/mfa.py:78 mfas/SMS/mfa.py:198
 #: notifiers/email/notifier.py:88 services/Azure_enterprise/helpers.py:121
-#: services/Proxmox/service_fixed.py:111 services/Proxmox/service_linked.py:197
+#: services/Proxmox/service.py:216 services/Proxmox/service_fixed.py:111
 #: services/Sample/service.py:96 services/Sample/service.py:102
 #: services/Test/service.py:63 services/Test/service.py:65
 msgid "None"
@@ -479,7 +480,7 @@ msgstr "Pool-zerbitzu izena"
 #: REST/methods/meta_service_pools.py:93 REST/methods/notifiers.py:72
 #: REST/methods/notifiers.py:105 REST/methods/users_groups.py:183
 #: REST/methods/users_groups.py:422 REST/methods/users_groups.py:429
-#: core/types/pools.py:84 services/Proxmox/service_linked.py:201
+#: core/types/pools.py:84 services/Proxmox/service.py:220
 msgid "Enabled"
 msgstr "Gaituta"
 
@@ -496,7 +497,7 @@ msgstr "Sortze data"
 #: reports/stats/base.py:45 reports/stats/pool_users_summary.py:61
 #: reports/stats/pools_performance.py:247 reports/stats/pools_usage_day.py:150
 #: reports/stats/pools_usage_summary.py:157 reports/stats/usage_by_pool.py:156
-#: services/Proxmox/service_linked.py:112
+#: services/Proxmox/service.py:112
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
 #: templates/uds/reports/stats/pools-usage-summary.html:14
@@ -2905,7 +2906,7 @@ msgstr "Inprimatu da {orain:% Y,% b% d} at {orain:% H:% M}"
 #: core/services/generics/dynamic/service.py:65
 #: services/NutanixPrism_enterprise/service.py:72
 #: services/Nutanix_enterprise/service.py:60
-#: services/OVirt/service_linked.py:140 services/Proxmox/service_linked.py:133
+#: services/OVirt/service_linked.py:140 services/Proxmox/service.py:133
 #: services/Xen/service.py:124
 msgid "Base Machine"
 msgstr "Oinarri makina"
@@ -2914,12 +2915,12 @@ msgstr "Oinarri makina"
 msgid "Base machine for this service"
 msgstr "Zerbitzu honen oinarrizko makina"
 
-#: core/services/generics/fixed/service.py:84
+#: core/services/generics/fixed/service.py:86
 #: services/PhysicalMachines/service_multi.py:61
 msgid "Service Token"
 msgstr "Zerbitzuaren tokena"
 
-#: core/services/generics/fixed/service.py:87
+#: core/services/generics/fixed/service.py:89
 #: services/PhysicalMachines/service_multi.py:64
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
@@ -2928,31 +2929,31 @@ msgstr ""
 "Aktoreek zerbitzuarekin komunikatzeko erabiliko duten token zerbitzua. Utzi "
 "hutsik iraunkorra esleitzeko."
 
-#: core/services/generics/fixed/service.py:95
+#: core/services/generics/fixed/service.py:97
 #: services/Vmware_enterprise/service_fixed.py:79
 msgid "Machines"
 msgstr "Makinak"
 
-#: core/services/generics/fixed/service.py:97
+#: core/services/generics/fixed/service.py:99
 #: services/Vmware_enterprise/service_fixed.py:81
 msgid "Machines for this service"
 msgstr "Zerbitzu honetako makinak"
 
-#: core/services/generics/fixed/service.py:105
+#: core/services/generics/fixed/service.py:107
 msgid "Randomize machine assignation"
 msgstr "Ausazko makinen esleipena"
 
-#: core/services/generics/fixed/service.py:108
+#: core/services/generics/fixed/service.py:110
 msgid "If active, UDS will assign machines in a random way, instead of linear"
 msgstr ""
 "Aktibatuta badago, UDS-k makinak ausazko esleituko ditu, linealaren ordez"
 
-#: core/services/generics/fixed/service.py:116
+#: core/services/generics/fixed/service.py:118
 msgid "Use snapshots"
 msgstr "Erabili argazkiak"
 
-#: core/services/generics/fixed/service.py:120
-#: core/services/generics/fixed/service.py:131
+#: core/services/generics/fixed/service.py:122
+#: core/services/generics/fixed/service.py:133
 msgid ""
 "If active, UDS will try to create an snapshot (if one already does not "
 "exists) before accessing a machine, and restore it after usage."
@@ -2960,23 +2961,23 @@ msgstr ""
 "Aktibatuta badago, UDS argazki bat sortzen saiatuko da (bada existitzen ez "
 "bada) makina batean sartu aurretik, eta erabili ondoren berreskuratuko du."
 
-#: core/services/generics/fixed/service.py:127
+#: core/services/generics/fixed/service.py:129
 msgid "Snapshot type"
 msgstr "Argazki mota"
 
-#: core/services/generics/fixed/service.py:135
+#: core/services/generics/fixed/service.py:137
 msgid "No snapshot"
 msgstr "Ez dago argazkirik"
 
-#: core/services/generics/fixed/service.py:136
+#: core/services/generics/fixed/service.py:138
 msgid "Recover snapshot and stop machine"
 msgstr "Berreskuratu argazkia eta gelditu makina"
 
-#: core/services/generics/fixed/service.py:137
+#: core/services/generics/fixed/service.py:139
 msgid "Recover snapshot and start machine"
 msgstr "Berreskuratu argazkia eta abiarazi makina"
 
-#: core/services/generics/fixed/service.py:150
+#: core/services/generics/fixed/service.py:152
 #: services/Azure_enterprise/service_fixed.py:121
 #: services/HyperV_enterprise/service_fixed.py:91
 #: services/NutanixPrism_enterprise/service_fixed.py:121
@@ -5359,7 +5360,7 @@ msgstr "Erabiltzaile baten zain exekutatzen jarraitzeko beharrezko VM kopurua"
 #: services/AWS_enterprise/service.py:47
 #: services/Azure_enterprise/service.py:47
 #: services/HyperV_enterprise/service.py:75 services/OpenNebula/service.py:84
-#: services/Proxmox/service_linked.py:95
+#: services/Proxmox/service.py:95
 #: services/ScaleComputing_enterprise/service.py:94
 msgid "Number of desired VMs to keep stopped waiting for use"
 msgstr "Erabiltzeko zain gelditu beharreko VMen kopurua"
@@ -5790,7 +5791,7 @@ msgid "Hyper Services based on templates and differential disks"
 msgstr "Hyper Zerbitzuak txantiloietan eta disko diferentzialetan oinarrituta"
 
 #: services/HyperV_enterprise/service.py:73 services/OVirt/service_linked.py:83
-#: services/Proxmox/service_linked.py:89
+#: services/Proxmox/service.py:89
 #: services/ScaleComputing_enterprise/service.py:88 services/Xen/service.py:83
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr ""
@@ -5912,7 +5913,7 @@ msgstr "Konexioa ondo funtzionatzen du"
 #: services/Morpheus_enterprise/provider.py:139
 #: services/NutanixPrism_enterprise/provider.py:142
 #: services/Nutanix_enterprise/provider.py:164 services/OVirt/provider.py:242
-#: services/Proxmox/provider.py:255
+#: services/Proxmox/provider.py:256
 #: services/ScaleComputing_enterprise/provider.py:140
 #: services/Vmware_enterprise/provider.py:175
 msgid "Connection failed. Check connection params"
@@ -5996,7 +5997,7 @@ msgstr "Aukeratu proiektu bat"
 
 #: services/NutanixPrism_enterprise/service.py:73
 #: services/Nutanix_enterprise/service.py:61
-#: services/OVirt/service_linked.py:142 services/Proxmox/service_linked.py:140
+#: services/OVirt/service_linked.py:142 services/Proxmox/service.py:140
 #: services/Xen/service.py:126
 msgid "Service base machine"
 msgstr "Oinarrizko makina zerbitzua"
@@ -6104,7 +6105,6 @@ msgid "0.8"
 msgstr "0,8"
 
 #: services/Nutanix_enterprise/provider.py:87
-#| msgid "3.0"
 msgid "4.0"
 msgstr "4.0"
 
@@ -6849,10 +6849,73 @@ msgstr "VmId abiarazten"
 msgid "Starting machine id on proxmox"
 msgstr "Proxmox-en makinaren IDa abiarazten"
 
-#: services/Proxmox/provider.py:253
+#: services/Proxmox/provider.py:254
 #: services/ScaleComputing_enterprise/provider.py:138
 msgid "Test passed"
 msgstr "Proba gainditu da"
+
+#: services/Proxmox/service.py:71
+#| msgid "Proxmox Linked Clone"
+msgid "Proxmox Clone"
+msgstr "Proxmox klon"
+
+#: services/Proxmox/service.py:75
+#| msgid "Proxmox Services based on templates and COW"
+msgid "Proxmox Services based on templates"
+msgstr "Txantiloietan oinarritutako Proxmox zerbitzuak"
+
+#: services/Proxmox/service.py:114
+msgid "Pool that will contain UDS created vms"
+msgstr "UDS-ek sortutako vms-a edukiko duen igerilekua"
+
+#: services/Proxmox/service.py:121
+msgid "HA"
+msgstr "HA"
+
+#: services/Proxmox/service.py:123
+msgid "Select if HA is enabled and HA group for machines of this service"
+msgstr "Hautatu HA gaituta badago eta HA taldea zerbitzu honetako makinentzat"
+
+#: services/Proxmox/service.py:146
+#| msgid "Use Full Clones"
+msgid "Use full clone"
+msgstr "Erabili klon osoa"
+
+#: services/Proxmox/service.py:154
+msgid "Storage"
+msgstr "Biltegiratzea"
+
+#: services/Proxmox/service.py:157
+msgid "Storage for publications & machines."
+msgstr "Argitalpenak eta makinak gordetzea."
+
+#: services/Proxmox/service.py:163
+msgid "GPU Availability"
+msgstr "GPU erabilgarritasuna"
+
+#: services/Proxmox/service.py:167
+msgid "Do not check"
+msgstr "Ez egiaztatu"
+
+#: services/Proxmox/service.py:168
+msgid "Only if available"
+msgstr "Eskuragarri bada bakarrik"
+
+#: services/Proxmox/service.py:169
+msgid "Only if NOT available"
+msgstr "Eskuragarri EZ bada bakarrik"
+
+#: services/Proxmox/service.py:171
+msgid "Checking method for GPU availability"
+msgstr "GPU erabilgarritasunaren metodoa egiaztatzea"
+
+#: services/Proxmox/service.py:192
+msgid "Selected storage not found on Proxmox"
+msgstr "Hautatutako biltegiratzea ez da aurkitu Proxmox-en"
+
+#: services/Proxmox/service.py:195
+msgid "Linked clones are not allowed on the storage"
+msgstr "Lotutako klonak ez dira onartzen biltegian"
 
 #: services/Proxmox/service_fixed.py:60
 msgid "Proxmox Fixed Machines"
@@ -6876,54 +6939,6 @@ msgstr "Baliabide Pool-a"
 #: services/Vmware_enterprise/service_fixed.py:73
 msgid "Resource Pool containing base machines"
 msgstr "Base-makinak dituen baliabide-pool-a"
-
-#: services/Proxmox/service_linked.py:71
-msgid "Proxmox Linked Clone"
-msgstr "Proxmox loturiko-klona"
-
-#: services/Proxmox/service_linked.py:75
-msgid "Proxmox Services based on templates and COW"
-msgstr "Txantiloietan eta BEHIan oinarritutako Proxmox Zerbitzuak"
-
-#: services/Proxmox/service_linked.py:114
-msgid "Pool that will contain UDS created vms"
-msgstr "UDS-ek sortutako vms-a edukiko duen igerilekua"
-
-#: services/Proxmox/service_linked.py:121
-msgid "HA"
-msgstr "HA"
-
-#: services/Proxmox/service_linked.py:123
-msgid "Select if HA is enabled and HA group for machines of this service"
-msgstr "Hautatu HA gaituta badago eta HA taldea zerbitzu honetako makinentzat"
-
-#: services/Proxmox/service_linked.py:146
-msgid "Storage"
-msgstr "Biltegiratzea"
-
-#: services/Proxmox/service_linked.py:149
-msgid "Storage for publications & machines."
-msgstr "Argitalpenak eta makinak gordetzea."
-
-#: services/Proxmox/service_linked.py:155
-msgid "GPU Availability"
-msgstr "GPU erabilgarritasuna"
-
-#: services/Proxmox/service_linked.py:159
-msgid "Do not check"
-msgstr "Ez egiaztatu"
-
-#: services/Proxmox/service_linked.py:160
-msgid "Only if available"
-msgstr "Eskuragarri bada bakarrik"
-
-#: services/Proxmox/service_linked.py:161
-msgid "Only if NOT available"
-msgstr "Eskuragarri EZ bada bakarrik"
-
-#: services/Proxmox/service_linked.py:163
-msgid "Checking method for GPU availability"
-msgstr "GPU erabilgarritasunaren metodoa egiaztatzea"
 
 #: services/RDS_enterprise/provider.py:75
 msgid "RDS Platform Provider"
@@ -7208,7 +7223,6 @@ msgid "Path where the app will be started on. (i.e. f:\\example\\folder)"
 msgstr "Aplikazioa abiaraziko den bidea. (hau da, f: \\ adibidea \\ karpeta)"
 
 #: services/RDS_enterprise/service.py:90
-#| msgid "Servers"
 msgid "Exclude Servers"
 msgstr "Baztertu zerbitzariak"
 
@@ -7816,7 +7830,6 @@ msgid "Dutch"
 msgstr "Nederlandera"
 
 #: temp_for_locales.py:166
-#| msgid "Japanese keyboard"
 msgid "Japanese"
 msgstr "Japoniera"
 
@@ -7837,6 +7850,10 @@ msgid "Catalan"
 msgstr "Katalan"
 
 #: temp_for_locales.py:171
+msgid "Galician"
+msgstr "Galiziarra"
+
+#: temp_for_locales.py:172
 msgid "Chinese"
 msgstr "Txinera"
 
@@ -8750,7 +8767,6 @@ msgstr ""
 "erabiliko da"
 
 #: transports/RDP/rdp_base.py:301 transports/RDP/rdp_base.py:345
-#| msgid "How many colors use for connection"
 msgid "Use RDP file for connections"
 msgstr "Erabili RDP fitxategia konexioetarako"
 

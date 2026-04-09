@@ -31,11 +31,12 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2022
 # Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
 # Elena Mishina, 2022
-# Elena Mishina, 2022-2025
+# Elena Mishina, 2022-2026
 # Maxim Stepanov <msteapnov@sharxdc.ru>, 2021
 # Maxim Stepanov <msteapnov@sharxdc.ru>, 2021
 # Александр Бурматов, 2022
@@ -44,9 +45,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-26 23:09+0100\n"
+"POT-Creation-Date: 2026-04-09 16:47+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Elena Mishina, 2022-2025\n"
+"Last-Translator: Elena Mishina, 2022-2026\n"
 "Language-Team: Russian (http://app.transifex.com/openuds/openuds/language/"
 "ru/)\n"
 "Language: ru\n"
@@ -248,7 +249,7 @@ msgstr "Скрытый"
 
 #: REST/methods/authenticators.py:125 REST/methods/users_groups.py:183
 #: REST/methods/users_groups.py:422 REST/methods/users_groups.py:429
-#: core/types/pools.py:83 services/Proxmox/service_linked.py:201
+#: core/types/pools.py:83 services/Proxmox/service.py:220
 msgid "Disabled"
 msgstr "Отключено"
 
@@ -277,7 +278,7 @@ msgstr "Экран/Дисплей"
 #: core/services/service.py:169 core/types/permissions.py:16
 #: core/types/permissions.py:20 mfas/Email/mfa.py:78 mfas/SMS/mfa.py:198
 #: notifiers/email/notifier.py:88 services/Azure_enterprise/helpers.py:121
-#: services/Proxmox/service_fixed.py:111 services/Proxmox/service_linked.py:197
+#: services/Proxmox/service.py:216 services/Proxmox/service_fixed.py:111
 #: services/Sample/service.py:96 services/Sample/service.py:102
 #: services/Test/service.py:63 services/Test/service.py:65
 msgid "None"
@@ -485,7 +486,7 @@ msgstr "Название пула услуг"
 #: REST/methods/meta_service_pools.py:93 REST/methods/notifiers.py:72
 #: REST/methods/notifiers.py:105 REST/methods/users_groups.py:183
 #: REST/methods/users_groups.py:422 REST/methods/users_groups.py:429
-#: core/types/pools.py:84 services/Proxmox/service_linked.py:201
+#: core/types/pools.py:84 services/Proxmox/service.py:220
 msgid "Enabled"
 msgstr "Включено"
 
@@ -502,7 +503,7 @@ msgstr "Дата создания"
 #: reports/stats/base.py:45 reports/stats/pool_users_summary.py:61
 #: reports/stats/pools_performance.py:247 reports/stats/pools_usage_day.py:150
 #: reports/stats/pools_usage_summary.py:157 reports/stats/usage_by_pool.py:156
-#: services/Proxmox/service_linked.py:112
+#: services/Proxmox/service.py:112
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
 #: templates/uds/reports/stats/pools-usage-summary.html:14
@@ -2918,7 +2919,7 @@ msgstr "Напечатано {now:%Y, %b } в {now:%H:%M}"
 #: core/services/generics/dynamic/service.py:65
 #: services/NutanixPrism_enterprise/service.py:72
 #: services/Nutanix_enterprise/service.py:60
-#: services/OVirt/service_linked.py:140 services/Proxmox/service_linked.py:133
+#: services/OVirt/service_linked.py:140 services/Proxmox/service.py:133
 #: services/Xen/service.py:124
 msgid "Base Machine"
 msgstr "Базовая машина"
@@ -2927,12 +2928,12 @@ msgstr "Базовая машина"
 msgid "Base machine for this service"
 msgstr "Базовая машина для этой услуги"
 
-#: core/services/generics/fixed/service.py:84
+#: core/services/generics/fixed/service.py:86
 #: services/PhysicalMachines/service_multi.py:61
 msgid "Service Token"
 msgstr "Ключ услуги"
 
-#: core/services/generics/fixed/service.py:87
+#: core/services/generics/fixed/service.py:89
 #: services/PhysicalMachines/service_multi.py:64
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
@@ -2941,32 +2942,32 @@ msgstr ""
 "Ключ услуги, который будет использоваться клиентами для связи с сервисом. "
 "Оставьте пустым для постоянного назначения."
 
-#: core/services/generics/fixed/service.py:95
+#: core/services/generics/fixed/service.py:97
 #: services/Vmware_enterprise/service_fixed.py:79
 msgid "Machines"
 msgstr "Машины"
 
-#: core/services/generics/fixed/service.py:97
+#: core/services/generics/fixed/service.py:99
 #: services/Vmware_enterprise/service_fixed.py:81
 msgid "Machines for this service"
 msgstr "Машины для этой услуги"
 
-#: core/services/generics/fixed/service.py:105
+#: core/services/generics/fixed/service.py:107
 msgid "Randomize machine assignation"
 msgstr "Рандомизировать назначение машины"
 
-#: core/services/generics/fixed/service.py:108
+#: core/services/generics/fixed/service.py:110
 msgid "If active, UDS will assign machines in a random way, instead of linear"
 msgstr ""
 "Если этот параметр активен, UDS будет назначать машины случайным образом, а "
 "не линейным."
 
-#: core/services/generics/fixed/service.py:116
+#: core/services/generics/fixed/service.py:118
 msgid "Use snapshots"
 msgstr "Использовать моментальные снимки"
 
-#: core/services/generics/fixed/service.py:120
-#: core/services/generics/fixed/service.py:131
+#: core/services/generics/fixed/service.py:122
+#: core/services/generics/fixed/service.py:133
 msgid ""
 "If active, UDS will try to create an snapshot (if one already does not "
 "exists) before accessing a machine, and restore it after usage."
@@ -2974,23 +2975,23 @@ msgstr ""
 "Если этот параметр активен, UDS попытается создать снимок (если он еще не "
 "существует) перед доступом к машине и восстановить его после использования."
 
-#: core/services/generics/fixed/service.py:127
+#: core/services/generics/fixed/service.py:129
 msgid "Snapshot type"
 msgstr "Тип снимка"
 
-#: core/services/generics/fixed/service.py:135
+#: core/services/generics/fixed/service.py:137
 msgid "No snapshot"
 msgstr "Нет снимка"
 
-#: core/services/generics/fixed/service.py:136
+#: core/services/generics/fixed/service.py:138
 msgid "Recover snapshot and stop machine"
 msgstr "Восстановить снимок и остановить машину"
 
-#: core/services/generics/fixed/service.py:137
+#: core/services/generics/fixed/service.py:139
 msgid "Recover snapshot and start machine"
 msgstr "Восстановить снимок и запустить машину"
 
-#: core/services/generics/fixed/service.py:150
+#: core/services/generics/fixed/service.py:152
 #: services/Azure_enterprise/service_fixed.py:121
 #: services/HyperV_enterprise/service_fixed.py:91
 #: services/NutanixPrism_enterprise/service_fixed.py:121
@@ -5390,7 +5391,7 @@ msgstr ""
 #: services/AWS_enterprise/service.py:47
 #: services/Azure_enterprise/service.py:47
 #: services/HyperV_enterprise/service.py:75 services/OpenNebula/service.py:84
-#: services/Proxmox/service_linked.py:95
+#: services/Proxmox/service.py:95
 #: services/ScaleComputing_enterprise/service.py:94
 msgid "Number of desired VMs to keep stopped waiting for use"
 msgstr ""
@@ -5833,7 +5834,7 @@ msgid "Hyper Services based on templates and differential disks"
 msgstr "Службы HyperV на основе шаблонов и разностных дисков"
 
 #: services/HyperV_enterprise/service.py:73 services/OVirt/service_linked.py:83
-#: services/Proxmox/service_linked.py:89
+#: services/Proxmox/service.py:89
 #: services/ScaleComputing_enterprise/service.py:88 services/Xen/service.py:83
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr "Количество работающих в ожидании пользователя машин"
@@ -5958,7 +5959,7 @@ msgstr "Подключение работает отлично"
 #: services/Morpheus_enterprise/provider.py:139
 #: services/NutanixPrism_enterprise/provider.py:142
 #: services/Nutanix_enterprise/provider.py:164 services/OVirt/provider.py:242
-#: services/Proxmox/provider.py:255
+#: services/Proxmox/provider.py:256
 #: services/ScaleComputing_enterprise/provider.py:140
 #: services/Vmware_enterprise/provider.py:175
 msgid "Connection failed. Check connection params"
@@ -6042,7 +6043,7 @@ msgstr "Выберите проект"
 
 #: services/NutanixPrism_enterprise/service.py:73
 #: services/Nutanix_enterprise/service.py:61
-#: services/OVirt/service_linked.py:142 services/Proxmox/service_linked.py:140
+#: services/OVirt/service_linked.py:142 services/Proxmox/service.py:140
 #: services/Xen/service.py:126
 msgid "Service base machine"
 msgstr "Сервисная базовая машина"
@@ -6154,7 +6155,6 @@ msgid "0.8"
 msgstr "0,8"
 
 #: services/Nutanix_enterprise/provider.py:87
-#| msgid "3.0"
 msgid "4.0"
 msgstr "4.0"
 
@@ -6171,9 +6171,9 @@ msgid ""
 "Nutanix API Key to use. Username/password must be empty to use this option. "
 "Only valid for v4.0 and later"
 msgstr ""
-"Ключ API Nutanix для использования. Имя пользователя/пароль должны быть "
-"пустыми для использования этой опции. Действительно только для версии 4.0 и "
-"более поздних."
+"API-ключ Nutanix для использования. Чтобы воспользоваться этим параметром, "
+"поля имени пользователя и пароля должны быть пустыми. Поддерживается только "
+"в версии 4.0 и выше."
 
 #: services/Nutanix_enterprise/service.py:38
 msgid "Nutanix Acropolis Service"
@@ -6897,10 +6897,75 @@ msgstr "Начальный VmId"
 msgid "Starting machine id on proxmox"
 msgstr "Начальный идентификатор машины на Proxmox"
 
-#: services/Proxmox/provider.py:253
+#: services/Proxmox/provider.py:254
 #: services/ScaleComputing_enterprise/provider.py:138
 msgid "Test passed"
 msgstr "Тест пройден"
+
+#: services/Proxmox/service.py:71
+#| msgid "Proxmox Linked Clone"
+msgid "Proxmox Clone"
+msgstr "Клон Proxmox"
+
+#: services/Proxmox/service.py:75
+#| msgid "Proxmox Services based on templates and COW"
+msgid "Proxmox Services based on templates"
+msgstr "Сервисы Proxmox на основе шаблонов"
+
+#: services/Proxmox/service.py:114
+msgid "Pool that will contain UDS created vms"
+msgstr "Пул, который будет содержать виртуальные машины, созданные UDS"
+
+#: services/Proxmox/service.py:121
+msgid "HA"
+msgstr "Высокая доступность"
+
+#: services/Proxmox/service.py:123
+msgid "Select if HA is enabled and HA group for machines of this service"
+msgstr ""
+"Выберите, если задействована высокая доступность и группа высокой "
+"доступности для машин этой службы"
+
+#: services/Proxmox/service.py:146
+#| msgid "Use Full Clones"
+msgid "Use full clone"
+msgstr "Использовать полный клон"
+
+#: services/Proxmox/service.py:154
+msgid "Storage"
+msgstr "Хранилище"
+
+#: services/Proxmox/service.py:157
+msgid "Storage for publications & machines."
+msgstr "Хранилище публикаций и машин."
+
+#: services/Proxmox/service.py:163
+msgid "GPU Availability"
+msgstr "Доступность графического процессора"
+
+#: services/Proxmox/service.py:167
+msgid "Do not check"
+msgstr "Не проверять"
+
+#: services/Proxmox/service.py:168
+msgid "Only if available"
+msgstr "Только если доступно"
+
+#: services/Proxmox/service.py:169
+msgid "Only if NOT available"
+msgstr "Только при отсутствии"
+
+#: services/Proxmox/service.py:171
+msgid "Checking method for GPU availability"
+msgstr "Метод проверки доступности графического процессора"
+
+#: services/Proxmox/service.py:192
+msgid "Selected storage not found on Proxmox"
+msgstr "Некоторые элементы хранилища отсутствуют в Proxmox."
+
+#: services/Proxmox/service.py:195
+msgid "Linked clones are not allowed on the storage"
+msgstr "Создание связанных клонов на хранилище запрещено."
 
 #: services/Proxmox/service_fixed.py:60
 msgid "Proxmox Fixed Machines"
@@ -6924,56 +6989,6 @@ msgstr "Пул ресурсов"
 #: services/Vmware_enterprise/service_fixed.py:73
 msgid "Resource Pool containing base machines"
 msgstr "Пул ресурсов, содержащий базовые машины"
-
-#: services/Proxmox/service_linked.py:71
-msgid "Proxmox Linked Clone"
-msgstr "Связанный клон Proxmox"
-
-#: services/Proxmox/service_linked.py:75
-msgid "Proxmox Services based on templates and COW"
-msgstr "Сервисы Proxmox на основе шаблонов и COW"
-
-#: services/Proxmox/service_linked.py:114
-msgid "Pool that will contain UDS created vms"
-msgstr "Пул, который будет содержать виртуальные машины, созданные UDS"
-
-#: services/Proxmox/service_linked.py:121
-msgid "HA"
-msgstr "Высокая доступность"
-
-#: services/Proxmox/service_linked.py:123
-msgid "Select if HA is enabled and HA group for machines of this service"
-msgstr ""
-"Выберите, если задействована высокая доступность и группа высокой "
-"доступности для машин этой службы"
-
-#: services/Proxmox/service_linked.py:146
-msgid "Storage"
-msgstr "Хранилище"
-
-#: services/Proxmox/service_linked.py:149
-msgid "Storage for publications & machines."
-msgstr "Хранилище публикаций и машин."
-
-#: services/Proxmox/service_linked.py:155
-msgid "GPU Availability"
-msgstr "Доступность графического процессора"
-
-#: services/Proxmox/service_linked.py:159
-msgid "Do not check"
-msgstr "Не проверять"
-
-#: services/Proxmox/service_linked.py:160
-msgid "Only if available"
-msgstr "Только если доступно"
-
-#: services/Proxmox/service_linked.py:161
-msgid "Only if NOT available"
-msgstr "Только при отсутствии"
-
-#: services/Proxmox/service_linked.py:163
-msgid "Checking method for GPU availability"
-msgstr "Метод проверки доступности графического процессора"
 
 #: services/RDS_enterprise/provider.py:75
 msgid "RDS Platform Provider"
@@ -7260,7 +7275,6 @@ msgid "Path where the app will be started on. (i.e. f:\\example\\folder)"
 msgstr "Путь, где будет запущено приложение. (т.е. папка f:\\example\\)"
 
 #: services/RDS_enterprise/service.py:90
-#| msgid "Servers"
 msgid "Exclude Servers"
 msgstr "Исключить серверы"
 
@@ -7867,9 +7881,8 @@ msgid "Dutch"
 msgstr "Голландский"
 
 #: temp_for_locales.py:166
-#| msgid "Japanese keyboard"
 msgid "Japanese"
-msgstr "японский"
+msgstr "Японский"
 
 #: temp_for_locales.py:167
 msgid "Arabic"
@@ -7888,6 +7901,10 @@ msgid "Catalan"
 msgstr "Каталонский"
 
 #: temp_for_locales.py:171
+msgid "Galician"
+msgstr "галисийский"
+
+#: temp_for_locales.py:172
 msgid "Chinese"
 msgstr "Китайский"
 
@@ -8811,17 +8828,16 @@ msgstr ""
 "будет использоваться Pulse"
 
 #: transports/RDP/rdp_base.py:301 transports/RDP/rdp_base.py:345
-#| msgid "How many colors use for connection"
 msgid "Use RDP file for connections"
-msgstr "Используйте файл RDP для подключения."
+msgstr "Использовать RDP-файл для подключения."
 
 #: transports/RDP/rdp_base.py:303
 msgid ""
 "If marked, an RDP file will be used for connections with Thincast or "
 "xfreerdp on Linux."
 msgstr ""
-"Если указано иное, для подключения к Thincast или xfreerdp в Linux будет "
-"использоваться RDP-файл."
+"Если установлено, для подключения в Linux с использованием Thincast или "
+"xfreerdp будет применяться RDP-файл."
 
 #: transports/RDP/rdp_base.py:309 transports/RDS_enterprise/rds_base.py:214
 msgid "Printer string"
@@ -8873,8 +8889,8 @@ msgid ""
 "If marked, an RDP file will be used for connections with Thincast or "
 "xfreerdp on Mac OS X."
 msgstr ""
-"Если указано иное, для подключения к Thincast или xfreerdp в Mac OS X будет "
-"использоваться RDP-файл."
+"Если установлено, для подключения в Mac OS X с использованием Thincast или "
+"xfreerdp будет применяться RDP-файл."
 
 #: transports/RDP/rdp_base.py:357
 msgid ""

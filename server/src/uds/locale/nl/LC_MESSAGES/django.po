@@ -31,11 +31,12 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-26 23:09+0100\n"
+"POT-Creation-Date: 2026-04-09 16:47+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Dutch (http://app.transifex.com/openuds/openuds/language/"
@@ -237,7 +238,7 @@ msgstr "Verborgen"
 
 #: REST/methods/authenticators.py:125 REST/methods/users_groups.py:183
 #: REST/methods/users_groups.py:422 REST/methods/users_groups.py:429
-#: core/types/pools.py:83 services/Proxmox/service_linked.py:201
+#: core/types/pools.py:83 services/Proxmox/service.py:220
 msgid "Disabled"
 msgstr "Gehandicapt"
 
@@ -266,7 +267,7 @@ msgstr "Weergave"
 #: core/services/service.py:169 core/types/permissions.py:16
 #: core/types/permissions.py:20 mfas/Email/mfa.py:78 mfas/SMS/mfa.py:198
 #: notifiers/email/notifier.py:88 services/Azure_enterprise/helpers.py:121
-#: services/Proxmox/service_fixed.py:111 services/Proxmox/service_linked.py:197
+#: services/Proxmox/service.py:216 services/Proxmox/service_fixed.py:111
 #: services/Sample/service.py:96 services/Sample/service.py:102
 #: services/Test/service.py:63 services/Test/service.py:65
 msgid "None"
@@ -441,7 +442,8 @@ msgstr "Zwembadgroep"
 
 #: REST/methods/meta_pools.py:214 REST/methods/services_pools.py:374
 msgid "Pool group for this pool (for pool classify on display)"
-msgstr "Zwembadgroep voor dit zwembad (voor zwembadclassificatie op het scherm)"
+msgstr ""
+"Zwembadgroep voor dit zwembad (voor zwembadclassificatie op het scherm)"
 
 #: REST/methods/meta_pools.py:223
 msgid "If active, metapool will be visible for users"
@@ -477,7 +479,7 @@ msgstr "Service Pool naam"
 #: REST/methods/meta_service_pools.py:93 REST/methods/notifiers.py:72
 #: REST/methods/notifiers.py:105 REST/methods/users_groups.py:183
 #: REST/methods/users_groups.py:422 REST/methods/users_groups.py:429
-#: core/types/pools.py:84 services/Proxmox/service_linked.py:201
+#: core/types/pools.py:84 services/Proxmox/service.py:220
 msgid "Enabled"
 msgstr "Ingeschakeld"
 
@@ -494,7 +496,7 @@ msgstr "Aanmaakdatum"
 #: reports/stats/base.py:45 reports/stats/pool_users_summary.py:61
 #: reports/stats/pools_performance.py:247 reports/stats/pools_usage_day.py:150
 #: reports/stats/pools_usage_summary.py:157 reports/stats/usage_by_pool.py:156
-#: services/Proxmox/service_linked.py:112
+#: services/Proxmox/service.py:112
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
 #: templates/uds/reports/stats/pools-usage-summary.html:14
@@ -1933,8 +1935,8 @@ msgid ""
 "If checked, requests via proxy will get FORWARDED ip address (take care with "
 "this bein checked, can take internal IP addresses from internet)"
 msgstr ""
-"Indien aangevinkt, krijgen verzoeken via de proxy een DOORGESTUURD IP-adres ("
-"wees voorzichtig met deze optie, want er kunnen interne IP-adressen van "
+"Indien aangevinkt, krijgen verzoeken via de proxy een DOORGESTUURD IP-adres "
+"(wees voorzichtig met deze optie, want er kunnen interne IP-adressen van "
 "internet worden gebruikt)."
 
 #: auths/IP/authenticator.py:79
@@ -1959,7 +1961,8 @@ msgstr "Interne database"
 
 #: auths/InternalDB/authenticator.py:60
 msgid "Internal dabasase authenticator. Doesn't use external sources"
-msgstr "Interne database-authenticator. Maakt geen gebruik van externe bronnen."
+msgstr ""
+"Interne database-authenticator. Maakt geen gebruik van externe bronnen."
 
 #: auths/InternalDB/authenticator.py:73
 msgid "Different user for each host"
@@ -2283,7 +2286,8 @@ msgstr "IDP-metadata"
 #: auths/SAML/saml.py:140
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
-msgstr "U kunt hier de URL, de IDP-metadata of de metadata zelf (xml) invoeren."
+msgstr ""
+"U kunt hier de URL, de IDP-metadata of de metadata zelf (xml) invoeren."
 
 #: auths/SAML/saml.py:142 auths/SAML/saml.py:150 auths/SAML/saml.py:328
 #: auths/SAML/saml.py:337
@@ -2335,7 +2339,8 @@ msgstr "Wereldwijde uitlog"
 
 #: auths/SAML/saml.py:191
 msgid "If set, logout from UDS will trigger SAML logout"
-msgstr "Indien ingesteld, zal uitloggen bij UDS een SAML-uitlogactie activeren."
+msgstr ""
+"Indien ingesteld, zal uitloggen bij UDS een SAML-uitlogactie activeren."
 
 #: auths/SAML/saml.py:197
 msgid "ADFS compatibility"
@@ -2640,8 +2645,8 @@ msgid ""
 "Ldap group class or group id attr is probably wrong (can't find any group "
 "with both conditions)"
 msgstr ""
-"De LDAP-groepsklasse of het groeps-ID-attribuut is waarschijnlijk onjuist ("
-"ik kan geen groep vinden die aan beide voorwaarden voldoet)."
+"De LDAP-groepsklasse of het groeps-ID-attribuut is waarschijnlijk onjuist "
+"(ik kan geen groep vinden die aan beide voorwaarden voldoet)."
 
 #: auths/SimpleLDAP/authenticator.py:586
 msgid "Can't locate any group with the membership attribute specified"
@@ -2792,7 +2797,8 @@ msgstr "Het is niet mogelijk om een niet-bruikbare publicatie te verwijderen."
 
 #: core/managers/publication.py:357
 msgid "Can't unpublish publications with services in process"
-msgstr "Publicaties met lopende serviceprocessen kunnen niet worden verwijderd."
+msgstr ""
+"Publicaties met lopende serviceprocessen kunnen niet worden verwijderd."
 
 #: core/managers/servers.py:224
 msgid "No server available for user"
@@ -2824,7 +2830,8 @@ msgstr "Een niet-actief element kan niet worden verwijderd."
 
 #: core/managers/userservice.py:517
 msgid "Can't remove nor cancel {} cause its state don't allow it"
-msgstr "Kan {} niet verwijderen of annuleren omdat de status dit niet toestaat."
+msgstr ""
+"Kan {} niet verwijderen of annuleren omdat de status dit niet toestaat."
 
 #: core/managers/userservice.py:578
 msgid "The requested service is restrained"
@@ -2878,7 +2885,8 @@ msgstr ""
 
 #: core/mfas/mfa.py:138
 msgid "Deny user to login if it IP is in the networks list"
-msgstr "Weiger de gebruiker toegang als zijn IP-adres in de netwerklijst staat."
+msgstr ""
+"Weiger de gebruiker toegang als zijn IP-adres in de netwerklijst staat."
 
 #: core/mfas/mfa.py:160 core/mfas/mfa.py:172
 msgid "Base MFA"
@@ -2931,7 +2939,7 @@ msgstr "Geprint in {now:%Y, %b %d} op {now:%H:%M}"
 #: core/services/generics/dynamic/service.py:65
 #: services/NutanixPrism_enterprise/service.py:72
 #: services/Nutanix_enterprise/service.py:60
-#: services/OVirt/service_linked.py:140 services/Proxmox/service_linked.py:133
+#: services/OVirt/service_linked.py:140 services/Proxmox/service.py:133
 #: services/Xen/service.py:124
 msgid "Base Machine"
 msgstr "Basismachine"
@@ -2940,12 +2948,12 @@ msgstr "Basismachine"
 msgid "Base machine for this service"
 msgstr "Basismachine voor deze service"
 
-#: core/services/generics/fixed/service.py:84
+#: core/services/generics/fixed/service.py:86
 #: services/PhysicalMachines/service_multi.py:61
 msgid "Service Token"
 msgstr "Servicetoken"
 
-#: core/services/generics/fixed/service.py:87
+#: core/services/generics/fixed/service.py:89
 #: services/PhysicalMachines/service_multi.py:64
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
@@ -2954,31 +2962,31 @@ msgstr ""
 "Servicetoken dat door actoren wordt gebruikt om met de service te "
 "communiceren. Laat dit veld leeg voor permanente toewijzing."
 
-#: core/services/generics/fixed/service.py:95
+#: core/services/generics/fixed/service.py:97
 #: services/Vmware_enterprise/service_fixed.py:79
 msgid "Machines"
 msgstr "Machines"
 
-#: core/services/generics/fixed/service.py:97
+#: core/services/generics/fixed/service.py:99
 #: services/Vmware_enterprise/service_fixed.py:81
 msgid "Machines for this service"
 msgstr "Machines voor deze service"
 
-#: core/services/generics/fixed/service.py:105
+#: core/services/generics/fixed/service.py:107
 msgid "Randomize machine assignation"
 msgstr "Willekeurige machinetoewijzing"
 
-#: core/services/generics/fixed/service.py:108
+#: core/services/generics/fixed/service.py:110
 msgid "If active, UDS will assign machines in a random way, instead of linear"
 msgstr ""
 "Indien actief, wijst UDS machines willekeurig toe in plaats van lineair."
 
-#: core/services/generics/fixed/service.py:116
+#: core/services/generics/fixed/service.py:118
 msgid "Use snapshots"
 msgstr "Gebruik momentopnamen"
 
-#: core/services/generics/fixed/service.py:120
-#: core/services/generics/fixed/service.py:131
+#: core/services/generics/fixed/service.py:122
+#: core/services/generics/fixed/service.py:133
 msgid ""
 "If active, UDS will try to create an snapshot (if one already does not "
 "exists) before accessing a machine, and restore it after usage."
@@ -2987,23 +2995,23 @@ msgstr ""
 "bestaat) voordat toegang tot een machine wordt verkregen, en deze na gebruik "
 "te herstellen."
 
-#: core/services/generics/fixed/service.py:127
+#: core/services/generics/fixed/service.py:129
 msgid "Snapshot type"
 msgstr "Momentopnametype"
 
-#: core/services/generics/fixed/service.py:135
+#: core/services/generics/fixed/service.py:137
 msgid "No snapshot"
 msgstr "Geen momentopname"
 
-#: core/services/generics/fixed/service.py:136
+#: core/services/generics/fixed/service.py:138
 msgid "Recover snapshot and stop machine"
 msgstr "Herstel de momentopname en stop de machine."
 
-#: core/services/generics/fixed/service.py:137
+#: core/services/generics/fixed/service.py:139
 msgid "Recover snapshot and start machine"
 msgstr "Herstel de momentopname en start de computer."
 
-#: core/services/generics/fixed/service.py:150
+#: core/services/generics/fixed/service.py:152
 #: services/Azure_enterprise/service_fixed.py:121
 #: services/HyperV_enterprise/service_fixed.py:91
 #: services/NutanixPrism_enterprise/service_fixed.py:121
@@ -3439,8 +3447,8 @@ msgstr ""
 #: core/util/config.py:589
 msgid "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
 msgstr ""
-"Maximale tijdsduur die in één run kan worden opgebouwd. Standaard is dit 7 ("
-"1 week)."
+"Maximale tijdsduur die in één run kan worden opgebouwd. Standaard is dit 7 "
+"(1 week)."
 
 #: core/util/config.py:597
 msgid "If disallow login showing authenticatiors"
@@ -3463,8 +3471,8 @@ msgstr ""
 #: core/util/config.py:619
 msgid "IPs or networks allowed to forward requests (like proxies)"
 msgstr ""
-"IP-adressen of netwerken die gemachtigd zijn om verzoeken door te sturen ("
-"zoals proxy&#39;s)"
+"IP-adressen of netwerken die gemachtigd zijn om verzoeken door te sturen "
+"(zoals proxy&#39;s)"
 
 #: core/util/config.py:627
 msgid ""
@@ -3766,8 +3774,8 @@ msgstr "Sta toe om MFA over te slaan op netwerken."
 #: core/util/fields.py:454
 msgid "Users within these networks will not be asked for OTP"
 msgstr ""
-"Gebruikers binnen deze netwerken zullen niet om een OTP (eenmalige wachtcode)"
-" worden gevraagd."
+"Gebruikers binnen deze netwerken zullen niet om een OTP (eenmalige "
+"wachtcode) worden gevraagd."
 
 #: core/util/fields.py:466
 msgid "MFA policy networks"
@@ -3816,8 +3824,8 @@ msgid ""
 "Attributes that contains the user name attributes or attribute patterns (one "
 "for each line)"
 msgstr ""
-"Attributen die de gebruikersnaamattributen of attribuutpatronen bevatten ("
-"één per regel)."
+"Attributen die de gebruikersnaamattributen of attribuutpatronen bevatten "
+"(één per regel)."
 
 #: core/util/fields.py:534
 msgid "Group Name Attr"
@@ -4638,8 +4646,8 @@ msgid ""
 "Organizational unit where to add machines in domain (not used if IPA is "
 "selected). i.e.: ou=My Machines,dc=mydomain,dc=local"
 msgstr ""
-"Organisatie-eenheid waaraan machines in het domein moeten worden toegevoegd ("
-"niet gebruikt als IPA is geselecteerd). Bijvoorbeeld: ou=Mijn "
+"Organisatie-eenheid waaraan machines in het domein moeten worden toegevoegd "
+"(niet gebruikt als IPA is geselecteerd). Bijvoorbeeld: ou=Mijn "
 "machines,dc=mijndomein,dc=lokaal"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:87
@@ -4871,8 +4879,8 @@ msgid ""
 "Organizational unit where to add machines in domain (check it before using "
 "it). i.e.: ou=My Machines,dc=mydomain,dc=local"
 msgstr ""
-"Organisatie-eenheid waaraan machines in het domein moeten worden toegevoegd ("
-"controleer dit voordat u het gebruikt). Bijvoorbeeld: ou=Mijn "
+"Organisatie-eenheid waaraan machines in het domein moeten worden toegevoegd "
+"(controleer dit voordat u het gebruikt). Bijvoorbeeld: ou=Mijn "
 "Machines,dc=mijndomein,dc=lokaal"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:97
@@ -5419,7 +5427,7 @@ msgstr ""
 #: services/AWS_enterprise/service.py:47
 #: services/Azure_enterprise/service.py:47
 #: services/HyperV_enterprise/service.py:75 services/OpenNebula/service.py:84
-#: services/Proxmox/service_linked.py:95
+#: services/Proxmox/service.py:95
 #: services/ScaleComputing_enterprise/service.py:94
 msgid "Number of desired VMs to keep stopped waiting for use"
 msgstr "Aantal gewenste VM&#39;s die in de wachtstand moeten blijven staan."
@@ -5693,7 +5701,8 @@ msgstr "Token-URI"
 
 #: services/Google_enterprise/provider.py:60
 msgid "Token URL, as provided by Google (default is for Google Cloud)"
-msgstr "Token-URL, zoals verstrekt door Google (standaard is voor Google Cloud)"
+msgstr ""
+"Token-URL, zoals verstrekt door Google (standaard is voor Google Cloud)"
 
 #: services/Google_enterprise/provider.py:67
 msgid "Private Key"
@@ -5855,7 +5864,7 @@ msgid "Hyper Services based on templates and differential disks"
 msgstr "Hyperservices gebaseerd op sjablonen en differentiële schijven"
 
 #: services/HyperV_enterprise/service.py:73 services/OVirt/service_linked.py:83
-#: services/Proxmox/service_linked.py:89
+#: services/Proxmox/service.py:89
 #: services/ScaleComputing_enterprise/service.py:88 services/Xen/service.py:83
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr ""
@@ -5983,7 +5992,7 @@ msgstr "De verbinding werkt prima."
 #: services/Morpheus_enterprise/provider.py:139
 #: services/NutanixPrism_enterprise/provider.py:142
 #: services/Nutanix_enterprise/provider.py:164 services/OVirt/provider.py:242
-#: services/Proxmox/provider.py:255
+#: services/Proxmox/provider.py:256
 #: services/ScaleComputing_enterprise/provider.py:140
 #: services/Vmware_enterprise/provider.py:175
 msgid "Connection failed. Check connection params"
@@ -6066,7 +6075,7 @@ msgstr "Selecteer een project"
 
 #: services/NutanixPrism_enterprise/service.py:73
 #: services/Nutanix_enterprise/service.py:61
-#: services/OVirt/service_linked.py:142 services/Proxmox/service_linked.py:140
+#: services/OVirt/service_linked.py:142 services/Proxmox/service.py:140
 #: services/Xen/service.py:126
 msgid "Service base machine"
 msgstr "Servicebasismachine"
@@ -6077,8 +6086,8 @@ msgid ""
 "Memory assigned to machines. (Zero value means \"keep original machine "
 "memory\")"
 msgstr ""
-"Geheugen toegewezen aan machines. (Nulwaarde betekent "
-"\"behoud het oorspronkelijke machinegeheugen\")"
+"Geheugen toegewezen aan machines. (Nulwaarde betekent \"behoud het "
+"oorspronkelijke machinegeheugen\")"
 
 #: services/NutanixPrism_enterprise/service.py:91
 #: services/Nutanix_enterprise/service.py:79
@@ -6207,15 +6216,15 @@ msgstr "Nutanix Acropolis-gebaseerde service"
 #: services/Nutanix_enterprise/service.py:85
 msgid "Number of vcpus (Zero value means \"keep original machine vcpus\")"
 msgstr ""
-"Aantal vCPU&#39;s (nulwaarde betekent "
-"\"behoud de originele vCPU&#39;s van de machine\")"
+"Aantal vCPU&#39;s (nulwaarde betekent \"behoud de originele vCPU&#39;s van "
+"de machine\")"
 
 #: services/Nutanix_enterprise/service.py:98
 msgid ""
 "Number of vcpus (Zero value means \"keep original machine cores per vcpu\")"
 msgstr ""
-"Aantal vCPU&#39;s (nulwaarde betekent "
-"\"behoud het oorspronkelijke aantal machinecores per vCPU\")"
+"Aantal vCPU&#39;s (nulwaarde betekent \"behoud het oorspronkelijke aantal "
+"machinecores per vCPU\")"
 
 #: services/Nutanix_enterprise/service.py:107
 msgid ""
@@ -6720,7 +6729,8 @@ msgstr "Volume"
 
 #: services/OpenStack/service.py:150
 msgid "Base volume for service (restricted by availability zone)"
-msgstr "Basisvolume voor de dienstverlening (beperkt door beschikbaarheidszone)"
+msgstr ""
+"Basisvolume voor de dienstverlening (beperkt door beschikbaarheidszone)"
 
 #: services/OpenStack/service.py:158
 msgid "Network to attach to this service"
@@ -6934,10 +6944,75 @@ msgstr "VmId starten"
 msgid "Starting machine id on proxmox"
 msgstr "De machine-ID wordt gestart op Proxmox."
 
-#: services/Proxmox/provider.py:253
+#: services/Proxmox/provider.py:254
 #: services/ScaleComputing_enterprise/provider.py:138
 msgid "Test passed"
 msgstr "Test geslaagd"
+
+#: services/Proxmox/service.py:71
+#| msgid "Proxmox Linked Clone"
+msgid "Proxmox Clone"
+msgstr "Proxmox-kloon"
+
+#: services/Proxmox/service.py:75
+#| msgid "Proxmox Services based on templates and COW"
+msgid "Proxmox Services based on templates"
+msgstr "Proxmox-services gebaseerd op sjablonen"
+
+#: services/Proxmox/service.py:114
+msgid "Pool that will contain UDS created vms"
+msgstr "Pool die de door UDS gemaakte VM&#39;s zal bevatten."
+
+#: services/Proxmox/service.py:121
+msgid "HA"
+msgstr "HA"
+
+#: services/Proxmox/service.py:123
+msgid "Select if HA is enabled and HA group for machines of this service"
+msgstr ""
+"Selecteer of HA is ingeschakeld en de HA-groep voor machines van deze "
+"service."
+
+#: services/Proxmox/service.py:146
+#| msgid "Use Full Clones"
+msgid "Use full clone"
+msgstr "Gebruik volledige kloon"
+
+#: services/Proxmox/service.py:154
+msgid "Storage"
+msgstr "Opslag"
+
+#: services/Proxmox/service.py:157
+msgid "Storage for publications & machines."
+msgstr "Opslagruimte voor publicaties en machines."
+
+#: services/Proxmox/service.py:163
+msgid "GPU Availability"
+msgstr "Beschikbaarheid van GPU&#39;s"
+
+#: services/Proxmox/service.py:167
+msgid "Do not check"
+msgstr "Niet controleren"
+
+#: services/Proxmox/service.py:168
+msgid "Only if available"
+msgstr "Alleen indien beschikbaar"
+
+#: services/Proxmox/service.py:169
+msgid "Only if NOT available"
+msgstr "Alleen indien NIET beschikbaar"
+
+#: services/Proxmox/service.py:171
+msgid "Checking method for GPU availability"
+msgstr "Controlemethode voor GPU-beschikbaarheid"
+
+#: services/Proxmox/service.py:192
+msgid "Selected storage not found on Proxmox"
+msgstr "De geselecteerde opslaglocatie is niet gevonden op Proxmox."
+
+#: services/Proxmox/service.py:195
+msgid "Linked clones are not allowed on the storage"
+msgstr "Gekoppelde klonen zijn niet toegestaan op de opslag."
 
 #: services/Proxmox/service_fixed.py:60
 msgid "Proxmox Fixed Machines"
@@ -6961,56 +7036,6 @@ msgstr "Resourcepool"
 #: services/Vmware_enterprise/service_fixed.py:73
 msgid "Resource Pool containing base machines"
 msgstr "Resourcepool met basismachines"
-
-#: services/Proxmox/service_linked.py:71
-msgid "Proxmox Linked Clone"
-msgstr "Proxmox Linked Clone"
-
-#: services/Proxmox/service_linked.py:75
-msgid "Proxmox Services based on templates and COW"
-msgstr "Proxmox-services gebaseerd op sjablonen en COW (Copy-on-Write)."
-
-#: services/Proxmox/service_linked.py:114
-msgid "Pool that will contain UDS created vms"
-msgstr "Pool die de door UDS gemaakte VM&#39;s zal bevatten."
-
-#: services/Proxmox/service_linked.py:121
-msgid "HA"
-msgstr "HA"
-
-#: services/Proxmox/service_linked.py:123
-msgid "Select if HA is enabled and HA group for machines of this service"
-msgstr ""
-"Selecteer of HA is ingeschakeld en de HA-groep voor machines van deze "
-"service."
-
-#: services/Proxmox/service_linked.py:146
-msgid "Storage"
-msgstr "Opslag"
-
-#: services/Proxmox/service_linked.py:149
-msgid "Storage for publications & machines."
-msgstr "Opslagruimte voor publicaties en machines."
-
-#: services/Proxmox/service_linked.py:155
-msgid "GPU Availability"
-msgstr "Beschikbaarheid van GPU&#39;s"
-
-#: services/Proxmox/service_linked.py:159
-msgid "Do not check"
-msgstr "Niet controleren"
-
-#: services/Proxmox/service_linked.py:160
-msgid "Only if available"
-msgstr "Alleen indien beschikbaar"
-
-#: services/Proxmox/service_linked.py:161
-msgid "Only if NOT available"
-msgstr "Alleen indien NIET beschikbaar"
-
-#: services/Proxmox/service_linked.py:163
-msgid "Checking method for GPU availability"
-msgstr "Controlemethode voor GPU-beschikbaarheid"
 
 #: services/RDS_enterprise/provider.py:75
 msgid "RDS Platform Provider"
@@ -7216,7 +7241,8 @@ msgstr "AD-gebruikersbeheer: u moet de basis-DN van de gebruiker opgeven."
 
 #: services/RDS_enterprise/provider.py:284
 msgid "AD User Management: the username should be in USER@DOMAIN form."
-msgstr "AD-gebruikersbeheer: de gebruikersnaam moet de vorm USER@DOMAIN hebben."
+msgstr ""
+"AD-gebruikersbeheer: de gebruikersnaam moet de vorm USER@DOMAIN hebben."
 
 #: services/RDS_enterprise/provider.py:289
 msgid "AD User Management: you must provide the password."
@@ -7928,6 +7954,10 @@ msgid "Catalan"
 msgstr "Catalaans"
 
 #: temp_for_locales.py:171
+msgid "Galician"
+msgstr "Galicisch"
+
+#: temp_for_locales.py:172
 msgid "Chinese"
 msgstr "Chinese"
 
@@ -8104,8 +8134,8 @@ msgid ""
 "If not empty, this domain will be always used as credential (used as "
 "DOMAIN\\user)"
 msgstr ""
-"Indien niet leeg, wordt dit domein altijd gebruikt als inloggegevens ("
-"gebruikt als DOMAIN\\user)."
+"Indien niet leeg, wordt dit domein altijd gebruikt als inloggegevens "
+"(gebruikt als DOMAIN\\user)."
 
 #: transports/HTML5RDP/html5rdp.py:121
 msgid "Show wallpaper"
@@ -8150,8 +8180,8 @@ msgid ""
 "If checked, the audio will be redirected to remote session (if client "
 "browser supports it)"
 msgstr ""
-"Indien aangevinkt, wordt de audio doorgestuurd naar de externe sessie ("
-"indien de clientbrowser dit ondersteunt)."
+"Indien aangevinkt, wordt de audio doorgestuurd naar de externe sessie "
+"(indien de clientbrowser dit ondersteunt)."
 
 #: transports/HTML5RDP/html5rdp.py:152
 msgid "Enable Microphone"
@@ -8162,8 +8192,8 @@ msgid ""
 "If checked, the microphone will be redirected to remote session (if client "
 "browser supports it)"
 msgstr ""
-"Indien aangevinkt, wordt de microfoon doorgeschakeld naar de externe sessie ("
-"indien de clientbrowser dit ondersteunt)."
+"Indien aangevinkt, wordt de microfoon doorgeschakeld naar de externe sessie "
+"(indien de clientbrowser dit ondersteunt)."
 
 #: transports/HTML5RDP/html5rdp.py:161
 msgid "Enable Printing"
@@ -8174,8 +8204,8 @@ msgid ""
 "If checked, the printing will be redirected to remote session (if client "
 "browser supports it)"
 msgstr ""
-"Indien aangevinkt, wordt het afdrukken doorgestuurd naar een externe sessie ("
-"indien de clientbrowser dit ondersteunt)."
+"Indien aangevinkt, wordt het afdrukken doorgestuurd naar een externe sessie "
+"(indien de clientbrowser dit ondersteunt)."
 
 #: transports/HTML5RDP/html5rdp.py:170
 msgid "File Sharing"
@@ -8628,8 +8658,8 @@ msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
 msgstr ""
-"Indien aangevinkt, worden alle clientmonitoren gebruikt voor de weergave ("
-"werkt alleen op Windows-clients)."
+"Indien aangevinkt, worden alle clientmonitoren gebruikt voor de weergave "
+"(werkt alleen op Windows-clients)."
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:44
 msgid "NICE DCV Protocol. Tunneled connection."
@@ -8893,8 +8923,8 @@ msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /"
 "usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)"
 msgstr ""
-"Indien niet leeg, extra parameter toevoegen voor Linux-client (bijvoorbeeld "
-"/usb:id,dev:054c:0268, of iets dat compatibel is met uw xfreerdp-client)."
+"Indien niet leeg, extra parameter toevoegen voor Linux-client (bijvoorbeeld /"
+"usb:id,dev:054c:0268, of iets dat compatibel is met uw xfreerdp-client)."
 
 #: transports/RDP/rdp_base.py:336
 msgid "Allow Microsoft Rdp Client"

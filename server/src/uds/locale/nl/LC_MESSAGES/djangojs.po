@@ -28,12 +28,13 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-26 23:09+0100\n"
+"POT-Creation-Date: 2026-04-09 16:47+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Dutch (http://app.transifex.com/openuds/openuds/language/"
@@ -1921,7 +1922,8 @@ msgstr "De dienst is in onderhoud."
 
 #: static/modern/translations-fakejs.js:9
 msgid "This service is currently not accessible due to schedule restrictions."
-msgstr "Deze dienst is momenteel niet beschikbaar vanwege planningsbeperkingen."
+msgstr ""
+"Deze dienst is momenteel niet beschikbaar vanwege planningsbeperkingen."
 
 #: static/modern/translations-fakejs.js:10
 msgid "Launcher"
@@ -1933,7 +1935,8 @@ msgstr "De service is in onderhoud en kan niet worden gestart."
 
 #: static/modern/translations-fakejs.js:12
 msgid "This service is currently not accesible due to schedule restrictions."
-msgstr "Deze dienst is momenteel niet beschikbaar vanwege planningsbeperkingen."
+msgstr ""
+"Deze dienst is momenteel niet beschikbaar vanwege planningsbeperkingen."
 
 #: static/modern/translations-fakejs.js:13
 msgid "Service message"

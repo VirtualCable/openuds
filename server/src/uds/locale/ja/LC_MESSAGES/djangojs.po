@@ -28,12 +28,13 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-26 23:09+0100\n"
+"POT-Creation-Date: 2026-04-09 16:47+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Japanese (http://app.transifex.com/openuds/openuds/language/"
@@ -1301,7 +1302,8 @@ msgstr "これは、要素へのアクセスが制限されていることを意
 msgid ""
 "In order to increase your access privileges, please contact your local UDS "
 "administrator."
-msgstr "アクセス権限を増やすには、ローカルの UDS 管理者に問い合わせてください。"
+msgstr ""
+"アクセス権限を増やすには、ローカルの UDS 管理者に問い合わせてください。"
 
 #: static/admin/translations-fakejs.js:351
 msgid "Thank you."
@@ -1862,8 +1864,9 @@ msgstr "サービス開始までお待ちください。"
 msgid ""
 "Remember that you will need the UDS client on your platform to access the "
 "service."
-msgstr "サービスにアクセスするには、プラットフォーム上に UDS "
-"クライアントが必要であることに注意してください。"
+msgstr ""
+"サービスにアクセスするには、プラットフォーム上に UDS クライアントが必要である"
+"ことに注意してください。"
 
 #: static/modern/main.js:8 static/modern/translations-fakejs.js:34
 #: static/modern/translations-fakejs.js:37
@@ -1878,7 +1881,8 @@ msgstr "UDSクライアントが起動しない"
 msgid ""
 "It seems that you don't have UDS Client installed. Please, install it from "
 "here:"
-msgstr "UDSクライアントがインストールされていないようです。こちらからインストールして"
+msgstr ""
+"UDSクライアントがインストールされていないようです。こちらからインストールして"
 "ください。"
 
 #: static/modern/main.js:8 static/modern/translations-fakejs.js:36
@@ -2076,7 +2080,8 @@ msgstr "サービスを再起動するには、元の状態から実行する必
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS Client installed"
-msgstr "サービスが自動的に起動しない場合は、UDSクライアントがインストールされていない"
+msgstr ""
+"サービスが自動的に起動しない場合は、UDSクライアントがインストールされていない"
 "可能性があります。"
 
 #: static/modern/translations-fakejs.js:63
