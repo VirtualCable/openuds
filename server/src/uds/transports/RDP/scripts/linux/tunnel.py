@@ -4,7 +4,7 @@ import os
 import subprocess
 import os.path
 
-# Asegura que subprocess y shutil estén en el scope global para clientes antiguos (3.6)
+# Ensures subprocess and shutil are in global scope for old clients (3.6)
 globals()['subprocess'] = subprocess
 globals()['shutil'] = shutil
 globals()['os'] = os
@@ -59,9 +59,13 @@ def _exec_client_with_params(executable: str, params: typing.List[str], unlink_f
         tools.addFileToUnlink(unlink_file)
 
 def exec_udsrdp(udsrdp: str, port: int) -> None:
-    logger.debug('UDSRDP client will use command line parameters')
-    params: typing.List[str] = [os.path.expandvars(i) for i in [app] + sp['as_new_xfreerdp_params'] + [f'/v:127.0.0.1:{port}']]  # type: ignore
-    _exec_client_with_params(udsrdp, params)
+    if sp.get('as_file', ''): # type: ignore
+        dest_filename = _prepare_rdp_file(sp['as_file'], port, '.rdp') # type: ignore
+        params = [udsrdp, dest_filename, f'/p:{sp.get("password", "")}'] # type: ignore
+        _exec_client_with_params(udsrdp, params, unlink_file=dest_filename)
+    else:
+        params: typing.List[str] = [os.path.expandvars(i) for i in [app] + sp['as_new_xfreerdp_params'] + [f'/v:127.0.0.1:{port}']]  # type: ignore
+        _exec_client_with_params(udsrdp, params)
 
 def exec_new_xfreerdp(xfreerdp: str, port: int) -> None:
     if sp.get('as_file', ''): # type: ignore
@@ -93,7 +97,8 @@ thincast_list = [
     '/opt/thincast/thincast',
     '/snap/bin/thincast-remote-desktop-client',
     '/snap/bin/thincast',
-    '/snap/bin/thincast-client'
+    '/snap/bin/thincast-client',
+    '/var/lib/flatpak/exports/bin/com.thincast.client',
 ]
 thincast_executable = None
 for thincast in thincast_list:
@@ -110,38 +115,37 @@ if fs.check() is False:
         '<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>'
     )
 
-# If thincast exists, use it. If not, continue with UDSRDP/XFREERDP as before
-if thincast_executable:
+# Priority: udsrdp > thincast > xfreerdp
+udsrdp = tools.findApp('udsrdp')
+xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp') or tools.findApp('xfreerdp2')
+fnc, app = None, None
+
+if udsrdp:
+    logger.debug('udsrdp found: %s', udsrdp)
+    fnc, app = exec_udsrdp, udsrdp
+elif thincast_executable:
     logger.debug('Thincast client found, using it')
     fnc, app = exec_thincast, thincast_executable
+elif xfreerdp:
+    logger.debug('xfreerdp found: %s', xfreerdp)
+    fnc, app = exec_new_xfreerdp, xfreerdp
 else:
-    logger.debug('Thincast not found, searching for xfreerdp and udsrdp')
-    xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp') or tools.findApp('xfreerdp2')
-    udsrdp = tools.findApp('udsrdp')
-    fnc, app = None, None
-    if xfreerdp:
-        logger.debug('xfreerdp found: %s', xfreerdp)
-        fnc, app = exec_new_xfreerdp, xfreerdp
-    if udsrdp:
-        logger.debug('udsrdp found: %s', udsrdp)
-        fnc, app = exec_udsrdp, udsrdp
-    if app is None or fnc is None:
-        logger.error('No suitable RDP client found (Thincast, xfreerdp, udsrdp)')
-        raise Exception(
-            '''<p>You need to have Thincast Remote Desktop Client o xfreerdp (>= 2.0) installed on your system, y tenerlo en tu PATH para conectar con este servicio UDS.</p>
+    logger.error('No suitable RDP client found (udsrdp, Thincast, xfreerdp)')
+    raise Exception(
+        '''<p>You need to have udsrdp, Thincast Remote Desktop Client or xfreerdp (>= 2.0) installed on your system, and available in your PATH to connect to this UDS service.</p>
         <p>Please install the right package for your system.</p>
         <ul>
             <li>Thincast: <a href="https://thincast.com/en/products/client">Download</a></li>
             <li>xfreerdp: <a href="https://github.com/FreeRDP/FreeRDP">Download</a></li>
         </ul>
 '''
-        )
+    )
 
-# Asegura que app y fnc sean globales para clientes antiguos (3.6)
+# Ensure app and fnc are in global scope for old clients (3.6)
 globals()['app'] = app
 globals()['fnc'] = fnc
 
-# Añade las funciones al scope global para clientes antiguos (3.6)
+# Add functions to global scope for old clients (3.6)
 globals()['_prepare_rdp_file'] = _prepare_rdp_file
 globals()['_exec_client_with_params'] = _exec_client_with_params
 globals()['exec_udsrdp'] = exec_udsrdp
