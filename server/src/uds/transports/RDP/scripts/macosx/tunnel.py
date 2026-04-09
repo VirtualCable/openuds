@@ -57,7 +57,6 @@ thincast_list = [
 ]
 
 xfreerdp_list = [
-    'udsrdp',
     'xfreerdp',
     'xfreerdp3',
     'xfreerdp2',
@@ -67,33 +66,44 @@ xfreerdp_list = [
 executable = None
 kind = ''
 
-# Check first thincast (better option right now, prefer it)
-logger.debug('Searching for Thincast in: %s', thincast_list)
-for thincast in thincast_list:
-    if os.path.isdir(thincast):
-        executable = thincast
-        kind = 'thincast'
-        logger.debug('Found Thincast client at %s', thincast)
-        break
+# Search UDSRDP first (preferred client)
+logger.debug('Searching for UDSRDP')
+udsrdp = tools.findApp('udsrdp')  # type: ignore
+if udsrdp and os.path.isfile(udsrdp):  # type: ignore
+    logger.debug('UDSRDP found: %s', udsrdp)
+    executable = udsrdp  # type: ignore
+    kind = 'udsrdp'
 
+# If UDSRDP not found, search Thincast
+if not executable:
+    logger.debug('Searching for Thincast in: %s', thincast_list)
+    for thincast in thincast_list:
+        if os.path.isdir(thincast):
+            executable = thincast
+            kind = 'thincast'
+            logger.debug('Found Thincast client at %s', thincast)
+            break
+
+# If still not found, search xfreerdp variants
 if not executable:
     logger.debug('Searching for xfreerdp in: %s', xfreerdp_list)
     for xfreerdp_executable in xfreerdp_list:
-        xfreerdp: str = tools.findApp(xfreerdp_executable) # type: ignore
-        if xfreerdp and os.path.isfile(xfreerdp): # type: ignore
-            executable = xfreerdp # type: ignore
-            # Ensure that the kind is 'xfreerdp' and not 'xfreerdp3' or 'xfreerdp2'
+        xfreerdp: str = tools.findApp(xfreerdp_executable)  # type: ignore
+        if xfreerdp and os.path.isfile(xfreerdp):  # type: ignore
+            executable = xfreerdp  # type: ignore
             kind = xfreerdp_executable.rstrip('3').rstrip('2')
-            logger.debug('Found xfreerdp client: %s (kind: %s)', xfreerdp, kind) # type: ignore
+            logger.debug('Found xfreerdp client: %s (kind: %s)', xfreerdp, kind)  # type: ignore
             break
-    else:
-        logger.debug('Searching for Microsoft Remote Desktop in: %s', msrdc_list)
-        for msrdc in msrdc_list:
-            if os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
-                executable = msrdc
-                kind = 'msrdc'
-                logger.debug('Found Microsoft Remote Desktop client at %s', msrdc)
-                break
+
+# If still not found, search MSRDC
+if not executable:
+    logger.debug('Searching for Microsoft Remote Desktop in: %s', msrdc_list)
+    for msrdc in msrdc_list:
+        if os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
+            executable = msrdc
+            kind = 'msrdc'
+            logger.debug('Found Microsoft Remote Desktop client at %s', msrdc)
+            break
 
 if not executable:
     msrd = msrd_li = ''

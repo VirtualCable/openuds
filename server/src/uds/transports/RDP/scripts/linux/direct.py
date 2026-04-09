@@ -5,7 +5,7 @@ import os.path
 import shutil
 import os
 
-# Asegura que subprocess, shutil, os, os.path y typing estén en el scope global para clientes antiguos (3.6)
+# Ensures subprocess, shutil, os, os.path and typing are in global scope for old clients (3.6)
 globals()['subprocess'] = subprocess
 globals()['shutil'] = shutil
 globals()['os'] = os
@@ -27,7 +27,7 @@ except ImportError:
     tools: typing.Any = None
     raise
 
-# Asegura tools en globales
+# Secure tools in globals
 globals()['tools'] = tools
 
 if 'sp' not in globals():
@@ -52,12 +52,17 @@ def _exec_client_with_params(executable: str, params: typing.List[str], unlink_f
         tools.addFileToUnlink(unlink_file)
 
 def exec_udsrdp(udsrdp: str) -> None:
-    params = [os.path.expandvars(i) for i in [udsrdp] + sp['as_new_xfreerdp_params'] + [f'/v:{sp["address"]}']] # type: ignore
-    _exec_client_with_params(udsrdp, params)
+    if sp.get('as_file', ''): # type: ignore
+        dest_filename = _prepare_rdp_file(sp['as_file'], '.rdp') # type: ignore
+        params = [udsrdp, dest_filename, f'/p:{sp.get("password", "")}'] # type: ignore
+        _exec_client_with_params(udsrdp, params, unlink_file=dest_filename)
+    else:
+        params = [os.path.expandvars(i) for i in [udsrdp] + sp['as_new_xfreerdp_params'] + [f'/v:{sp["address"]}']] # type: ignore
+        _exec_client_with_params(udsrdp, params)
 
 def exec_new_xfreerdp(xfreerdp: str) -> None:
     if sp.get('as_file', ''): # type: ignore
-        dest_filename = _prepare_rdp_file(sp['as_file'], '.uds.rdp') # type: ignore
+        dest_filename = _prepare_rdp_file(sp['as_file'], '.rdp') # type: ignore
         params = [xfreerdp, dest_filename, f'/p:{sp.get("password", "")}'] # type: ignore
         _exec_client_with_params(xfreerdp, params, unlink_file=dest_filename)
     else:
@@ -73,7 +78,7 @@ def exec_thincast(thincast: str) -> None:
         params = [os.path.expandvars(i) for i in [thincast] + sp['as_new_xfreerdp_params'] + [f'/v:{sp["address"]}']] # type: ignore
         _exec_client_with_params(thincast, params)
 
-# Añade las funciones al scope global para clientes antiguos (3.6)
+# Add functions to global scope for old clients (3.6)
 globals()['_prepare_rdp_file'] = _prepare_rdp_file
 globals()['_exec_client_with_params'] = _exec_client_with_params
 globals()['exec_udsrdp'] = exec_udsrdp
@@ -88,34 +93,37 @@ thincast_list = [
     '/opt/thincast/thincast',
     '/snap/bin/thincast-remote-desktop-client',
     '/snap/bin/thincast',
-    '/snap/bin/thincast-client'
+    '/snap/bin/thincast-client',
+    '/var/lib/flatpak/exports/bin/com.thincast.client',
 ]
 
-# Search Thincast first
+# Search UDSRDP first (preferred client)
 executable = None
 kind = ''
-for thincast in thincast_list:
-    if os.path.isfile(thincast) and os.access(thincast, os.X_OK):
-        executable = thincast
-        kind = 'thincast'
-        logger.debug('Found Thincast executable: %s', thincast)
-        break
+udsrdp: typing.Optional[str] = tools.findApp('udsrdp')
+if udsrdp:
+    executable = udsrdp
+    kind = 'udsrdp'
+    logger.debug('Found UDSRDP executable: %s', udsrdp)
 
-# If you don't find Thincast, search UDSRDP and XFREERDP
+# If UDSRDP not found, search Thincast
 if not executable:
-    logger.debug('Thincast not found. Searching for UDSRDP and XFREERDP.')
-    udsrdp: typing.Optional[str] = tools.findApp('udsrdp')
+    logger.debug('UDSRDP not found. Searching for Thincast.')
+    for thincast in thincast_list:
+        if os.path.isfile(thincast) and os.access(thincast, os.X_OK):
+            executable = thincast
+            kind = 'thincast'
+            logger.debug('Found Thincast executable: %s', thincast)
+            break
+
+# If still not found, search XFREERDP
+if not executable:
+    logger.debug('Thincast not found. Searching for XFREERDP.')
     xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp') or tools.findApp('xfreerdp2')
-    logger.debug('UDSRDP found: %s', udsrdp)
-    logger.debug('XFREERDP found: %s', xfreerdp)
-    if udsrdp:
-        executable = udsrdp
-        kind = 'udsrdp'
-        logger.debug('Selected UDSRDP as executable.')
-    elif xfreerdp:
+    if xfreerdp:
         executable = xfreerdp
         kind = 'xfreerdp'
-        logger.debug('Selected XFREERDP as executable.')
+        logger.debug('Selected XFREERDP as executable: %s', xfreerdp)
 
 if not executable:
     logger.error('No suitable RDP client found. Thincast, UDSRDP, or XFREERDP are required.')
@@ -132,16 +140,16 @@ else:
     logger.debug(f'RDP client found: {executable} of kind {kind}')
 
     # Execute the client found
-    if kind == 'thincast':
-        if isinstance(executable, str):
-            exec_thincast(executable)
-        else:
-            raise TypeError("Executable must be a string for exec_thincast")
-    elif kind == 'udsrdp':
+    if kind == 'udsrdp':
         if isinstance(executable, str):
             exec_udsrdp(executable)
         else:
             raise TypeError("Executable must be a string for exec_udsrdp")
+    elif kind == 'thincast':
+        if isinstance(executable, str):
+            exec_thincast(executable)
+        else:
+            raise TypeError("Executable must be a string for exec_thincast")
     elif kind == 'xfreerdp':
         if isinstance(executable, str):
             exec_new_xfreerdp(executable)

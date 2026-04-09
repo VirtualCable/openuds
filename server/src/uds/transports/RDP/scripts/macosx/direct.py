@@ -50,7 +50,6 @@ thincast_list = [
 ]
 
 xfreerdp_list = [
-    'udsrdp',
     'xfreerdp',
     'xfreerdp3',
     'xfreerdp2',
@@ -60,34 +59,44 @@ xfreerdp_list = [
 executable = None
 kind = ''
 
-# Check first thincast (better option right now, prefer it)
-logger.debug('Searching for Thincast in: %s', thincast_list)
-for thincast in thincast_list:
-    if os.path.isdir(thincast):
-        logger.debug('Thincast found: %s', thincast)
-        executable = thincast
-        kind = 'thincast'
-        break
+# Search UDSRDP first (preferred client)
+logger.debug('Searching for UDSRDP')
+udsrdp = tools.findApp('udsrdp')  # type: ignore
+if udsrdp and os.path.isfile(udsrdp):  # type: ignore
+    logger.debug('UDSRDP found: %s', udsrdp)
+    executable = udsrdp  # type: ignore
+    kind = 'udsrdp'
 
+# If UDSRDP not found, search Thincast
+if not executable:
+    logger.debug('Searching for Thincast in: %s', thincast_list)
+    for thincast in thincast_list:
+        if os.path.isdir(thincast):
+            logger.debug('Thincast found: %s', thincast)
+            executable = thincast
+            kind = 'thincast'
+            break
+
+# If still not found, search xfreerdp variants
 if not executable:
     logger.debug('Searching for xfreerdp in: %s', xfreerdp_list)
-    found_xfreerdp = False
     for xfreerdp_executable in xfreerdp_list:
-        xfreerdp = tools.findApp(xfreerdp_executable) # type: ignore
-        logger.debug('tools.findApp(%s) result: %s', xfreerdp_executable, xfreerdp) # type: ignore
-        if xfreerdp and os.path.isfile(xfreerdp): # type: ignore
-            logger.debug('xfreerdp found: %s', xfreerdp) # type: ignore
-            executable = xfreerdp # type: ignore
-            # Ensure that the kind is 'xfreerdp' and not 'xfreerdp3' or 'xfreerdp2'
+        xfreerdp = tools.findApp(xfreerdp_executable)  # type: ignore
+        logger.debug('tools.findApp(%s) result: %s', xfreerdp_executable, xfreerdp)  # type: ignore
+        if xfreerdp and os.path.isfile(xfreerdp):  # type: ignore
+            logger.debug('xfreerdp found: %s', xfreerdp)  # type: ignore
+            executable = xfreerdp  # type: ignore
             kind = xfreerdp_executable.rstrip('3').rstrip('2')
             break
-    if not found_xfreerdp:
-        logger.debug('Searching for MSRDC in: %s', msrdc_list)
-        for msrdc in msrdc_list:
-            if os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
-                executable = msrdc
-                kind = 'msrdc'
-                break
+
+# If still not found, search MSRDC
+if not executable:
+    logger.debug('Searching for MSRDC in: %s', msrdc_list)
+    for msrdc in msrdc_list:
+        if os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
+            executable = msrdc
+            kind = 'msrdc'
+            break
 
 if not executable:
     logger.debug('No compatible executable found (Thincast, xfreerdp, MSRDC)')
@@ -97,7 +106,7 @@ if not executable:
         msrd_li = '<li><p><b>{}</b> from Apple Store</p></li>'.format(msrd)
 
     raise Exception(
-        f'''<p><b>xfreerdp{msrd} or thincast client not found</b></p>
+        f'''<p><b>xfreerdp, {msrd} or thincast client not found</b></p>
         <p>In order to connect to UDS RDP Sessions, you need to have a<p>
         <ul>
             <li>
