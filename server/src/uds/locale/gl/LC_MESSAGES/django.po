@@ -32,13 +32,16 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
+# David Alonso, 2026
+# Javier Medina, 2026
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-09 16:47+0200\n"
+"POT-Creation-Date: 2026-04-10 15:42+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
+"Last-Translator: Javier Medina, 2026\n"
 "Language-Team: Galician (http://app.transifex.com/openuds/openuds/language/"
 "gl/)\n"
 "Language: gl\n"
@@ -92,7 +95,7 @@ msgstr "etiquetas"
 
 #: REST/methods/accountsusage.py:92
 msgid "Pool name"
-msgstr "Nome da piscina"
+msgstr "Nome da pool"
 
 #: REST/methods/accountsusage.py:93 core/auths/authenticator.py:148
 msgid "User name"
@@ -336,11 +339,11 @@ msgstr "Regras"
 
 #: REST/methods/calendars.py:75
 msgid "Pools with Accesses"
-msgstr "Piscinas con accesos"
+msgstr "Pools con accesos"
 
 #: REST/methods/calendars.py:76
 msgid "Pools with Actions"
-msgstr "Piscinas con accións"
+msgstr "Pools con accións"
 
 #: REST/methods/client.py:92
 msgid "Your service is being created. Please, wait while we complete it"
@@ -390,7 +393,7 @@ msgstr "En preparación"
 
 #: REST/methods/meta_pools.py:106
 msgid "Pool Group"
-msgstr "Grupo de piscinas"
+msgstr "Grupo de Pools"
 
 #: REST/methods/meta_pools.py:118 REST/methods/meta_pools.py:206
 #: REST/methods/services_pools.py:188 REST/methods/services_pools.py:249
@@ -412,15 +415,15 @@ msgstr "Política de equilibrio de carga"
 
 #: REST/methods/meta_pools.py:176
 msgid "Service pool load balancing policy"
-msgstr "Política de equilibrio de carga de grupos de servizos"
+msgstr "Política de equilibrio de carga de pool de servizos"
 
 #: REST/methods/meta_pools.py:187
 msgid ""
 "Service pool High Availability policy. If enabled and a pool fails, it will "
 "be restarted in another pool. Enable with care!."
 msgstr ""
-"Política de alta dispoñibilidade do grupo de servizos. Se está activada e un "
-"grupo falla, reiniciarase noutro grupo. Activa con coidado!"
+"Política de alta dispoñibilidade do pool de servizos. Se está activada e un "
+"pool falla, reiniciarase noutro pool. Activa con coidado!"
 
 #: REST/methods/meta_pools.py:198 REST/methods/services_pool_groups.py:107
 #: REST/methods/services_pools.py:361
@@ -435,13 +438,12 @@ msgstr "Imaxe asociada a este servizo"
 #: REST/methods/meta_pools.py:213 REST/methods/services_pools.py:116
 #: REST/methods/services_pools.py:373
 msgid "Pool group"
-msgstr "Grupo de piscinas"
+msgstr "Grupo de Pool"
 
 #: REST/methods/meta_pools.py:214 REST/methods/services_pools.py:374
 msgid "Pool group for this pool (for pool classify on display)"
 msgstr ""
-"Grupo de piscinas para esta piscina (para a clasificación de piscinas en "
-"visualización)"
+"Grupo de Pool para esta pool (para a clasificación de pool en visualización)"
 
 #: REST/methods/meta_pools.py:223
 msgid "If active, metapool will be visible for users"
@@ -468,11 +470,11 @@ msgstr "Política de selección de transporte"
 
 #: REST/methods/meta_service_pools.py:87
 msgid "Service pools"
-msgstr "Grupos de servizos"
+msgstr "Pools de servizos"
 
 #: REST/methods/meta_service_pools.py:92
 msgid "Service Pool name"
-msgstr "Nome do grupo de servizos"
+msgstr "Nome do Pool name"
 
 #: REST/methods/meta_service_pools.py:93 REST/methods/notifiers.py:72
 #: REST/methods/notifiers.py:105 REST/methods/users_groups.py:183
@@ -500,7 +502,7 @@ msgstr "Data de creación"
 #: templates/uds/reports/stats/pools-usage-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:17
 msgid "Pool"
-msgstr "Piscina"
+msgstr "Pool"
 
 #: REST/methods/meta_service_pools.py:220 REST/methods/servers_management.py:68
 #: REST/methods/servers_management.py:206 REST/methods/services_usage.py:127
@@ -665,7 +667,7 @@ msgstr "Última execución"
 
 #: REST/methods/osmanagers.py:57
 msgid "OS Managers"
-msgstr "Xestores de sistemas operativos"
+msgstr "OS Managers"
 
 #: REST/methods/osmanagers.py:62
 msgid "Used by"
@@ -673,9 +675,7 @@ msgstr "Usado por"
 
 #: REST/methods/osmanagers.py:91
 msgid "Can't delete an OS Manager with services pools associated"
-msgstr ""
-"Non se pode eliminar un xestor de sistemas operativos con grupos de servizos "
-"asociados"
+msgstr "Non se pode eliminar un OS Manager con pool de servizos asociados"
 
 #: REST/methods/providers.py:69
 msgid "Service providers"
@@ -888,7 +888,7 @@ msgstr "Nome do servizo"
 
 #: REST/methods/services.py:240
 msgid "Services Pools"
-msgstr "Servizos Piscinas"
+msgstr "Servizos Pools"
 
 #: REST/methods/services.py:247
 msgid "Max services count type"
@@ -918,12 +918,12 @@ msgstr "De acordo"
 
 #: REST/methods/services_pool_groups.py:67
 msgid "Services Pool Groups"
-msgstr "Servizos Grupos de piscinas"
+msgstr "Servizos Pool Groups"
 
 #: REST/methods/services_pools.py:107 REST/methods/transports.py:75
 #: REST/methods/transports.py:129
 msgid "Service Pools"
-msgstr "Grupos de servizos"
+msgstr "Pools de servizos"
 
 #: REST/methods/services_pools.py:113
 msgid "Usage"
@@ -939,7 +939,7 @@ msgstr "Servizo para pais"
 
 #: REST/methods/services_pools.py:278
 msgid "Create at least a service before creating a new service pool"
-msgstr "Crear polo menos un servizo antes de crear un novo grupo de servizos"
+msgstr "Crear polo menos un servizo antes de crear un novo pool de servizos"
 
 #: REST/methods/services_pools.py:299
 msgid "Base service"
@@ -947,15 +947,15 @@ msgstr "Servizo base"
 
 #: REST/methods/services_pools.py:300
 msgid "Service used as base of this service pool"
-msgstr "Servizo empregado como base deste conxunto de servizos"
+msgstr "Servizo empregado como base deste pool de servizos"
 
 #: REST/methods/services_pools.py:309
 msgid "OS Manager"
-msgstr "Xestor do sistema operativo"
+msgstr "OS Manager"
 
 #: REST/methods/services_pools.py:310
 msgid "OS Manager used as base of this service pool"
-msgstr "Xestor do sistema operativo usado como base deste conxunto de servizos"
+msgstr "OS Manager usado como base deste pool de servizos"
 
 #: REST/methods/services_pools.py:318
 msgid "Allow removal by users"
@@ -1012,7 +1012,7 @@ msgid ""
 "service from this pool."
 msgstr ""
 "Mensaxe personalizada que se lles mostrará aos usuarios, se están activos, "
-"ao tentar iniciar un servizo desde este grupo."
+"ao tentar iniciar un servizo desde este pool."
 
 #: REST/methods/services_pools.py:404
 msgid "Enable custom launch message"
@@ -1029,7 +1029,7 @@ msgstr "Servizos dispoñibles iniciais"
 
 #: REST/methods/services_pools.py:415
 msgid "Services created initially for this service pool"
-msgstr "Servizos creados inicialmente para este conxunto de servizos"
+msgstr "Servizos creados inicialmente para este pool de servizos"
 
 #: REST/methods/services_pools.py:418 REST/methods/services_pools.py:428
 #: REST/methods/services_pools.py:438 REST/methods/services_pools.py:450
@@ -1080,7 +1080,7 @@ msgstr "Contabilidade"
 
 #: REST/methods/services_pools.py:466
 msgid "Account associated to this service pool"
-msgstr "Conta asociada a este grupo de servizos"
+msgstr "Conta asociada a este pool de servizos"
 
 #: REST/methods/services_pools.py:481
 msgid "Name too long"
@@ -1096,7 +1096,7 @@ msgstr "O servizo base xa non existe"
 
 #: REST/methods/services_pools.py:508
 msgid "This service requires an OS Manager"
-msgstr "Este servizo require un xestor do sistema operativo"
+msgstr "Este servizo require un OS Manager"
 
 #: REST/methods/services_pools.py:539
 msgid "This parameters provided are not valid"
@@ -1134,7 +1134,7 @@ msgstr ""
 
 #: REST/methods/transports.py:130
 msgid "Currently assigned services pools"
-msgstr "Grupos de servizos asignados actualmente"
+msgstr "Pools de servizos asignados actualmente"
 
 #: REST/methods/transports.py:142
 msgid "Metapool transport label (only used on metapool transports grouping)"
@@ -1393,8 +1393,8 @@ msgstr ""
 #: REST/model/base.py:237
 msgid "Networks associated. If No network selected, will mean \"all networks\""
 msgstr ""
-"Redes asociadas. Se non se selecciona ningunha rede, significará "
-"\"todas as redes\""
+"Redes asociadas. Se non se selecciona ningunha rede, significará \"todas as "
+"redes\""
 
 #: REST/model/base.py:351
 msgid "Invalid Request"
@@ -1621,8 +1621,8 @@ msgid ""
 "Could not connect to any AD server. Check your configuration (server, ssl "
 "certificates, ...)."
 msgstr ""
-"Non se puido conectar a ningún servidor AD. Comprobe a súa configuración ("
-"servidor, certificados SSL, ...)."
+"Non se puido conectar a ningún servidor AD. Comprobe a súa configuración "
+"(servidor, certificados SSL, ...)."
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:849
 #: auths/ActiveDirectory_enterprise/authenticator.py:909
@@ -1726,8 +1726,8 @@ msgid ""
 "Proxy used for connection to azure for HTTPS connections (use PROTOCOL://"
 "host:port, i.e. https://10.10.0.1:8080)"
 msgstr ""
-"Proxy usado para a conexión a Azure para conexións HTTPS (use "
-"PROTOCOL://host:port, é dicir, https://10.10.0.1:8080)"
+"Proxy usado para a conexión a Azure para conexións HTTPS (use PROTOCOL://"
+"host:port, é dicir, https://10.10.0.1:8080)"
 
 #: auths/AzureAD_enterprise/authenticator.py:147
 msgid "Enable School Data Sync Integration"
@@ -2063,7 +2063,8 @@ msgstr ""
 
 #: auths/OAuth2/authenticator.py:199
 msgid "Common groups is required for \"code\" response types"
-msgstr "Os grupos comúns son necesarios para os tipos de resposta de \"código\""
+msgstr ""
+"Os grupos comúns son necesarios para os tipos de resposta de \"código\""
 
 #: auths/OAuth2/authenticator.py:203
 msgid "Token endpoint is required for \"code\" response types"
@@ -2451,8 +2452,8 @@ msgstr "Duración da caché de metadatos"
 #: auths/SAML/saml.py:327
 msgid "Duration of metadata cache in days. 0 means default (ten years)"
 msgstr ""
-"Duración da caché de metadatos en días. 0 significa o valor predeterminado ("
-"dez anos)"
+"Duración da caché de metadatos en días. 0 significa o valor predeterminado "
+"(dez anos)"
 
 #: auths/SAML/saml.py:333
 msgid "Metadata validity duration"
@@ -2483,7 +2484,8 @@ msgstr "Nome para mostrar da organización"
 
 #: auths/SAML/saml.py:355
 msgid "Organization Display name to use on SAML SP Metadata"
-msgstr "Nome para mostrar da organización que se usará nos metadatos de SAML SP"
+msgstr ""
+"Nome para mostrar da organización que se usará nos metadatos de SAML SP"
 
 #: auths/SAML/saml.py:361
 msgid "Organization URL"
@@ -2634,7 +2636,8 @@ msgstr ""
 
 #: auths/SimpleLDAP/authenticator.py:586
 msgid "Can't locate any group with the membership attribute specified"
-msgstr "Non se pode localizar ningún grupo co atributo de pertenza especificado"
+msgstr ""
+"Non se pode localizar ningún grupo co atributo de pertenza especificado"
 
 #: core/auths/auth.py:111
 msgid "System Administrator"
@@ -2734,7 +2737,8 @@ msgstr "Ignorar asignados e sen usar"
 
 #: core/consts/calendar.py:154
 msgid "Remove ALL assigned user service. USE WITH CAUTION!"
-msgstr "Elimina TODOS os servizos de usuario asignados. UTILIZA CON PRECAUCIÓN!"
+msgstr ""
+"Elimina TODOS os servizos de usuario asignados. UTILIZA CON PRECAUCIÓN!"
 
 #: core/consts/calendar.py:160
 msgid "Remove OLD assigned user services."
@@ -2887,7 +2891,7 @@ msgstr "Non se implementa ningún método de comprobación de conexións."
 
 #: core/osmanagers/osmanager.py:62
 msgid "Base OS Manager"
-msgstr "Xestor do sistema operativo base"
+msgstr "OS Manager base"
 
 #: core/osmanagers/osmanager.py:64
 msgid "Base Manager"
@@ -2973,8 +2977,8 @@ msgid ""
 "If active, UDS will try to create an snapshot (if one already does not "
 "exists) before accessing a machine, and restore it after usage."
 msgstr ""
-"Se está activo, o UDS tentará crear unha instantánea (se non existe ningunha)"
-" antes de acceder a unha máquina e restaurala despois do seu uso."
+"Se está activo, o UDS tentará crear unha instantánea (se non existe "
+"ningunha) antes de acceder a unha máquina e restaurala despois do seu uso."
 
 #: core/services/generics/fixed/service.py:129
 msgid "Snapshot type"
@@ -3338,8 +3342,8 @@ msgid ""
 "How long should the user service be unused before os manager considers it "
 "for removal"
 msgstr ""
-"Canto tempo debe permanecer sen usar o servizo de usuario antes de que o "
-"administrador do sistema operativo considere a súa eliminación?"
+"Canto tempo debe permanecer sen usar o servizo de usuario antes de que o OS "
+"Manager considere a súa eliminación?"
 
 #: core/util/config.py:493
 msgid "Max logins before blocking an account for a while"
@@ -3440,7 +3444,8 @@ msgstr ""
 
 #: core/util/config.py:612
 msgid "Networks or hosts considered \"trusted\" for UDS (Tunnels, etc...)"
-msgstr "Redes ou hosts considerados \"de confianza\" para UDS (túneles, etc...)"
+msgstr ""
+"Redes ou hosts considerados \"de confianza\" para UDS (túneles, etc...)"
 
 #: core/util/config.py:619
 msgid "IPs or networks allowed to forward requests (like proxies)"
@@ -3463,9 +3468,8 @@ msgid ""
 "If we use new logout mechanics for osmanagers, where only when the logged in "
 "users reaches 0, it is considered \"logged out\""
 msgstr ""
-"Se empregamos novas mecánicas de peche de sesión para os administradores de "
-"sistema, onde só cando os usuarios conectados chegan a 0, se considera "
-"\"sesión pechada\""
+"Se empregamos novas mecánicas de peche de sesión para OS Managers, onde só "
+"cando os usuarios conectados chegan a 0, se considera \"sesión pechada\""
 
 #: core/util/config.py:653
 msgid "Enable/Disable Actor attack detection ip blocking"
@@ -4236,11 +4240,11 @@ msgid ""
 "* {realName} - the real name of the user\n"
 "Headers are in the form of \"Header: Value\". (without the quotes)"
 msgstr ""
-"Cabeceiras para solicitudes SMS. Pode conter as seguintes variables: * {code}"
-" - o código a enviar * {phone/+phone} - o número de teléfono * {username} - "
-"o nome de usuario * {justUsername} - o nome de usuario sen @... * {realName} "
-"- o nome real do usuario As cabeceiras teñen o formato \"Cabeceira: Valor\". "
-"(sen as comiñas)"
+"Cabeceiras para solicitudes SMS. Pode conter as seguintes variables: * "
+"{code} - o código a enviar * {phone/+phone} - o número de teléfono * "
+"{username} - o nome de usuario * {justUsername} - o nome de usuario sen @... "
+"* {realName} - o nome real do usuario As cabeceiras teñen o formato "
+"\"Cabeceira: Valor\". (sen as comiñas)"
 
 #: mfas/SMS/mfa.py:166
 msgid "Parameters for SMS POST/PUT sending"
@@ -4550,13 +4554,11 @@ msgstr ""
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:52
 msgid "Linux Active Directory OS Manager"
-msgstr "Xestor do sistema operativo Linux Active Directory"
+msgstr "OS Manager Linux Active Directory"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:54
 msgid "Os Manager to control Linux virtual machines with active directory"
-msgstr ""
-"Xestor de sistemas operativos para controlar máquinas virtuais Linux con "
-"Active Directory"
+msgstr "OS Manager para controlar máquinas virtuais Linux con Active Directory"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:59
 #: osmanagers/WindowsOsManager/windows_domain.py:68
@@ -4701,11 +4703,11 @@ msgstr "Debe proporcionar un contrasinal para a conta!"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:50
 msgid "Linux OS Manager"
-msgstr "Xestor do sistema operativo Linux"
+msgstr "Linux OS Manager"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:52
 msgid "Os Manager to control Linux virtual machines"
-msgstr "Xestor de sistemas operativos para controlar máquinas virtuais Linux"
+msgstr "OS Manager para controlar máquinas virtuais Linux"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:60
 #: osmanagers/Test/testing_osmanager.py:75
@@ -4738,13 +4740,13 @@ msgstr ""
 
 #: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:53
 msgid "Linux Random Password OS Manager"
-msgstr "Xestor de contrasinais aleatorios de Linux"
+msgstr "Linux Random Password OS Manager"
 
 #: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:55
 msgid "Os Manager to control linux machines, with user password set randomly."
 msgstr ""
-"Xestor de sistemas operativos para controlar máquinas Linux, cun contrasinal "
-"de usuario configurado aleatoriamente."
+"Os Manager para controlar máquinas Linux, cun contrasinal de usuario "
+"configurado aleatoriamente."
 
 #: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:63
 #: osmanagers/WindowsOsManager/windows_random.py:68
@@ -4766,12 +4768,11 @@ msgstr "Actor RDS UDS (herdado, use o servidor RDS UDS no seu lugar)"
 
 #: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:32
 msgid "RDS OS Manager"
-msgstr "Xestor do sistema operativo RDS"
+msgstr "RDS OS Manager"
 
 #: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:34
 msgid "Os Manager to control RDS provided services"
-msgstr ""
-"Xestor de sistemas operativos para controlar os servizos prestados por RDS"
+msgstr "Os Manager para controlar os servizos prestados por RDS"
 
 #: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:40
 msgid "Max. session time"
@@ -4787,11 +4788,11 @@ msgstr ""
 
 #: osmanagers/Test/testing_osmanager.py:51
 msgid "Test OS Manager"
-msgstr "Xestor de sistemas operativos de proba"
+msgstr "Os Manager de proba"
 
 #: osmanagers/Test/testing_osmanager.py:53
 msgid "Os Manager for testing pourposes"
-msgstr "Xestor de sistemas operativos para fins de proba"
+msgstr "Os Manager para fins de proba"
 
 #: osmanagers/Test/testing_osmanager.py:81
 #: osmanagers/WindowsOsManager/windows.py:46
@@ -4816,21 +4817,19 @@ msgstr ""
 
 #: osmanagers/WindowsOsManager/windows.py:30
 msgid "Windows Basic OS Manager"
-msgstr "Xestor de sistemas operativos básicos de Windows"
+msgstr "Os Manager básicos de Windows"
 
 #: osmanagers/WindowsOsManager/windows.py:32
 msgid "Os Manager to control windows machines without domain."
-msgstr ""
-"Xestor de sistemas operativos para controlar máquinas Windows sen dominio."
+msgstr "Os Manager para controlar máquinas Windows sen dominio."
 
 #: osmanagers/WindowsOsManager/windows_domain.py:60
 msgid "Windows Domain OS Manager"
-msgstr "Xestor do sistema operativo de dominio de Windows"
+msgstr "Os Manager de dominio de Windows"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:62
 msgid "Os Manager to control windows machines with domain."
-msgstr ""
-"Xestor de sistemas operativos para controlar máquinas Windows con dominio."
+msgstr "Os Manager para controlar máquinas Windows con dominio."
 
 #: osmanagers/WindowsOsManager/windows_domain.py:92
 msgid ""
@@ -4924,14 +4923,14 @@ msgstr "Erro descoñecido: {0}"
 
 #: osmanagers/WindowsOsManager/windows_random.py:58
 msgid "Windows Random Password OS Manager"
-msgstr "Xestor do sistema operativo de contrasinais aleatorios de Windows"
+msgstr "Windows Random Password OS Manager"
 
 #: osmanagers/WindowsOsManager/windows_random.py:60
 msgid ""
 "Os Manager to control windows machines, with user password set randomly."
 msgstr ""
-"Xestor de sistemas operativos para controlar máquinas con Windows, cun "
-"contrasinal de usuario configurado aleatoriamente."
+"Os Manager para controlar máquinas con Windows, cun contrasinal de usuario "
+"configurado aleatoriamente."
 
 #: osmanagers/WindowsOsManager/windows_random.py:75
 msgid "Current (template) password of the user account"
@@ -4975,11 +4974,11 @@ msgstr "Intervalo para os datos do informe"
 
 #: reports/auto/fields.py:102
 msgid "Service pool"
-msgstr "Grupo de servizos"
+msgstr "Pool de servizos"
 
 #: reports/auto/fields.py:102
 msgid "Service pool for report"
-msgstr "Grupo de servizos para o informe"
+msgstr "Pool de servizos para o informe"
 
 #: reports/auto/fields.py:103 reports/lists/users.py:56
 #: web/forms/login_form.py:51
@@ -5094,15 +5093,15 @@ msgstr "Estatísticas"
 
 #: reports/stats/base.py:46 reports/stats/pool_users_summary.py:62
 msgid "Pool for report"
-msgstr "Grupo para informe"
+msgstr "Pool para informe"
 
 #: reports/stats/base.py:52
 msgid "Pools"
-msgstr "Piscinas"
+msgstr "Pools"
 
 #: reports/stats/base.py:52
 msgid "Pools for report"
-msgstr "Grupos para o informe"
+msgstr "Pools para o informe"
 
 #: reports/stats/base.py:75 reports/stats/user_access.py:69
 msgid "Number of intervals"
@@ -5114,11 +5113,11 @@ msgstr "Número de puntos de mostraxe empregados nos gráficos"
 
 #: reports/stats/pool_users_summary.py:53
 msgid "Pool Usage by users"
-msgstr "Uso da piscina por parte dos usuarios"
+msgstr "Uso da pool por parte dos usuarios"
 
 #: reports/stats/pool_users_summary.py:54
 msgid "Generates a report with the summary of users usage for a pool"
-msgstr "Xera un informe co resumo do uso dos usuarios para un grupo"
+msgstr "Xera un informe co resumo do uso dos usuarios para un pool"
 
 #: reports/stats/pool_users_summary.py:141
 msgid "Users usage list for {}"
@@ -5136,15 +5135,15 @@ msgstr "Media"
 
 #: reports/stats/pools_performance.py:63
 msgid "Pools performance by date"
-msgstr "Rendemento das piscinas por data"
+msgstr "Rendemento das pools por data"
 
 #: reports/stats/pools_performance.py:64
 msgid "Pools performance report by date"
-msgstr "Informe de rendemento das piscinas por data"
+msgstr "Informe de rendemento das pools por data"
 
 #: reports/stats/pools_performance.py:75 reports/stats/usage_by_pool.py:64
 msgid "ALL POOLS"
-msgstr "TODAS AS PISCINAS"
+msgstr "TODAS AS POOLS"
 
 #: reports/stats/pools_performance.py:184
 msgid "Distinct Users"
@@ -5159,11 +5158,11 @@ msgstr "Accesos"
 
 #: reports/stats/pools_performance.py:221
 msgid "UDS Pools Performance Report"
-msgstr "Informe de rendemento das piscinas UDS"
+msgstr "Informe de rendemento das pools UDS"
 
 #: reports/stats/pools_performance.py:222
 msgid "Pools Performance"
-msgstr "Rendemento das piscinas"
+msgstr "Rendemento das pools"
 
 #: reports/stats/pools_performance.py:248 reports/stats/user_access.py:264
 #: templates/uds/reports/stats/pools-performance.html:34
@@ -5173,11 +5172,11 @@ msgstr "Rango de datas"
 
 #: reports/stats/pools_usage_day.py:58
 msgid "Pools usage on a day"
-msgstr "Uso das piscinas nun día"
+msgstr "Uso das pools nun día"
 
 #: reports/stats/pools_usage_day.py:59
 msgid "Pools usage counters for an specific day"
-msgstr "Contadores de uso de piscinas para un día específico"
+msgstr "Contadores de uso de pools para un día específico"
 
 #: reports/stats/pools_usage_day.py:114
 msgid "Services by hour"
@@ -5199,18 +5198,18 @@ msgstr "Informe de uso do servizo"
 
 #: reports/stats/pools_usage_summary.py:48
 msgid "Summary of pools usage"
-msgstr "Resumo do uso das piscinas"
+msgstr "Resumo do uso das pools"
 
 #: reports/stats/pools_usage_summary.py:50
 msgid ""
 "Summary of Pools usage with time totals, accesses totals, time total by pool"
 msgstr ""
-"Resumo do uso dos grupos con totais de tempo, totais de accesos e total de "
-"tempo por grupo"
+"Resumo do uso dos pools con totais de tempo, totais de accesos e total de "
+"tempo por pool"
 
 #: reports/stats/pools_usage_summary.py:127
 msgid "Summary of Pools usage"
-msgstr "Resumo do uso das piscinas"
+msgstr "Resumo do uso das Pools"
 
 #: reports/stats/pools_usage_summary.py:131
 #: templates/uds/reports/stats/pools-usage-summary.html:4
@@ -5220,7 +5219,7 @@ msgstr "a"
 
 #: reports/stats/pools_usage_summary.py:134
 msgid "UDS Report Summary of pools usage"
-msgstr "Resumo do uso das piscinas do informe UDS"
+msgstr "Resumo do uso das pools do informe UDS"
 
 #: reports/stats/pools_usage_summary.py:158
 msgid "Total Time (seconds)"
@@ -5246,11 +5245,11 @@ msgstr "Total"
 
 #: reports/stats/usage_by_pool.py:53
 msgid "Pools usage by users"
-msgstr "Uso das piscinas por parte dos usuarios"
+msgstr "Uso das Pools por parte dos usuarios"
 
 #: reports/stats/usage_by_pool.py:54
 msgid "Pools usage by user report"
-msgstr "Informe de uso de grupos por usuario"
+msgstr "Informe de uso de Pools por usuario"
 
 #: reports/stats/usage_by_pool.py:155
 #: templates/uds/reports/stats/usage-by-pool.html:16
@@ -5348,8 +5347,8 @@ msgid ""
 "Proxy used on server connections for HTTPS connections (use PROTOCOL://"
 "host:port, i.e. http://10.10.0.1:8080)"
 msgstr ""
-"Proxy usado nas conexións ao servidor para conexións HTTPS (use "
-"PROTOCOLO://host:porto, por exemplo http://10.10.0.1:8080)"
+"Proxy usado nas conexións ao servidor para conexións HTTPS (use PROTOCOLO://"
+"host:porto, por exemplo http://10.10.0.1:8080)"
 
 #: services/AWS_enterprise/provider.py:77
 msgid "Default region"
@@ -5964,7 +5963,7 @@ msgstr ""
 
 #: services/Morpheus_enterprise/service_fixed.py:58
 msgid "Fixed Instances Pool"
-msgstr "Grupo de instancias fixas"
+msgstr "Pool de instancias fixas"
 
 #: services/Morpheus_enterprise/service_fixed.py:60
 msgid ""
@@ -6034,8 +6033,8 @@ msgid ""
 "Memory assigned to machines. (Zero value means \"keep original machine "
 "memory\")"
 msgstr ""
-"Memoria asignada ás máquinas. (O valor cero significa "
-"\"manter a memoria orixinal da máquina\")"
+"Memoria asignada ás máquinas. (O valor cero significa \"manter a memoria "
+"orixinal da máquina\")"
 
 #: services/NutanixPrism_enterprise/service.py:91
 #: services/Nutanix_enterprise/service.py:79
@@ -6161,15 +6160,15 @@ msgstr "Servizo Nutanix baseado na Acrópole"
 #: services/Nutanix_enterprise/service.py:85
 msgid "Number of vcpus (Zero value means \"keep original machine vcpus\")"
 msgstr ""
-"Número de vcpus (o valor cero significa "
-"\"conservar os vcpus orixinais da máquina\")"
+"Número de vcpus (o valor cero significa \"conservar os vcpus orixinais da "
+"máquina\")"
 
 #: services/Nutanix_enterprise/service.py:98
 msgid ""
 "Number of vcpus (Zero value means \"keep original machine cores per vcpu\")"
 msgstr ""
-"Número de vcpu (o valor cero significa "
-"\"conservar os núcleos orixinais da máquina por vcpu\")"
+"Número de vcpu (o valor cero significa \"conservar os núcleos orixinais da "
+"máquina por vcpu\")"
 
 #: services/Nutanix_enterprise/service.py:107
 msgid ""
@@ -6641,8 +6640,8 @@ msgid ""
 "Proxy used for connection to azure for HTTPS connections (use PROTOCOL://"
 "host:port, i.e. http://10.10.0.1:8080)"
 msgstr ""
-"Proxy usado para a conexión a Azure para conexións HTTPS (use "
-"PROTOCOL://host:port, é dicir, http://10.10.0.1:8080)"
+"Proxy usado para a conexión a Azure para conexións HTTPS (use PROTOCOL://"
+"host:port, é dicir, http://10.10.0.1:8080)"
 
 #: services/OpenStack/service.py:71
 msgid "OpenStack Live Volume"
@@ -6749,7 +6748,8 @@ msgstr "Ignorar os minutos en caso de fallo"
 
 #: services/PhysicalMachines/service_multi.py:89
 msgid "If a host fails to check, skip it for this time (in minutes)."
-msgstr "Se un host non consegue comprobar, omítese por este tempo (en minutos)."
+msgstr ""
+"Se un host non consegue comprobar, omítese por este tempo (en minutos)."
 
 #: services/PhysicalMachines/service_multi.py:98
 msgid "Max session duration"
@@ -6896,7 +6896,7 @@ msgstr "Servizos de Proxmox baseados en modelos"
 
 #: services/Proxmox/service.py:114
 msgid "Pool that will contain UDS created vms"
-msgstr "Grupo que conterá as máquinas virtuais creadas por UDS"
+msgstr "Pool que conterá as máquinas virtuais creadas por UDS"
 
 #: services/Proxmox/service.py:121
 msgid "HA"
@@ -6964,12 +6964,12 @@ msgstr ""
 #: services/Vmware_enterprise/service.py:88
 #: services/Vmware_enterprise/service_fixed.py:65
 msgid "Resource Pool"
-msgstr "Grupo de recursos"
+msgstr "Pool de recursos"
 
 #: services/Proxmox/service_fixed.py:88
 #: services/Vmware_enterprise/service_fixed.py:73
 msgid "Resource Pool containing base machines"
-msgstr "Grupo de recursos que contén máquinas base"
+msgstr "Pool de recursos que contén máquinas base"
 
 #: services/RDS_enterprise/provider.py:75
 msgid "RDS Platform Provider"
@@ -7154,8 +7154,8 @@ msgstr ""
 #: services/RDS_enterprise/provider.py:268
 msgid "Select only one of \"User mapping\" or \"User creation\" methods."
 msgstr ""
-"Selecciona só un dos métodos de \"Mapeo de usuarios\" ou "
-"\"Creación de usuarios\"."
+"Selecciona só un dos métodos de \"Mapeo de usuarios\" ou \"Creación de "
+"usuarios\"."
 
 #: services/RDS_enterprise/provider.py:274
 msgid "AD User Management: you must provide the AD server host."
@@ -7253,7 +7253,8 @@ msgstr "Excluír servidores"
 
 #: services/RDS_enterprise/service.py:92
 msgid "Select the RDS Servers where this RemoteApp will not be available."
-msgstr "Seleccione os servidores RDS onde esta RemoteApp non estará dispoñible."
+msgstr ""
+"Seleccione os servidores RDS onde esta RemoteApp non estará dispoñible."
 
 #: services/RDS_enterprise/service.py:98
 msgid "Wait spawned processes"
@@ -7535,7 +7536,8 @@ msgstr "Este servizo proporciona acceso a VDI baseado en vApp"
 
 #: services/VCloud_enterprise/service.py:41
 msgid "Number of desired vApps to keep running waiting for an user"
-msgstr "Número de vApps desexadas para manter en execución á espera dun usuario"
+msgstr ""
+"Número de vApps desexadas para manter en execución á espera dun usuario"
 
 #: services/VCloud_enterprise/service.py:43
 msgid "Number of desired vApps to keep suspended waiting for use"
@@ -7659,11 +7661,11 @@ msgstr "Centro de datos que contén a máquina base"
 
 #: services/Vmware_enterprise/service.py:73
 msgid "Clones Resource Pool"
-msgstr "Grupo de recursos de clons"
+msgstr "Pool de recursos de clons"
 
 #: services/Vmware_enterprise/service.py:76
 msgid "Resource Pool where deploy clones"
-msgstr "Grupo de recursos onde se despregan os clons"
+msgstr "Pool de recursos onde se despregan os clons"
 
 #: services/Vmware_enterprise/service.py:80
 msgid "Pub. Datastores"
@@ -7675,7 +7677,7 @@ msgstr "Almacéns de datos onde colocar as publicacións"
 
 #: services/Vmware_enterprise/service.py:96
 msgid "Resource Pool containing base machine"
-msgstr "Grupo de recursos que contén a máquina base"
+msgstr "Pool de recursos que contén a máquina base"
 
 #: services/Vmware_enterprise/service.py:118
 msgid ""
@@ -7711,7 +7713,7 @@ msgstr "Almacéns de datos onde colocar as máquinas"
 
 #: services/Vmware_enterprise/service_fixed.py:35
 msgid "Fixed Machines Pool"
-msgstr "Piscina de máquinas fixas"
+msgstr "Pool de Máquinas Fixas"
 
 #: services/Vmware_enterprise/service_fixed.py:38
 msgid ""
@@ -7826,59 +7828,59 @@ msgstr "Cartafol"
 msgid "Folder containing base machines"
 msgstr "Cartafol que contén máquinas base"
 
-#: temp_for_locales.py:159
+#: temp_for_locales.py:162
 msgid "Spanish"
 msgstr "Español"
 
-#: temp_for_locales.py:160
+#: temp_for_locales.py:163
 msgid "English"
 msgstr "Inglés"
 
-#: temp_for_locales.py:161
+#: temp_for_locales.py:164
 msgid "French"
 msgstr "Francés"
 
-#: temp_for_locales.py:162
+#: temp_for_locales.py:165
 msgid "German"
 msgstr "Alemán"
 
-#: temp_for_locales.py:163
+#: temp_for_locales.py:166
 msgid "Portuguese"
 msgstr "Portugués"
 
-#: temp_for_locales.py:164
+#: temp_for_locales.py:167
 msgid "Italian"
 msgstr "Italiano"
 
-#: temp_for_locales.py:165
+#: temp_for_locales.py:168
 msgid "Dutch"
 msgstr "Holandés"
 
-#: temp_for_locales.py:166
+#: temp_for_locales.py:169
 msgid "Japanese"
 msgstr "Xaponés"
 
-#: temp_for_locales.py:167
+#: temp_for_locales.py:170
 msgid "Arabic"
 msgstr "Árabe"
 
-#: temp_for_locales.py:168
+#: temp_for_locales.py:171
 msgid "Russian"
 msgstr "Ruso"
 
-#: temp_for_locales.py:169
+#: temp_for_locales.py:172
 msgid "Basque"
 msgstr "Éuscaro"
 
-#: temp_for_locales.py:170
+#: temp_for_locales.py:173
 msgid "Catalan"
 msgstr "Catalán"
 
-#: temp_for_locales.py:171
+#: temp_for_locales.py:174
 msgid "Galician"
 msgstr "Galego"
 
-#: temp_for_locales.py:172
+#: temp_for_locales.py:175
 msgid "Chinese"
 msgstr "Chinés"
 
@@ -7905,7 +7907,7 @@ msgstr "Usuario traballando"
 #: templates/uds/reports/stats/pools-performance.html:13
 #: templates/uds/reports/stats/pools-usage-day.html:13
 msgid "Pools:"
-msgstr "Piscinas:"
+msgstr "Pools:"
 
 #: templates/uds/reports/stats/pools-performance.html:14
 msgid "Start date:"
@@ -7922,15 +7924,15 @@ msgstr "Intervalos:"
 #: templates/uds/reports/stats/pools-performance.html:19
 #: templates/uds/reports/stats/pools-usage-day.html:17
 msgid "Distinct users by pool"
-msgstr "Usuarios distintos por grupo"
+msgstr "Usuarios distintos por pool"
 
 #: templates/uds/reports/stats/pools-performance.html:23
 msgid "Accesses by pool"
-msgstr "Accesos por piscina"
+msgstr "Accesos por pool"
 
 #: templates/uds/reports/stats/pools-performance.html:28
 msgid "Users Accesses by pool/date"
-msgstr "Accesos de usuarios por grupo/data"
+msgstr "Accesos de usuarios por pool/data"
 
 #: templates/uds/reports/stats/pools-usage-day.html:14
 msgid "Date:"
@@ -7943,7 +7945,7 @@ msgstr "Asignación de servizos"
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
 msgid "Pools usage summary"
-msgstr "Resumo do uso das piscinas"
+msgstr "Resumo do uso das Pools"
 
 #: templates/uds/reports/stats/pools-usage-summary.html:4
 #: templates/uds/reports/stats/pools-usage-summary.html:6
@@ -8067,8 +8069,8 @@ msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
 msgstr ""
-"Se está marcado, o fondo de pantalla e os temas mostraranse na máquina ("
-"mellor experiencia de usuario, máis ancho de banda)"
+"Se está marcado, o fondo de pantalla e os temas mostraranse na máquina "
+"(mellor experiencia de usuario, máis ancho de banda)"
 
 #: transports/HTML5RDP/html5rdp.py:130 transports/RDP/rdp_base.py:263
 msgid "Allow Desk.Comp."
@@ -8832,8 +8834,8 @@ msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /"
 "usb:id,dev:054c:0268, or aything compatible with your xfreerdp client)"
 msgstr ""
-"Se non está baleiro, parámetro adicional para incluír para o cliente Linux ("
-"por exemplo /usb:id,dev:054c:0268 ou calquera cousa compatible co seu "
+"Se non está baleiro, parámetro adicional para incluír para o cliente Linux "
+"(por exemplo /usb:id,dev:054c:0268 ou calquera cousa compatible co seu "
 "cliente xfreerdp)"
 
 #: transports/RDP/rdp_base.py:336

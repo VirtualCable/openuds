@@ -119,7 +119,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         'version': consts.system.VERSION,
         'version_stamp': consts.system.VERSION_STAMP,
         'language': get_language(),
-        'available_languages': [{'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES],
+        'available_languages': [{'id': k, 'name': gettext(v).capitalize()} for k, v in settings.LANGUAGES],
         'authenticators': [_get_auth_info(auth) for auth in authenticators if _is_auth_visible(auth)],
         'mfa': request.session.get('mfa', None),
         'tag': tag,

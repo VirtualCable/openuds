@@ -32,6 +32,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2022
 # Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
@@ -45,9 +46,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-09 16:47+0200\n"
+"POT-Creation-Date: 2026-04-10 15:42+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Elena Mishina, 2022-2026\n"
+"Last-Translator: Александр Бурматов, 2022\n"
 "Language-Team: Russian (http://app.transifex.com/openuds/openuds/language/"
 "ru/)\n"
 "Language: ru\n"
@@ -6903,12 +6904,10 @@ msgid "Test passed"
 msgstr "Тест пройден"
 
 #: services/Proxmox/service.py:71
-#| msgid "Proxmox Linked Clone"
 msgid "Proxmox Clone"
 msgstr "Клон Proxmox"
 
 #: services/Proxmox/service.py:75
-#| msgid "Proxmox Services based on templates and COW"
 msgid "Proxmox Services based on templates"
 msgstr "Сервисы Proxmox на основе шаблонов"
 
@@ -6927,7 +6926,6 @@ msgstr ""
 "доступности для машин этой службы"
 
 #: services/Proxmox/service.py:146
-#| msgid "Use Full Clones"
 msgid "Use full clone"
 msgstr "Использовать полный клон"
 
@@ -7852,59 +7850,59 @@ msgstr "Папка"
 msgid "Folder containing base machines"
 msgstr "Папка с базовыми машинами"
 
-#: temp_for_locales.py:159
+#: temp_for_locales.py:162
 msgid "Spanish"
 msgstr "Испанский"
 
-#: temp_for_locales.py:160
+#: temp_for_locales.py:163
 msgid "English"
 msgstr "Английский"
 
-#: temp_for_locales.py:161
+#: temp_for_locales.py:164
 msgid "French"
 msgstr "Французский"
 
-#: temp_for_locales.py:162
+#: temp_for_locales.py:165
 msgid "German"
 msgstr "Немецкий"
 
-#: temp_for_locales.py:163
+#: temp_for_locales.py:166
 msgid "Portuguese"
 msgstr "Португальский"
 
-#: temp_for_locales.py:164
+#: temp_for_locales.py:167
 msgid "Italian"
 msgstr "Итальянский"
 
-#: temp_for_locales.py:165
+#: temp_for_locales.py:168
 msgid "Dutch"
 msgstr "Голландский"
 
-#: temp_for_locales.py:166
+#: temp_for_locales.py:169
 msgid "Japanese"
 msgstr "Японский"
 
-#: temp_for_locales.py:167
+#: temp_for_locales.py:170
 msgid "Arabic"
 msgstr "Арабский"
 
-#: temp_for_locales.py:168
+#: temp_for_locales.py:171
 msgid "Russian"
 msgstr "Русский"
 
-#: temp_for_locales.py:169
+#: temp_for_locales.py:172
 msgid "Basque"
 msgstr "Баскский"
 
-#: temp_for_locales.py:170
+#: temp_for_locales.py:173
 msgid "Catalan"
 msgstr "Каталонский"
 
-#: temp_for_locales.py:171
+#: temp_for_locales.py:174
 msgid "Galician"
 msgstr "галисийский"
 
-#: temp_for_locales.py:172
+#: temp_for_locales.py:175
 msgid "Chinese"
 msgstr "Китайский"
 

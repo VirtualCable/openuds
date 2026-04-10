@@ -32,6 +32,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2018
 # albert clar <albert.clar@uib.cat>, 2017-2018,2020-2021
 # Andrés Schumann <aschumann@virtualcable.es>, 2025
@@ -40,7 +41,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-09 16:47+0200\n"
+"POT-Creation-Date: 2026-04-10 15:42+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2020,2025\n"
 "Language-Team: Catalan (http://app.transifex.com/openuds/openuds/language/"
@@ -6909,12 +6910,10 @@ msgid "Test passed"
 msgstr "Prova superada"
 
 #: services/Proxmox/service.py:71
-#| msgid "Proxmox Linked Clone"
 msgid "Proxmox Clone"
 msgstr "Clon de Proxmox"
 
 #: services/Proxmox/service.py:75
-#| msgid "Proxmox Services based on templates and COW"
 msgid "Proxmox Services based on templates"
 msgstr "Serveis de Proxmox basats en plantilles"
 
@@ -6932,7 +6931,6 @@ msgstr ""
 "Seleccioneu-ho si HA està habilitat i grup HA per a màquines d’aquest servei"
 
 #: services/Proxmox/service.py:146
-#| msgid "Use Full Clones"
 msgid "Use full clone"
 msgstr "Utilitza el clon complet"
 
@@ -7861,59 +7859,59 @@ msgstr "Carpeta"
 msgid "Folder containing base machines"
 msgstr "Carpeta que conté màquines base"
 
-#: temp_for_locales.py:159
+#: temp_for_locales.py:162
 msgid "Spanish"
 msgstr "Espanyol"
 
-#: temp_for_locales.py:160
+#: temp_for_locales.py:163
 msgid "English"
 msgstr "Anglès"
 
-#: temp_for_locales.py:161
+#: temp_for_locales.py:164
 msgid "French"
 msgstr "Francès"
 
-#: temp_for_locales.py:162
+#: temp_for_locales.py:165
 msgid "German"
 msgstr "Alemany"
 
-#: temp_for_locales.py:163
+#: temp_for_locales.py:166
 msgid "Portuguese"
 msgstr "Portuguès"
 
-#: temp_for_locales.py:164
+#: temp_for_locales.py:167
 msgid "Italian"
 msgstr "Italià"
 
-#: temp_for_locales.py:165
+#: temp_for_locales.py:168
 msgid "Dutch"
 msgstr "neerlandès"
 
-#: temp_for_locales.py:166
+#: temp_for_locales.py:169
 msgid "Japanese"
 msgstr "Japonès"
 
-#: temp_for_locales.py:167
+#: temp_for_locales.py:170
 msgid "Arabic"
 msgstr "Àrab"
 
-#: temp_for_locales.py:168
+#: temp_for_locales.py:171
 msgid "Russian"
 msgstr "Rus"
 
-#: temp_for_locales.py:169
+#: temp_for_locales.py:172
 msgid "Basque"
 msgstr "Basc"
 
-#: temp_for_locales.py:170
+#: temp_for_locales.py:173
 msgid "Catalan"
 msgstr "Català"
 
-#: temp_for_locales.py:171
+#: temp_for_locales.py:174
 msgid "Galician"
 msgstr "Gallec"
 
-#: temp_for_locales.py:172
+#: temp_for_locales.py:175
 msgid "Chinese"
 msgstr "Xinès"
 

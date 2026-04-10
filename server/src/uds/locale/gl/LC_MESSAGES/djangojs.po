@@ -29,14 +29,16 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
+# David Alonso, 2026
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-09 16:47+0200\n"
+"POT-Creation-Date: 2026-04-10 15:42+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
-"Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
+"Last-Translator: David Alonso, 2026\n"
 "Language-Team: Galician (http://app.transifex.com/openuds/openuds/language/"
 "gl/)\n"
 "Language: gl\n"
@@ -236,7 +238,7 @@ msgstr "servizo"
 
 #: static/admin/main.js:9 static/admin/translations-fakejs.js:322
 msgid "service pool"
-msgstr "grupo de servizos"
+msgstr "pools de servizos"
 
 #: static/admin/main.js:9 static/admin/translations-fakejs.js:323
 msgid "authenticator"
@@ -261,7 +263,7 @@ msgstr "transporte"
 
 #: static/admin/main.js:9 static/admin/translations-fakejs.js:328
 msgid "OS manager"
-msgstr "Xestor do sistema operativo"
+msgstr "OS Manager"
 
 #: static/admin/main.js:9 static/admin/translations-fakejs.js:329
 msgid "calendar"
@@ -269,7 +271,7 @@ msgstr "calendario"
 
 #: static/admin/main.js:9 static/admin/translations-fakejs.js:330
 msgid "pool group"
-msgstr "grupo de piscinas"
+msgstr "grupo de pools"
 
 #: static/admin/main.js:9 static/admin/translations-fakejs.js:331
 msgid "Go to"
@@ -441,7 +443,7 @@ msgstr "Activo"
 #: static/admin/translations-fakejs.js:133
 #: static/admin/translations-fakejs.js:187
 msgid "Pool"
-msgstr "Piscina"
+msgstr "Pool"
 
 #: static/admin/main.js:14 static/admin/main.js:17 static/admin/main.js:18
 #: static/admin/translations-fakejs.js:117
@@ -465,7 +467,7 @@ msgstr "Servizos ao usuario"
 #: static/admin/translations-fakejs.js:412
 #: static/admin/translations-fakejs.js:570
 msgid "Service pools"
-msgstr "Grupos de servizos"
+msgstr "Pools de servizos"
 
 #: static/admin/main.js:15 static/admin/main.js:29
 #: static/admin/translations-fakejs.js:254
@@ -616,7 +618,7 @@ msgstr "IP"
 
 #: static/admin/main.js:17 static/admin/translations-fakejs.js:140
 msgid "Services Pool"
-msgstr "Piscina de servizos"
+msgstr "Pool de servizos"
 
 #: static/admin/main.js:17 static/admin/main.js:18
 #: static/admin/translations-fakejs.js:130
@@ -636,7 +638,7 @@ msgstr "Grupos"
 #: static/admin/translations-fakejs.js:442
 #: static/admin/translations-fakejs.js:448
 msgid "Services Pools"
-msgstr "Servizos Piscinas"
+msgstr "Pools de servizos"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:119
 #: static/admin/translations-fakejs.js:427
@@ -722,15 +724,15 @@ msgstr "Rexistro de clientes activado"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:245
 msgid "New OS Manager"
-msgstr "Novo xestor do sistema operativo"
+msgstr "Novo OS Manager"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:246
 msgid "Edit OS Manager"
-msgstr "Editar o xestor do sistema operativo"
+msgstr "Editar OS Manager"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:247
 msgid "Delete OS Manager"
-msgstr "Eliminar o xestor do sistema operativo"
+msgstr "Eliminar OS Manager"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:221
 msgid "New Transport"
@@ -782,11 +784,11 @@ msgstr "Retirar membro do túnel"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:39
 msgid "(This service does not requires an OS Manager)"
-msgstr "(Este servizo non require un xestor de sistema operativo)"
+msgstr "(Este servizo non require un OS Manager)"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:40
 msgid "New service Pool"
-msgstr "Nova piscina de servizos"
+msgstr "Nova pool de servizos"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:41
 msgid "Publish on creation"
@@ -799,19 +801,19 @@ msgstr ""
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:43
 msgid "Service Pool is locked"
-msgstr "O grupo de servizos está bloqueado"
+msgstr "O pool de servizos está bloqueado"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:44
 msgid "This service pool is locked and cannot be edited"
-msgstr "Este conxunto de servizos está bloqueado e non se pode editar"
+msgstr "Este pool de servizos está bloqueado e non se pode editar"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:45
 msgid "Edit Service Pool"
-msgstr "Editar o grupo de servizos"
+msgstr "Editar o pool de servizos"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:46
 msgid "Delete service pool"
-msgstr "Eliminar o grupo de servizos"
+msgstr "Eliminar o pool de servizos"
 
 #: static/admin/main.js:18 static/admin/main.js:23
 #: static/admin/translations-fakejs.js:6 static/admin/translations-fakejs.js:8
@@ -900,11 +902,11 @@ msgstr "Eliminar o servizo almacenado na caché"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:18
 msgid "Service pool is locked"
-msgstr "O grupo de servizos está bloqueado"
+msgstr "O pool de servizos está bloqueado"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:19
 msgid "Service pool is locked, no changes allowed"
-msgstr "O grupo de servizos está bloqueado, non se permiten cambios"
+msgstr "O pool de servizos está bloqueado, non se permiten cambios"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:20
 #: static/admin/translations-fakejs.js:64
@@ -950,35 +952,35 @@ msgstr "Eliminar a regra de acceso ao calendario"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:66
 msgid "New meta pool"
-msgstr "Novo metagrupo"
+msgstr "Novo meta pool"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:67
 msgid "Edit meta pool"
-msgstr "Editar metagrupo"
+msgstr "Editar meta pool"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:68
 msgid "Delete meta pool"
-msgstr "Eliminar metagrupo"
+msgstr "Eliminar meta pool"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:61
 msgid "Please, select a valid service pool"
-msgstr "Por favor, selecciona un grupo de servizos válido"
+msgstr "Por favor, selecciona un pool de servizos válido"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:62
 msgid "Remove member pool"
-msgstr "Eliminar grupo de membros"
+msgstr "Eliminar pool de membros"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:47
 msgid "New pool group"
-msgstr "Novo grupo de piscinas"
+msgstr "Novo grupo de pools"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:48
 msgid "Edit pool group"
-msgstr "Editar grupo de piscinas"
+msgstr "Editar grupo de pools"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:49
 msgid "Delete pool group"
-msgstr "Eliminar grupo de agrupacións"
+msgstr "Eliminar grupo de pools"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:69
 msgid "New calendar"
@@ -1259,13 +1261,13 @@ msgstr "Ver autenticadores"
 
 #: static/admin/translations-fakejs.js:338
 msgid "total pools"
-msgstr "piscinas totais"
+msgstr "pools totais"
 
 #: static/admin/translations-fakejs.js:339
 #: static/admin/translations-fakejs.js:342
 #: static/admin/translations-fakejs.js:344
 msgid "View service pools"
-msgstr "Ver grupos de servizos"
+msgstr "Ver pools de servizos"
 
 #: static/admin/translations-fakejs.js:340
 msgid "total services"
@@ -1467,15 +1469,15 @@ msgstr "Uso da conta"
 
 #: static/admin/translations-fakejs.js:417
 msgid "New member pool"
-msgstr "Novo grupo de membros"
+msgstr "Novo pool de membros"
 
 #: static/admin/translations-fakejs.js:418
 msgid "Edit member pool"
-msgstr "Editar o grupo de membros"
+msgstr "Editar o pool de membros"
 
 #: static/admin/translations-fakejs.js:420
 msgid "Service pool"
-msgstr "Grupo de servizos"
+msgstr "Pool de servizos"
 
 #: static/admin/translations-fakejs.js:421
 msgid "Enabled?"
@@ -1577,7 +1579,7 @@ msgstr "Omitir MFA"
 
 #: static/admin/translations-fakejs.js:481
 msgid "Service Pools"
-msgstr "Grupos de servizos"
+msgstr "Pools de servizos"
 
 #: static/admin/translations-fakejs.js:483
 msgid "Any group"
@@ -1602,7 +1604,7 @@ msgstr "Uso"
 
 #: static/admin/translations-fakejs.js:495
 msgid "Services pools"
-msgstr "Piscinas de servizos"
+msgstr "Pools de servizos"
 
 #: static/admin/translations-fakejs.js:498
 msgid "Assign new server to tunnel group"
@@ -1772,7 +1774,7 @@ msgstr "Multifactor"
 
 #: static/admin/translations-fakejs.js:564
 msgid "Os Managers"
-msgstr "Xestores de sistemas operativos"
+msgstr "OS Managers"
 
 #: static/admin/translations-fakejs.js:565
 msgid "Connectivity"
@@ -1789,11 +1791,11 @@ msgstr "Túneles"
 
 #: static/admin/translations-fakejs.js:569
 msgid "Pools"
-msgstr "Piscinas"
+msgstr "Pools"
 
 #: static/admin/translations-fakejs.js:571
 msgid "Meta pools"
-msgstr "Metagrupos"
+msgstr "Meta pools"
 
 #: static/admin/translations-fakejs.js:573
 msgid "Calendars"
