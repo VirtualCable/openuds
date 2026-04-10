@@ -1,16 +1,16 @@
 [submodule "guacamole-auth-uds"]
 	path = guacamole-auth-uds
 	url = git@github.com:VirtualCable/guacamole-auth-uds.git
-	branch = master
+	branch = v4.0
 [submodule "tunnel-server"]
 	path = tunnel-server
 	url = git@github.com:VirtualCable/uds-tunnel-server.git
-	branch = master
+	branch = v4.0
 [submodule "actor"]
 	path = actor
 	url = git@github.com:VirtualCable/uds-actor.git
-	branch = master
+	branch = v4.0
 [submodule "client-py3"]
 	path = client
 	url = git@github.com:VirtualCable/uds-client.git
-	branch = master
+	branch = v4.0
