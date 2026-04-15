@@ -132,6 +132,10 @@ class Client(Handler):
             data: dict[str, typing.Any] = TicketStore.get(ticket)
         except TicketStore.InvalidTicket:
             return Client.result(error=types.errors.Error.ACCESS_DENIED)
+        
+        if scrambler == "rdp_signature":
+            # TODO: Signt and return the RDP signed by our server cert
+            pass
 
         self._request.user = User.objects.get(uuid=data['user'])
 
