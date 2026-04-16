@@ -36,6 +36,7 @@ from django.utils.translation import gettext as _
 
 from uds import models
 from uds.core import consts, exceptions, types
+from uds.core.managers import crypto
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.exceptions.services import ServiceNotReadyError
@@ -132,10 +133,13 @@ class Client(Handler):
             data: dict[str, typing.Any] = TicketStore.get(ticket)
         except TicketStore.InvalidTicket:
             return Client.result(error=types.errors.Error.ACCESS_DENIED)
-        
+
         if scrambler == "rdp_signature":
             # TODO: Signt and return the RDP signed by our server cert
-            pass
+            try:
+                return Client.result(crypto.CryptoManager.manager().sign_rdp(ticket))
+            except Exception as e:
+                return Client.result(error=str(e))
 
         self._request.user = User.objects.get(uuid=data['user'])
 

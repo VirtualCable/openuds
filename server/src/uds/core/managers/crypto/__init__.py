@@ -54,6 +54,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from django.conf import settings
 
 from uds.core.util import singleton
+from . import rdp
 
 logger = logging.getLogger(__name__)
 
@@ -340,3 +341,10 @@ class CryptoManager(metaclass=singleton.Singleton):
             value = value.encode()
 
         return hashlib.sha3_256(value).hexdigest()
+
+    # RDP related
+    def sign_rdp(self, data: str) -> str:
+        """
+        Signs the data using the key and returns the signature.
+        """
+        return rdp.sign_rdp(data)
