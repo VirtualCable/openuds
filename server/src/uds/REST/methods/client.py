@@ -140,6 +140,8 @@ class Client(Handler):
         except TicketStore.InvalidTicket:
             return Client.result(error=types.errors.Error.ACCESS_DENIED)
 
+        self._request.user = User.objects.get(uuid=data['user'])
+
         try:
             logger.debug(data)
             info = UserServiceManager.manager().get_user_service_info(
