@@ -108,6 +108,12 @@ class Client(Handler):
         """
         return Client.result(_('Correct'))
 
+    def sign_rdp(self, rdp: str) -> dict[str, typing.Any]:
+        try:
+            return Client.result(crypto.CryptoManager.manager().sign_rdp(rdp))
+        except Exception as e:
+            return Client.result(error=str(e))
+
     def process(self, ticket: str, scrambler: str) -> dict[str, typing.Any]:
         info: typing.Optional[types.services.UserServiceInfo] = None
         hostname = self._params.get('hostname', '')  # Or if hostname is not included...
@@ -133,15 +139,6 @@ class Client(Handler):
             data: dict[str, typing.Any] = TicketStore.get(ticket)
         except TicketStore.InvalidTicket:
             return Client.result(error=types.errors.Error.ACCESS_DENIED)
-
-        if scrambler == "rdp_signature":
-            # TODO: Signt and return the RDP signed by our server cert
-            try:
-                return Client.result(crypto.CryptoManager.manager().sign_rdp(ticket))
-            except Exception as e:
-                return Client.result(error=str(e))
-
-        self._request.user = User.objects.get(uuid=data['user'])
 
         try:
             logger.debug(data)
@@ -259,6 +256,8 @@ class Client(Handler):
                         except Exception:
                             # If something goes wrong, log it as debug
                             pass
+                case 'rdp_signature':
+                    return self.sign_rdp(self._params.get('rdp') or '')
                 case _:
                     return Client.result(error='Invalid command')
 
