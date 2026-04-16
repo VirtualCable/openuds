@@ -802,7 +802,27 @@ class GlobalConfig:
         type=Config.FieldType.TEXT,
         help=_('URL to leave cookies consent'),
     )
-        
+
+    # RDP file signing
+    RDP_SIGN_CERT: Config.Value = Config.section(Config.SectionType.SECURITY).value(
+        'RDP Signing Certificate',
+        '',
+        type=Config.FieldType.LONGTEXT,
+        help=_('PEM-encoded certificate used to sign .rdp files (leaf certificate)'),
+    )
+    RDP_SIGN_KEY: Config.Value = Config.section(Config.SectionType.SECURITY).value(
+        'RDP Signing Private Key',
+        '',
+        type=Config.FieldType.LONGTEXT,
+        help=_('PEM-encoded private key corresponding to the RDP signing certificate'),
+    )
+    RDP_SIGN_CHAIN: Config.Value = Config.section(Config.SectionType.SECURITY).value(
+        'RDP Signing Certificate Chain',
+        '',
+        type=Config.FieldType.LONGTEXT,
+        help=_('PEM-encoded intermediate certificate chain for RDP signing (optional, omit for self-signed certs)'),
+    )
+
 
     @staticmethod
     def is_initialized() -> bool:

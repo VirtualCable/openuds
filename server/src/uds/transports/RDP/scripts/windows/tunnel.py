@@ -45,7 +45,8 @@ theFile = sp['as_file'].format(  # type: ignore
     password=password, address='127.0.0.1:{}'.format(fs.server_address[1])
 )
 
-theFile = tools.sign_rdp(theFile)
+if sp.get('sign_ticket'):  # type: ignore
+    theFile = tools.sign_rdp(theFile, api, sp['sign_ticket'])  # type: ignore
 
 filename = tools.saveTempFile(theFile)
 executable = tools.findApp('mstsc.exe')
