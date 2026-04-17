@@ -37,6 +37,7 @@ import collections.abc
 from django.utils.translation import gettext_noop as _
 
 from uds.core import types
+from uds.models.ticket_store import TicketStore
 
 from .rdp_base import BaseRDPTransport
 from .rdp_file import RDPFile
@@ -150,12 +151,26 @@ class RDPTransport(BaseRDPTransport):
         r.enforced_shares = self.enforce_drives.value
         r.redir_usb = self.allow_usb_redirection.value
 
+        # ticket_for_sign = TicketStore.create(None)
+
+        ticket_for_sign = TicketStore.create(
+                {
+                    'user': userservice.user.uuid if userservice.user else None,
+                    'userservice': userservice.uuid,
+                    'type': 'rdp',
+                },
+                validity=30,
+            )
+
+        logger.debug('Created ticket for RDP signing: %s', ticket_for_sign)
+
         sp: collections.abc.MutableMapping[str, typing.Any] = {
             'password': ci.password,
             'this_server': request.build_absolute_uri('/'),
             'ip': ip,
             'port': self.rdp_port.value,  # As string, because we need to use it in the template
             'address': r.address,
+            'ticket_sign': ticket_for_sign,
         }
 
         if os.os == types.os.KnownOS.WINDOWS:

@@ -183,6 +183,15 @@ class TRDPTransport(BaseRDPTransport):
         r.enforced_shares = self.enforce_drives.value
         r.redir_usb = self.allow_usb_redirection.value
 
+        ticket_for_sign = TicketStore.create(
+            {
+                'user': userservice.user.uuid if userservice.user else None,
+                'userservice': userservice.uuid,
+                'type': 'rdp',
+            },
+            validity=30,
+        )
+
         sp: collections.abc.MutableMapping[str, typing.Any] = {
             'tunHost': tunnel_host,
             'tunPort': tunnel_port,
@@ -192,6 +201,7 @@ class TRDPTransport(BaseRDPTransport):
             'password': ci.password,
             'this_server': request.build_absolute_uri('/'),
             'tunnel_key': key,
+            'ticket_sign': ticket_for_sign,
         }
 
         if os.os == types.os.KnownOS.WINDOWS:
