@@ -83,6 +83,7 @@ _RDP_SECURE_SETTINGS = [
 
 
 import base64
+import datetime
 import struct
 import typing
 import logging
@@ -90,42 +91,215 @@ from cryptography.hazmat.primitives.serialization import pkcs7, Encoding
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.backends import default_backend
 from cryptography import x509
+from cryptography.x509.oid import ExtendedKeyUsageOID
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
+from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
 
 logger = logging.getLogger(__name__)
 
-def _load_cert_key_chain():
+# PKCS7 signer only supports RSA and EC (DSA/Ed25519 not accepted by pkcs7.add_signer)
+_PrivateKey = typing.Union[RSAPrivateKey, EllipticCurvePrivateKey]
+
+# Debian/Ubuntu system CA bundle (populated by update-ca-certificates from
+# /usr/share/ca-certificates/). Used to complete chains whose root CA is
+# installed in the system trust store rather than bundled in server.pem.
+_SYSTEM_CA_BUNDLE = '/etc/ssl/certs/ca-certificates.crt'
+
+_system_trust_cache: typing.Optional[typing.List[x509.Certificate]] = None
+
+
+def _load_system_trust_store() -> typing.List[x509.Certificate]:
     """
-    Load certificate, key and chain from global configuration.
+    Load and cache the Debian system CA bundle. Returns [] if missing/unreadable.
+    """
+    global _system_trust_cache
+    if _system_trust_cache is not None:
+        return _system_trust_cache
+    path = getattr(settings, 'RDP_SIGN_CA_BUNDLE', _SYSTEM_CA_BUNDLE)
+    try:
+        with open(path, 'rb') as f:
+            _system_trust_cache = x509.load_pem_x509_certificates(f.read())
+    except (FileNotFoundError, PermissionError) as e:
+        logger.warning('System CA bundle unavailable at %s: %s', path, e)
+        _system_trust_cache = []
+    except Exception as e:
+        logger.warning('Unable to parse system CA bundle at %s: %s', path, e)
+        _system_trust_cache = []
+    return _system_trust_cache
+
+_MAX_CHAIN_DEPTH = 10
+
+
+def _verify_chain(
+    cert: x509.Certificate,
+    key: _PrivateKey,
+    chain: typing.List[x509.Certificate],
+) -> None:
+    """
+    Validate leaf + chain for RDP signing:
+      - Leaf pubkey matches private key.
+      - All certs inside validity window (notBefore/notAfter).
+      - Leaf has codeSigning EKU (required by mstsc).
+      - Chain is built order-independent by subject/issuer lookup: each hop
+        verified cryptographically via verify_directly_issued_by.
+      - Chain ends at a trust anchor: either a self-signed root bundled in
+        server.pem or a CA in the Debian system trust store
+        (/etc/ssl/certs/ca-certificates.crt).
+      - Self-signed leaf (no chain) is accepted but emits a warning, since
+        mstsc clients will show an "unknown publisher" prompt.
+    Raises ValueError on any failure.
+    """
+    now = datetime.datetime.now(datetime.timezone.utc)
+
+    # Leaf pubkey must match private key
+    if cert.public_key().public_bytes(
+        Encoding.DER, serialization.PublicFormat.SubjectPublicKeyInfo
+    ) != key.public_key().public_bytes(
+        Encoding.DER, serialization.PublicFormat.SubjectPublicKeyInfo
+    ):
+        raise ValueError('Leaf certificate public key does not match provided private key')
+
+    # Validity window for leaf + all bundled certs
+    for c in [cert, *chain]:
+        if not (c.not_valid_before_utc <= now <= c.not_valid_after_utc):
+            raise ValueError(
+                f'Certificate expired or not yet valid: {c.subject.rfc4514_string()} '
+                f'(valid {c.not_valid_before_utc} .. {c.not_valid_after_utc})'
+            )
+
+    # Leaf codeSigning EKU (mstsc requires it for .rdp signatures)
+    try:
+        eku = cert.extensions.get_extension_for_class(x509.ExtendedKeyUsage).value
+        if ExtendedKeyUsageOID.CODE_SIGNING not in eku:
+            raise ValueError('Leaf certificate missing codeSigning EKU required for RDP signing')
+    except x509.ExtensionNotFound:
+        raise ValueError('Leaf certificate missing Extended Key Usage extension (codeSigning required)')
+
+    # Special case: self-signed leaf, no intermediates. Accept with warning.
+    if not chain and cert.issuer == cert.subject:
+        try:
+            cert.verify_directly_issued_by(cert)
+        except Exception as e:
+            raise ValueError(f'Self-signed leaf signature invalid: {e}') from e
+        logger.warning(
+            'RDP signing certificate is self-signed (subject=%s). '
+            'mstsc clients will show an "unknown publisher" warning unless the '
+            'certificate is manually installed in the Windows Trusted Root store.',
+            cert.subject.rfc4514_string(),
+        )
+        return
+
+    # Split bundled chain into intermediates and self-signed bundled roots.
+    # Bundled self-signed roots act as extra trust anchors (useful for
+    # private/offline CAs not installed in the system store).
+    intermediates: typing.Dict[str, x509.Certificate] = {}
+    bundled_roots: typing.Dict[str, x509.Certificate] = {}
+    for c in chain:
+        subject_key = c.subject.rfc4514_string()
+        if c.issuer == c.subject:
+            bundled_roots[subject_key] = c
+        else:
+            intermediates[subject_key] = c
+
+    # Trust anchor index: system store + bundled roots (bundled override).
+    trust_anchors: typing.Dict[str, x509.Certificate] = {
+        c.subject.rfc4514_string(): c for c in _load_system_trust_store()
+    }
+    trust_anchors.update(bundled_roots)
+
+    # Walk: leaf → intermediate → ... → trust anchor. Crypto-verify each hop.
+    current = cert
+    for _ in range(_MAX_CHAIN_DEPTH):
+        issuer_key = current.issuer.rfc4514_string()
+
+        anchor = trust_anchors.get(issuer_key)
+        if anchor is not None:
+            try:
+                current.verify_directly_issued_by(anchor)
+            except Exception as e:
+                raise ValueError(
+                    f'Chain anchor signature invalid: {current.subject.rfc4514_string()} '
+                    f'not validly issued by trust anchor {anchor.subject.rfc4514_string()}: {e}'
+                ) from e
+            if anchor.issuer == anchor.subject:
+                try:
+                    anchor.verify_directly_issued_by(anchor)
+                except Exception as e:
+                    raise ValueError(
+                        f'Trust anchor {anchor.subject.rfc4514_string()} self-signature invalid: {e}'
+                    ) from e
+            return
+
+        nxt = intermediates.get(issuer_key)
+        if nxt is not None:
+            try:
+                current.verify_directly_issued_by(nxt)
+            except Exception as e:
+                raise ValueError(
+                    f'Chain link invalid: {current.subject.rfc4514_string()} not '
+                    f'validly issued by {nxt.subject.rfc4514_string()}: {e}'
+                ) from e
+            current = nxt
+            continue
+
+        raise ValueError(
+            f'Incomplete CA chain: issuer {current.issuer.rfc4514_string()} '
+            f'of {current.subject.rfc4514_string()} not found in bundled '
+            f'intermediates nor in system trust store'
+        )
+
+    raise ValueError(f'Chain depth exceeded {_MAX_CHAIN_DEPTH} (possible loop)')
+
+
+def _load_cert_key_chain() -> typing.Tuple[x509.Certificate, typing.Any, typing.List[x509.Certificate]]:
+    """
+    Load certificate, private key and chain from global configuration.
+    Uses cryptography.x509.load_pem_x509_certificates to robustly parse
+    all CERTIFICATE blocks regardless of surrounding content (keys, text,
+    trusted-certificate blocks, RSA/EC markers, etc).
+    Validates the chain before returning.
     """
     server_pem_path = getattr(settings, 'RDP_SIGN_CERT', '/etc/certs/server.pem')
     key_pem_path = getattr(settings, 'RDP_SIGN_KEY', '/etc/certs/key.pem')
-    with open(server_pem_path, 'r') as f:
+
+    with open(server_pem_path, 'rb') as f:
         pem_data = f.read()
-    # Split all certificate blocks
-    cert_blocks = pem_data.split('-----END CERTIFICATE-----')
-    certs = []
-    for block in cert_blocks:
-        block = block.strip()
-        if block:
-            block += '\n-----END CERTIFICATE-----\n'
-            certs.append(block)
+
+    try:
+        certs = x509.load_pem_x509_certificates(pem_data)
+    except Exception as e:
+        raise ValueError(f'Unable to parse certificates from {server_pem_path}: {e}') from e
+
     if not certs:
-        raise ValueError("No certificates found in server.pem")
-    # First block is the leaf, the rest is the chain
-    cert = x509.load_pem_x509_certificate(certs[0].encode(), default_backend())
-    chain = [x509.load_pem_x509_certificate(c.encode(), default_backend()) for c in certs[1:]] if len(certs) > 1 else []
+        raise ValueError(f'No certificates found in {server_pem_path}')
+
+    cert, chain = certs[0], certs[1:]
+
     with open(key_pem_path, 'rb') as f:
         key_pem = f.read()
-    key = serialization.load_pem_private_key(key_pem, password=None, backend=default_backend())
+    raw_key = serialization.load_pem_private_key(key_pem, password=None, backend=default_backend())
+    if not isinstance(raw_key, (RSAPrivateKey, EllipticCurvePrivateKey)):
+        raise ValueError(
+            f'Unsupported private key type for RDP signing: {type(raw_key).__name__} '
+            f'(expected RSA or EC; PKCS7 signer does not accept DSA/DH/Ed25519)'
+        )
+    key: _PrivateKey = raw_key
+
+    _verify_chain(cert, key, chain)
     return cert, key, chain
 
-def sign_rdp_settings(settings_lines: typing.List[str], cert=None, key=None, chain=None) -> typing.Tuple[str, typing.List[str]]:
+def sign_rdp_settings(
+    settings_lines: typing.List[str],
+    cert: typing.Optional[x509.Certificate] = None,
+    key: typing.Optional[_PrivateKey] = None,
+    chain: typing.Optional[typing.List[x509.Certificate]] = None,
+) -> typing.Tuple[str, typing.List[str]]:
     """
     Sign the RDP configuration lines and return (base64_signature, signnames).
     """
     # Filter and order the lines to sign
-    signlines = []
-    signnames = []
+    signlines: typing.List[str] = []
+    signnames: typing.List[str] = []
     for k, name in _RDP_SECURE_SETTINGS:
         for line in settings_lines:
             if line.startswith(k):
@@ -137,6 +311,7 @@ def sign_rdp_settings(settings_lines: typing.List[str], cert=None, key=None, cha
 
     if cert is None or key is None:
         cert, key, chain = _load_cert_key_chain()
+    assert cert is not None and key is not None  # narrow for type checker
 
     # Use PKCS7 to sign, including the chain if present
     builder = pkcs7.PKCS7SignatureBuilder().set_data(msgblob)
@@ -155,7 +330,12 @@ def sign_rdp_settings(settings_lines: typing.List[str], cert=None, key=None, cha
     sigval = base64.b64encode(msgsig).decode('ascii')
     return sigval, signnames
 
-def sign_rdp(rdp_text: str, cert=None, key=None, chain=None) -> str:
+def sign_rdp(
+    rdp_text: str,
+    cert: typing.Optional[x509.Certificate] = None,
+    key: typing.Optional[_PrivateKey] = None,
+    chain: typing.Optional[typing.List[x509.Certificate]] = None,
+) -> str:
     """
     Sign a complete RDP file (text) and return the resulting .rdp with
     the signscope:s: and signature:s: lines appended at the end.
