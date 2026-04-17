@@ -35,7 +35,7 @@ import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import types
+from uds.core import exceptions, types
 from uds.core.ui import gui
 from uds.core.util import fields
 from uds.models import TicketStore
@@ -117,10 +117,18 @@ class TRDPTransport(BaseRDPTransport):
 
     lnx_use_rdp_file = BaseRDPTransport.lnx_use_rdp_file
     mac_use_rdp_file = BaseRDPTransport.mac_use_rdp_file
-    # optimizeTeams = BaseRDPTransport.optimizeTeams
+    sign_rdp_file = BaseRDPTransport.sign_rdp_file
 
-    def initialize(self, values: 'types.core.ValuesType') -> None:
-        pass
+    def initialize(self, values: dict[str, typing.Any] | None) -> None:
+        # Check if is possible to sign with server
+        try:
+            self.check_rdp_can_be_signed()
+        except Exception as e:
+            logger.error('RDP signing is enabled but certificate chain check failed: %s', e)
+            self.sign_rdp_file.value = False
+            raise exceptions.ui.ValidationError(
+                _('RDP signing is enabled but certificate chain check failed, check logs for more details.')
+            ) from e
 
     def get_transport_script(  # pylint: disable=too-many-locals
         self,
@@ -190,7 +198,7 @@ class TRDPTransport(BaseRDPTransport):
                 'type': 'rdp',
             },
             validity=30,
-        )
+        ) if self.sign_rdp_file.as_bool() else None
 
         sp: collections.abc.MutableMapping[str, typing.Any] = {
             'tunHost': tunnel_host,

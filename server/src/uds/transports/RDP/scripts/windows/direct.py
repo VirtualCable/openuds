@@ -44,7 +44,8 @@ except Exception as e:  # nosec: Not really interested in the exception
 # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
 theFile = sp['as_file'].format(password=password)  # type: ignore
 
-theFile = tools.sign_rdp(theFile, api, sp['ticket_sign'])  # type: ignore
+if sp.get('ticket_sign'):  # type: ignore
+    theFile = tools.sign_rdp(theFile, api, sp['ticket_sign'])  # type: ignore
 
 filename = tools.saveTempFile(theFile)
 
