@@ -125,7 +125,6 @@ class TRDPTransport(BaseRDPTransport):
             self.check_rdp_can_be_signed()
         except Exception as e:
             logger.error('RDP signing is enabled but certificate chain check failed: %s', e)
-            self.sign_rdp_file.value = False
             raise exceptions.ui.ValidationError(
                 _('RDP signing is enabled but certificate chain check failed, check logs for more details.')
             ) from e
