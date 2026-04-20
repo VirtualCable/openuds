@@ -45,13 +45,6 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-# distro CA bundle locations; first existing one is merged with certifi so
-# corporate roots added via update-ca-certificates keep working
-_DISTRO_CA_BUNDLES: tuple[str, ...] = (
-    '/etc/ssl/certs/ca-certificates.crt',   # Debian/Ubuntu/Alpine
-    '/etc/pki/tls/certs/ca-bundle.crt',     # RHEL/Fedora/CentOS/SUSE
-    '/etc/ssl/cert.pem',                    # Alpine/BSD/macOS
-)
 _MAX_CHAIN_DEPTH = 10
 
 _CertLoader = typing.Callable[[bytes], list[x509.Certificate]]
@@ -104,13 +97,7 @@ def load_system_roots() -> list[x509.Certificate]:
     if override:
         paths: list[str] = [override]
     else:
-        # certifi = Mozilla roots (cross-distro baseline); merge distro bundle
-        # when present so corporate roots installed on the host are honored
         paths = [certifi.where()]
-        for p in _DISTRO_CA_BUNDLES:
-            if pathlib.Path(p).is_file():
-                paths.append(p)
-                break
 
     certs: list[x509.Certificate] = []
     seen: set[bytes] = set()
