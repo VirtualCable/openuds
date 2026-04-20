@@ -36,6 +36,7 @@ from django.utils.translation import gettext as _
 
 from uds import models
 from uds.core import consts, exceptions, types
+from uds.core.managers import crypto
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.exceptions.services import ServiceNotReadyError
@@ -106,6 +107,16 @@ class Client(Handler):
         Executes and returns the test
         """
         return Client.result(_('Correct'))
+
+    def sign_rdp(self, rdp: str) -> dict[str, typing.Any]:
+        try:
+            logger.debug('Signing RDP (input):\n%s', rdp)
+            signed = crypto.CryptoManager.manager().sign_rdp(rdp)
+            logger.debug('Signed RDP (output):\n%s', signed)
+            return Client.result(signed)
+        except Exception as e:
+            logger.exception('Error signing RDP')
+            return Client.result(error=str(e))
 
     def process(self, ticket: str, scrambler: str) -> dict[str, typing.Any]:
         info: typing.Optional[types.services.UserServiceInfo] = None
@@ -251,6 +262,8 @@ class Client(Handler):
                         except Exception:
                             # If something goes wrong, log it as debug
                             pass
+                case 'rdp_signature':
+                    return self.sign_rdp(self._params.get('rdp') or '')
                 case _:
                     return Client.result(error='Invalid command')
 

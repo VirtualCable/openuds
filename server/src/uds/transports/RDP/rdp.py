@@ -37,6 +37,8 @@ import collections.abc
 from django.utils.translation import gettext_noop as _
 
 from uds.core import types
+from uds.core import exceptions
+from uds.models.ticket_store import TicketStore
 
 from .rdp_base import BaseRDPTransport
 from .rdp_file import RDPFile
@@ -100,6 +102,17 @@ class RDPTransport(BaseRDPTransport):
 
     lnx_use_rdp_file = BaseRDPTransport.lnx_use_rdp_file
     mac_use_rdp_file = BaseRDPTransport.mac_use_rdp_file
+    sign_rdp_file = BaseRDPTransport.sign_rdp_file
+
+    def initialize(self, values: dict[str, typing.Any] | None) -> None:
+        # Check if is possible to sign with server
+        try:
+            self.check_rdp_can_be_signed()
+        except Exception as e:
+            logger.error('RDP signing is enabled but certificate chain check failed: %s', e)
+            raise exceptions.ui.ValidationError(
+                _('RDP signing is enabled but certificate chain check failed, check logs for more details.')
+            ) from e
 
     def get_transport_script(  # pylint: disable=too-many-locals
         self,
@@ -150,12 +163,26 @@ class RDPTransport(BaseRDPTransport):
         r.enforced_shares = self.enforce_drives.value
         r.redir_usb = self.allow_usb_redirection.value
 
+        # ticket_for_sign = TicketStore.create(None)
+
+        ticket_for_sign = TicketStore.create(
+            {
+                'user': userservice.user.uuid if userservice.user else None,
+                'userservice': userservice.uuid,
+                'type': 'rdp',
+            },
+            validity=30,
+        ) if self.sign_rdp_file.as_bool() else None
+
+        logger.debug('Created ticket for RDP signing: %s', ticket_for_sign)
+
         sp: collections.abc.MutableMapping[str, typing.Any] = {
             'password': ci.password,
             'this_server': request.build_absolute_uri('/'),
             'ip': ip,
             'port': self.rdp_port.value,  # As string, because we need to use it in the template
             'address': r.address,
+            'ticket_sign': ticket_for_sign,
         }
 
         if os.os == types.os.KnownOS.WINDOWS:

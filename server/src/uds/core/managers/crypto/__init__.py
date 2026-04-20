@@ -40,6 +40,7 @@ import string
 import logging
 import typing
 import secrets
+import pathlib
 
 # For password secrets
 from argon2 import PasswordHasher, Type as ArgonType
@@ -54,6 +55,8 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from django.conf import settings
 
 from uds.core.util import singleton
+from . import rdp
+from . import certs
 
 logger = logging.getLogger(__name__)
 
@@ -340,3 +343,22 @@ class CryptoManager(metaclass=singleton.Singleton):
             value = value.encode()
 
         return hashlib.sha3_256(value).hexdigest()
+    
+    # Certs related
+    def get_server_cert(self) -> str:
+        return certs.get_server_cert()
+    
+    def get_server_key(self) -> str:
+        return certs.get_server_key()
+    
+    def check_cert_chain(self, cert_chain: pathlib.Path|str|None = None) -> None:
+        return certs.check_cert_chain(cert_chain or certs.get_server_cert())
+
+    # RDP related
+    def sign_rdp(self, data: str) -> str:
+        """
+        Signs the data using the key and returns the signature.
+        """
+        return rdp.sign_rdp(data)
+    
+    

@@ -34,8 +34,12 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
+from uds.core.types.ui import Tab
 from uds.core.ui import gui
 from uds.core import transports, types
+from uds.core.managers import crypto
+
+
 from uds.models import UserService
 
 # Not imported at runtime, just for type checking
@@ -370,7 +374,19 @@ class BaseRDPTransport(transports.Transport):
         tab='Windows Client',
         old_field_name='customParametersWindows',
     )
-
+    
+    sign_rdp_file = gui.CheckBoxField(
+        label=_('Sign RDP file'),
+        order=53,
+        tooltip=_('If checked, RDP file will be signed with the server configured in crypto manager.'),
+        tab=Tab.ADVANCED,
+        default=False,
+    )
+    
+    def check_rdp_can_be_signed(self) -> None:
+        if self.sign_rdp_file.as_bool():
+            crypto.CryptoManager.manager().check_cert_chain()
+    
     def is_ip_allowed(self, userservice: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
