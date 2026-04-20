@@ -37,7 +37,7 @@ import typing
 import certifi
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.serialization import pkcs7
 from cryptography.x509.oid import ExtendedKeyUsageOID
 
@@ -45,7 +45,13 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-_SYSTEM_CA_BUNDLE = certifi.where()
+# distro CA bundle locations; first existing one is merged with certifi so
+# corporate roots added via update-ca-certificates keep working
+_DISTRO_CA_BUNDLES: tuple[str, ...] = (
+    '/etc/ssl/certs/ca-certificates.crt',   # Debian/Ubuntu/Alpine
+    '/etc/pki/tls/certs/ca-bundle.crt',     # RHEL/Fedora/CentOS/SUSE
+    '/etc/ssl/cert.pem',                    # Alpine/BSD/macOS
+)
 _MAX_CHAIN_DEPTH = 10
 
 _CertLoader = typing.Callable[[bytes], list[x509.Certificate]]
@@ -93,12 +99,32 @@ def load_system_roots() -> list[x509.Certificate]:
     global _system_trust_cache
     if _system_trust_cache is not None:
         return _system_trust_cache
-    path = getattr(settings, 'RDP_SIGN_CA_BUNDLE', _SYSTEM_CA_BUNDLE)
-    try:
-        _system_trust_cache = x509.load_pem_x509_certificates(pathlib.Path(path).read_bytes())
-    except Exception as e:
-        logger.warning('System CA bundle unavailable at %s: %s', path, e)
-        _system_trust_cache = []
+
+    override = getattr(settings, 'RDP_SIGN_CA_BUNDLE', None)
+    if override:
+        paths: list[str] = [override]
+    else:
+        # certifi = Mozilla roots (cross-distro baseline); merge distro bundle
+        # when present so corporate roots installed on the host are honored
+        paths = [certifi.where()]
+        for p in _DISTRO_CA_BUNDLES:
+            if pathlib.Path(p).is_file():
+                paths.append(p)
+                break
+
+    certs: list[x509.Certificate] = []
+    seen: set[bytes] = set()
+    for p in paths:
+        try:
+            for c in x509.load_pem_x509_certificates(pathlib.Path(p).read_bytes()):
+                fp = c.fingerprint(hashes.SHA256())
+                if fp not in seen:
+                    seen.add(fp)
+                    certs.append(c)
+        except Exception as e:
+            logger.warning('CA bundle unavailable at %s: %s', p, e)
+
+    _system_trust_cache = certs
     return _system_trust_cache
 
 
