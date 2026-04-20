@@ -34,6 +34,7 @@ import logging
 import pathlib
 import typing
 
+import certifi
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
@@ -44,7 +45,7 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-_SYSTEM_CA_BUNDLE = '/etc/ssl/certs/ca-certificates.crt'
+_SYSTEM_CA_BUNDLE = certifi.where()
 _MAX_CHAIN_DEPTH = 10
 
 _CertLoader = typing.Callable[[bytes], list[x509.Certificate]]
