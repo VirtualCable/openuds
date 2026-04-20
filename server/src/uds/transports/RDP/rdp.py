@@ -167,13 +167,13 @@ class RDPTransport(BaseRDPTransport):
         # ticket_for_sign = TicketStore.create(None)
 
         ticket_for_sign = TicketStore.create(
-                {
-                    'user': userservice.user.uuid if userservice.user else None,
-                    'userservice': userservice.uuid,
-                    'type': 'rdp',
-                },
-                validity=30,
-            )
+            {
+                'user': userservice.user.uuid if userservice.user else None,
+                'userservice': userservice.uuid,
+                'type': 'rdp',
+            },
+            validity=30,
+        ) if self.sign_rdp_file.as_bool() else None
 
         logger.debug('Created ticket for RDP signing: %s', ticket_for_sign)
 

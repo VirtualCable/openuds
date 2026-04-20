@@ -29,131 +29,142 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
+import datetime
 import logging
 import pathlib
 import typing
 
-import certifi
 from cryptography import x509
-from cryptography.x509 import load_pem_x509_certificates, NameOID
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.serialization import pkcs7
+from cryptography.x509.oid import ExtendedKeyUsageOID
 
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
+_SYSTEM_CA_BUNDLE = '/etc/ssl/certs/ca-certificates.crt'
+_MAX_CHAIN_DEPTH = 10
+
+_CertLoader = typing.Callable[[bytes], list[x509.Certificate]]
+_CERT_LOADERS: list[_CertLoader] = [
+    x509.load_pem_x509_certificates,
+    lambda d: [x509.load_der_x509_certificate(d)],
+    lambda d: list(pkcs7.load_pem_pkcs7_certificates(d)),
+    lambda d: list(pkcs7.load_der_pkcs7_certificates(d)),
+]
+
+_system_trust_cache: list[x509.Certificate] | None = None
+
 
 def get_server_cert() -> str:
-    # Get server cert from settings
     return getattr(settings, 'RDP_SIGN_CERT', '/etc/certs/server.pem')
 
 
 def get_server_key() -> str:
-    # Get server key from settings
     return getattr(settings, 'RDP_SIGN_KEY', '/etc/certs/key.pem')
 
 
-def load_pem_certificates(cert_chain: pathlib.Path | str) -> list[x509.Certificate]:
-    if isinstance(cert_chain, pathlib.Path):
-        with cert_chain.open('rb') as f:
-            pem_data = f.read()
-    else:
-        pem_data = cert_chain.encode('utf-8')
-
-    try:
-        return load_pem_x509_certificates(pem_data)
-    except Exception as e:
-        raise ValueError(f'Unable to parse certificate chain: {e}') from e
-
-
-def load_system_roots(ca_path: str) -> dict[str, x509.Certificate]:
-    """
-    Load trusted root certificates from the system store.
-    Returns a dict mapping subject RFC4514 string -> Certificate.
-    """
-    ca_file = pathlib.Path(ca_path)
-    if not ca_file.exists():
-        print(f"⚠  CA file not found: {ca_path}")
-        return {}
-
-    pem_data = ca_file.read_bytes()
-    certs = load_pem_x509_certificates(pem_data)
-
-    # Index by subject for quick lookup
-    roots: dict[str, x509.Certificate] = {}
-    for cert in certs:
-        key = cert.subject.rfc4514_string()
-        roots[key] = cert
-
-    return roots
-
-
-def cert_name(cert: x509.Certificate) -> str:
-    try:
-        cn = cert.subject.get_attributes_for_oid(NameOID.COMMON_NAME)
-        if cn:
-            return cn[0].rfc4514_string()
-    except Exception:
-        pass
-    return cert.subject.rfc4514_string()
-
-
-def cert_issuer_name(cert: x509.Certificate) -> str:
-    try:
-        cn = cert.issuer.get_attributes_for_oid(NameOID.COMMON_NAME)
-        if cn:
-            return cn[0].rfc4514_string()
-    except Exception:
-        pass
-    return cert.issuer.rfc4514_string()
-
-
-def build_chain(
-    leaf: x509.Certificate,
-    intermediates: list[x509.Certificate],
-    trusted_roots: dict[str, x509.Certificate],
-) -> tuple[list[x509.Certificate], x509.Certificate | None, list[str]]:
-    chain: list[x509.Certificate] = [leaf]
-    errors: list[str] = []
-    current = leaf
-
-    intermediate_map: dict[str, x509.Certificate] = {
-        cert.subject.rfc4514_string(): cert for cert in intermediates
-    }
-
-    MAX_DEPTH: typing.Final[int] = 10
-    for _ in range(MAX_DEPTH):
-        issuer_key = current.issuer.rfc4514_string()
-
-        if issuer_key in trusted_roots:
-            return chain, trusted_roots[issuer_key], errors
-
-        next_cert = intermediate_map.get(issuer_key)
-        if next_cert is not None:
-            chain.append(next_cert)
-            current = next_cert
+def load_certificates_any_format(data: bytes) -> list[x509.Certificate]:
+    for loader in _CERT_LOADERS:
+        try:
+            return loader(data)
+        except Exception:
             continue
+    raise ValueError('Unable to parse certificates (tried PEM, DER, PKCS7)')
 
-        errors.append(f'Missing certificate for issuer: {cert_issuer_name(current)}')
-        errors.append(f'   (needed to verify: {cert_name(current)})')
-        return chain, None, errors
 
-    errors.append('Chain too deep (possible loop)')
-    return chain, None, errors
+def load_private_key_any_format(data: bytes) -> typing.Any:
+    for loader in (serialization.load_pem_private_key, serialization.load_der_private_key):
+        try:
+            return loader(data, password=None, backend=default_backend())
+        except Exception:
+            continue
+    raise ValueError('Unable to parse private key (tried PEM, DER)')
+
+
+def load_pem_certificates(cert_chain: pathlib.Path | str) -> list[x509.Certificate]:
+    return load_certificates_any_format(pathlib.Path(cert_chain).read_bytes())
+
+
+def load_system_roots() -> list[x509.Certificate]:
+    global _system_trust_cache
+    if _system_trust_cache is not None:
+        return _system_trust_cache
+    path = getattr(settings, 'RDP_SIGN_CA_BUNDLE', _SYSTEM_CA_BUNDLE)
+    try:
+        _system_trust_cache = x509.load_pem_x509_certificates(pathlib.Path(path).read_bytes())
+    except Exception as e:
+        logger.warning('System CA bundle unavailable at %s: %s', path, e)
+        _system_trust_cache = []
+    return _system_trust_cache
+
+
+def _check_leaf_code_signing(leaf: x509.Certificate) -> None:
+    # mstsc won't accept the .rdp signature without codeSigning EKU on the leaf
+    try:
+        eku = leaf.extensions.get_extension_for_class(x509.ExtendedKeyUsage).value
+    except x509.ExtensionNotFound:
+        raise ValueError('Leaf missing Extended Key Usage extension (codeSigning required)')
+    if ExtendedKeyUsageOID.CODE_SIGNING not in eku:
+        raise ValueError('Leaf missing codeSigning EKU required for RDP signing')
+
+
+def _verify_issued_by(cert: x509.Certificate, issuer: x509.Certificate, label: str) -> None:
+    try:
+        cert.verify_directly_issued_by(issuer)
+    except Exception as e:
+        raise ValueError(
+            f'{label}: {cert.subject.rfc4514_string()} not issued by '
+            f'{issuer.subject.rfc4514_string()}: {e}'
+        ) from e
+
+
+def _walk_chain(leaf: x509.Certificate, chain: list[x509.Certificate]) -> None:
+    now = datetime.datetime.now(datetime.timezone.utc)
+    for c in (leaf, *chain):
+        if not (c.not_valid_before_utc <= now <= c.not_valid_after_utc):
+            raise ValueError(f'Certificate expired or not yet valid: {c.subject.rfc4514_string()}')
+
+    # self-signed leaf with no chain: let it pass but shout about it
+    if not chain and leaf.issuer == leaf.subject:
+        _verify_issued_by(leaf, leaf, 'Self-signed leaf signature invalid')
+        logger.warning(
+            'RDP signing certificate is self-signed (subject=%s). mstsc will show '
+            '"unknown publisher" unless installed in Windows Trusted Root store.',
+            leaf.subject.rfc4514_string(),
+        )
+        return
+
+    # system CAs + any self-signed root bundled with the leaf both count as anchors
+    intermediates: dict[str, x509.Certificate] = {}
+    anchors: dict[str, x509.Certificate] = {
+        c.subject.rfc4514_string(): c for c in load_system_roots()
+    }
+    for c in chain:
+        (anchors if c.issuer == c.subject else intermediates)[c.subject.rfc4514_string()] = c
+
+    current = leaf
+    for _ in range(_MAX_CHAIN_DEPTH):
+        issuer_key = current.issuer.rfc4514_string()
+        if (anchor := anchors.get(issuer_key)) is not None:
+            _verify_issued_by(current, anchor, 'Chain anchor signature invalid')
+            return
+        if (nxt := intermediates.get(issuer_key)) is None:
+            raise ValueError(
+                f'Incomplete chain: issuer {issuer_key} not found in intermediates nor system trust store'
+            )
+        _verify_issued_by(current, nxt, 'Chain link invalid')
+        current = nxt
+
+    raise ValueError(f'Chain depth exceeded {_MAX_CHAIN_DEPTH} (possible loop)')
 
 
 def check_cert_chain(cert_chain: pathlib.Path | str) -> None:
+    # preflight hit before signing; raises if anything's off
     certs = load_pem_certificates(cert_chain)
     if not certs:
         raise ValueError('No certificates found in certificate chain')
-
-    logger.debug('check_cert_chain: loaded %d certificates', len(certs))
-
-    leaf = certs[0]
-    chain = certs[1:]
-    trusted_roots = load_system_roots(certifi.where())
-
-    _, trusted_root, errors = build_chain(leaf, chain, trusted_roots)
-    if trusted_root is None:
-        raise ValueError(errors[0] if errors else 'Certificate chain incomplete')
-
-    logger.debug('check_cert_chain: certificate chain validated successfully')
+    _check_leaf_code_signing(certs[0])
+    _walk_chain(certs[0], certs[1:])
