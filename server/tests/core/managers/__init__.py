@@ -29,5 +29,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pyright: reportUnusedImport=false
+from . import test_certs
 from . import test_crypto
 from . import test_downloads
+from . import test_rdp
