@@ -164,9 +164,14 @@ def _walk_chain(leaf: x509.Certificate, chain: list[x509.Certificate]) -> None:
     raise ValueError(f'Chain depth exceeded {_MAX_CHAIN_DEPTH} (possible loop)')
 
 
+def check_chain(leaf: x509.Certificate, chain: list[x509.Certificate]) -> None:
+    # in-memory variant, for callers that already hold parsed certs (e.g. PKCS12)
+    _walk_chain(leaf, chain)
+
+
 def check_cert_chain(cert_chain: pathlib.Path | str) -> None:
     # preflight hit before signing; raises if anything's off
     certs = load_pem_certificates(cert_chain)
     if not certs:
         raise ValueError('No certificates found in certificate chain')
-    _walk_chain(certs[0], certs[1:])
+    check_chain(certs[0], certs[1:])

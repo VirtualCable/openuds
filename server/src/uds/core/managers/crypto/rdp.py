@@ -115,7 +115,8 @@ def _check_pubkey_matches_key(cert: x509.Certificate, key: _PrivateKey) -> None:
 
 def _load_cert_key_chain() -> tuple[x509.Certificate, _PrivateKey, list[x509.Certificate]]:
     cert_path = _certs.get_server_cert()
-    cert_data = open(cert_path, 'rb').read()
+    with open(cert_path, 'rb') as f:
+        cert_data = f.read()
 
     # try PFX first, it carries key+chain in one file
     try:
@@ -126,7 +127,7 @@ def _load_cert_key_chain() -> tuple[x509.Certificate, _PrivateKey, list[x509.Cer
 
     if p12_cert is not None and p12_key is not None:
         key = _ensure_signer_key(p12_key)
-        _certs.check_cert_chain(cert_path)
+        _certs.check_chain(p12_cert, list(p12_chain or []))
         _check_pubkey_matches_key(p12_cert, key)
         return p12_cert, key, list(p12_chain or [])
 
@@ -134,7 +135,8 @@ def _load_cert_key_chain() -> tuple[x509.Certificate, _PrivateKey, list[x509.Cer
     if not certs:
         raise ValueError(f'No certificates found in {cert_path}')
 
-    key_data = open(_certs.get_server_key(), 'rb').read()
+    with open(_certs.get_server_key(), 'rb') as f:
+        key_data = f.read()
     key = _ensure_signer_key(_certs.load_private_key_any_format(key_data))
 
     _certs.check_cert_chain(cert_path)
