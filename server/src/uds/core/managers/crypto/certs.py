@@ -39,7 +39,6 @@ from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.serialization import pkcs7
-from cryptography.x509.oid import ExtendedKeyUsageOID
 
 from django.conf import settings
 
@@ -115,16 +114,6 @@ def load_system_roots() -> list[x509.Certificate]:
     return _system_trust_cache
 
 
-def _check_leaf_code_signing(leaf: x509.Certificate) -> None:
-    # mstsc won't accept the .rdp signature without codeSigning EKU on the leaf
-    try:
-        eku = leaf.extensions.get_extension_for_class(x509.ExtendedKeyUsage).value
-    except x509.ExtensionNotFound:
-        raise ValueError('Leaf missing Extended Key Usage extension (codeSigning required)')
-    if ExtendedKeyUsageOID.CODE_SIGNING not in eku:
-        raise ValueError('Leaf missing codeSigning EKU required for RDP signing')
-
-
 def _verify_issued_by(cert: x509.Certificate, issuer: x509.Certificate, label: str) -> None:
     try:
         cert.verify_directly_issued_by(issuer)
@@ -180,5 +169,4 @@ def check_cert_chain(cert_chain: pathlib.Path | str) -> None:
     certs = load_pem_certificates(cert_chain)
     if not certs:
         raise ValueError('No certificates found in certificate chain')
-    _check_leaf_code_signing(certs[0])
     _walk_chain(certs[0], certs[1:])
