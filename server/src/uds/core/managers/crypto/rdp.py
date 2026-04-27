@@ -127,9 +127,10 @@ def _load_cert_key_chain() -> tuple[x509.Certificate, _PrivateKey, list[x509.Cer
 
     if p12_cert is not None and p12_key is not None:
         key = _ensure_signer_key(p12_key)
-        _certs.check_chain(p12_cert, list(p12_chain or []))
+        chain = list(p12_chain or [])
+        _certs.check_chain(p12_cert, chain)
         _check_pubkey_matches_key(p12_cert, key)
-        return p12_cert, key, list(p12_chain or [])
+        return p12_cert, key, chain
 
     certs = _certs.load_certificates_any_format(cert_data)
     if not certs:
