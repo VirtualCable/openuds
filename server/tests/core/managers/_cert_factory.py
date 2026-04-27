@@ -53,6 +53,33 @@ _PrivateKey = typing.Union[RSAPrivateKey, ec.EllipticCurvePrivateKey]
 _TEST_RSA_BITS = 1024
 
 
+class CertTestCase(UDSTestCase):
+    _tmpdir: tempfile.TemporaryDirectory[str]
+    tmp: pathlib.Path
+
+    def setUp(self) -> None:
+        super().setUp()
+        _certs._system_trust_cache = None  # type: ignore[attr-defined]
+        self._tmpdir = tempfile.TemporaryDirectory()
+        self.tmp = pathlib.Path(self._tmpdir.name)
+
+    def tearDown(self) -> None:
+        _certs._system_trust_cache = None  # type: ignore[attr-defined]
+        self._tmpdir.cleanup()
+        super().tearDown()
+
+    def write(self, name: str, data: bytes) -> pathlib.Path:
+        p = self.tmp / name
+        p.write_bytes(data)
+        return p
+
+    def install_trust(self, *roots: x509.Certificate) -> None:
+        bundle = self.write('trust.pem', chain_to_pem(*roots))
+        ov = override_settings(RDP_SIGN_CA_BUNDLE=str(bundle))
+        ov.enable()
+        self.addCleanup(ov.disable)
+
+
 def _name(cn: str) -> x509.Name:
     return x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, cn)])
 
@@ -152,30 +179,3 @@ def key_to_der(key: _PrivateKey) -> bytes:
 
 def chain_to_pem(*certs: x509.Certificate) -> bytes:
     return b''.join(to_pem(c) for c in certs)
-
-
-class CertTestCase(UDSTestCase):
-    _tmpdir: tempfile.TemporaryDirectory[str]
-    tmp: pathlib.Path
-
-    def setUp(self) -> None:
-        super().setUp()
-        _certs._system_trust_cache = None  # type: ignore[attr-defined]
-        self._tmpdir = tempfile.TemporaryDirectory()
-        self.tmp = pathlib.Path(self._tmpdir.name)
-
-    def tearDown(self) -> None:
-        _certs._system_trust_cache = None  # type: ignore[attr-defined]
-        self._tmpdir.cleanup()
-        super().tearDown()
-
-    def write(self, name: str, data: bytes) -> pathlib.Path:
-        p = self.tmp / name
-        p.write_bytes(data)
-        return p
-
-    def install_trust(self, *roots: x509.Certificate) -> None:
-        bundle = self.write('trust.pem', chain_to_pem(*roots))
-        ov = override_settings(RDP_SIGN_CA_BUNDLE=str(bundle))
-        ov.enable()
-        self.addCleanup(ov.disable)
