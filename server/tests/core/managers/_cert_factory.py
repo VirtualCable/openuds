@@ -28,8 +28,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# Shared cert/key factory for crypto manager tests.
-# Not a test module (filename does not start with ``test_``), so pytest skips collection.
+# Cert/key helpers for crypto manager tests. Underscore prefix keeps pytest from collecting it.
 import datetime
 import pathlib
 import secrets
@@ -50,7 +49,7 @@ from ...utils.test import UDSTestCase
 
 _PrivateKey = typing.Union[RSAPrivateKey, ec.EllipticCurvePrivateKey]
 
-# 1024 keys are insecure but ~8x faster than 2048; tests do not need real strength
+# 1024 here only because keygen dominates test runtime; not for production
 _TEST_RSA_BITS = 1024
 
 
@@ -60,6 +59,7 @@ def _name(cn: str) -> x509.Name:
 
 def make_rsa_key(size: int = _TEST_RSA_BITS) -> RSAPrivateKey:
     return rsa.generate_private_key(public_exponent=65537, key_size=size)
+
 
 
 def build_cert(
@@ -155,8 +155,6 @@ def chain_to_pem(*certs: x509.Certificate) -> bytes:
 
 
 class CertTestCase(UDSTestCase):
-    """Shared base: tmpdir for cert files + system trust cache reset + trust pin helper."""
-
     _tmpdir: tempfile.TemporaryDirectory[str]
     tmp: pathlib.Path
 

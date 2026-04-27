@@ -191,7 +191,7 @@ class RdpTest(cf.CertTestCase):
                 rdp._load_cert_key_chain()
 
     def test_sign_rdp_settings_includes_chain_in_pkcs7(self) -> None:
-        # Chain certs must be embedded in the PKCS7 SignedData so verifiers can build the path.
+        # mstsc needs intermediates inside the SignedData blob to build a path
         from cryptography.hazmat.primitives.serialization import pkcs7 as _pkcs7
         root_cert, root_key = cf.self_signed('ROOT')
         inter_cert, inter_key = cf.issue('INTER', root_cert, root_key, is_ca=True)
@@ -201,14 +201,13 @@ class RdpTest(cf.CertTestCase):
             ['full address:s:host'], cert=leaf_cert, key=leaf_key, chain=[inter_cert]
         )
         raw = base64.b64decode(sig_b64)
-        # Strip 12-byte rdpsign header → DER PKCS7
+        # skip rdpsign 12-byte header to get raw DER PKCS7
         embedded = _pkcs7.load_der_pkcs7_certificates(raw[12:])
         subjects = {c.subject for c in embedded}
         self.assertIn(leaf_cert.subject, subjects)
         self.assertIn(inter_cert.subject, subjects)
 
     def test_sign_rdp_with_ec_key(self) -> None:
-        # End-to-end with EC key (PKCS7 supports RSA + EC).
         ec_key = ec.generate_private_key(ec.SECP256R1())
         from cryptography import x509
         from cryptography.hazmat.primitives import hashes

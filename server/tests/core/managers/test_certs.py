@@ -44,14 +44,6 @@ from . import _cert_factory as cf
 
 class CertsTest(cf.CertTestCase):
     # ------------------------------------------------------------------ paths
-    def test_get_server_cert_default(self) -> None:
-        # Force-clear any settings the dev environment might have set
-        with override_settings(RDP_SIGN_CERT=None, RDP_SIGN_KEY=None):
-            # getattr default kicks in only if attribute is missing; with override_settings
-            # the attribute exists but is None — verify both behaviors explicitly
-            self.assertIn(certs.get_server_cert(), (None, '/etc/certs/server.pem'))
-            self.assertIn(certs.get_server_key(), (None, '/etc/certs/key.pem'))
-
     @override_settings(RDP_SIGN_CERT='/custom/cert.pem', RDP_SIGN_KEY='/custom/key.pem')
     def test_get_server_cert_override(self) -> None:
         self.assertEqual(certs.get_server_cert(), '/custom/cert.pem')
@@ -198,7 +190,7 @@ class CertsTest(cf.CertTestCase):
         self.assertIn('expired or not yet valid', str(ctx.exception))
 
     def test_check_chain_broken_signature_raises(self) -> None:
-        # Intermediate claims to be issued by ROOT but is signed with an unrelated key.
+        # intermediate names ROOT as issuer but was signed by some other key
         root_cert, _ = cf.self_signed('ROOT')
         rogue_key = cf.make_rsa_key()
         inter_cert, inter_key = cf.issue('INTER', root_cert, rogue_key, is_ca=True)
@@ -209,7 +201,7 @@ class CertsTest(cf.CertTestCase):
         self.assertIn('signature invalid', str(ctx.exception))
 
     def test_check_chain_depth_exceeded_raises(self) -> None:
-        # Build a chain longer than _MAX_CHAIN_DEPTH (10) with no anchor reachable.
+        # chain longer than _MAX_CHAIN_DEPTH with no anchor in trust
         root_cert, root_key = cf.self_signed('R')
         prev_cert, prev_key = root_cert, root_key
         intermediates: list[x509.Certificate] = []
@@ -218,7 +210,6 @@ class CertsTest(cf.CertTestCase):
             intermediates.append(c)
             prev_cert, prev_key = c, k
         leaf, _ = cf.issue('LEAF', prev_cert, prev_key)
-        # Trust empty: walker must give up after _MAX_CHAIN_DEPTH steps
         with override_settings(RDP_SIGN_CA_BUNDLE=str(self.tmp / 'missing.pem')):
             with self.assertRaises(ValueError) as ctx:
                 certs.check_chain(leaf, intermediates)

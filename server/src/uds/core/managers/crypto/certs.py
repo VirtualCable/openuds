@@ -125,7 +125,7 @@ def _verify_issued_by(cert: x509.Certificate, issuer: x509.Certificate, label: s
 
 
 def check_chain(leaf: x509.Certificate, chain: list[x509.Certificate]) -> None:
-    # in-memory chain validation, for callers that already hold parsed certs (e.g. PKCS12)
+    # in-memory variant — used by the PFX path where there's no on-disk chain file
     now = datetime.datetime.now(datetime.timezone.utc)
     for c in (leaf, *chain):
         if not (c.not_valid_before_utc <= now <= c.not_valid_after_utc):
