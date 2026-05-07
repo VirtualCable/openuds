@@ -34,6 +34,7 @@ import datetime
 import io
 import logging
 import typing
+from collections import defaultdict
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -77,37 +78,48 @@ class UsageByPool(StatsReport):
             pools = ServicePool.objects.all()
         else:
             pools = ServicePool.objects.filter(uuid__in=self.pool.value)
-        data: list[dict[str, typing.Any]] = []
-        for pool in pools:
-            items = (
-                StatsManager.manager()
-                .enumerate_events(
-                    stats.events.types.stats.EventOwnerType.SERVICEPOOL,
-                    (stats.events.types.stats.EventType.LOGIN, stats.events.types.stats.EventType.LOGOUT),
-                    owner_id=pool.id,
-                    since=start,
-                    to=end,
-                )
-                .order_by('stamp')
-            )
 
-            logins: dict[str, typing.Any] = {}
-            for i in items:
-                # if '\\' in i.fld1:
-                #    continue
-                full_username = i.full_username
-                if i.event_type == stats.events.types.stats.EventType.LOGIN:
-                    logins[full_username] = i.stamp
+        # Build pool id -> pool map for fast lookup
+        pool_map: dict[int, ServicePool] = {p.id: p for p in pools}
+
+        # Single query for ALL pools (eliminates N+1) + values() avoids model instantiation overhead
+        items = (
+            StatsManager.manager()
+            .enumerate_events(
+                stats.events.types.stats.EventOwnerType.SERVICEPOOL,
+                (stats.events.types.stats.EventType.LOGIN, stats.events.types.stats.EventType.LOGOUT),
+                owner_id=list(pool_map.keys()),
+                since=start,
+                to=end,
+            )
+            .order_by('stamp')
+            .values('owner_id', 'event_type', 'stamp', 'fld2', 'fld4')
+        )
+
+        # Group events by pool_id for correct LOGIN/LOGOUT pairing per pool
+        pool_events: dict[int, list[dict[str, typing.Any]]] = defaultdict(list)
+        for item in items:
+            pool_events[item['owner_id']].append(item)
+
+        data: list[dict[str, typing.Any]] = []
+        for pool_id, evts in pool_events.items():
+            pool = pool_map[pool_id]
+            logins: dict[str, int] = {}
+            for i in evts:
+                username = i['fld4']  # full_username
+                if i['event_type'] == stats.events.types.stats.EventType.LOGIN:
+                    logins[username] = i['stamp']
                 else:
-                    if full_username in logins:
-                        stamp = typing.cast(int, logins[full_username])
-                        del logins[full_username]
-                        total = i.stamp - stamp
+                    stamp = logins.pop(username, None)  # pop avoids double lookup + del
+                    if stamp is not None:
+                        total = i['stamp'] - stamp
+                        # src_ip logic: if IPv6 (contains '[') return as-is, else split port
+                        fld2 = i['fld2']
+                        origin = fld2 if '[' in fld2 else fld2.split(':')[0]
                         data.append(
                             {
-                                'name': full_username,
-                                # ipv6 handled by src_ip property
-                                'origin': i.src_ip,
+                                'name': username,
+                                'origin': origin,
                                 'date': datetime.datetime.fromtimestamp(stamp),
                                 'time': total,
                                 'pool': pool.uuid,

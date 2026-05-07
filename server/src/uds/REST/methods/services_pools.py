@@ -556,7 +556,7 @@ class ServicesPools(ModelHandler):
                 try:
                     fields['account_id'] = Account.objects.get(uuid=process_uuid(account_id)).id
                 except Exception:
-                    logger.warning('Getting account ID: %s %s', account_id)
+                    logger.warning('Getting account ID: %s', account_id)
 
             # **** IMAGE ***
             image_id = fields['image_id']
