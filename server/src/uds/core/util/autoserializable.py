@@ -702,7 +702,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
     def unmarshal(self, data: bytes) -> None:
         # Check header
         if data[: len(HEADER_BASE)] != HEADER_BASE:
-            raise ValueError('Invalid header')
+            raise ValueError(f'Invalid header: {data[: len(HEADER_BASE)]}')
 
         header = data[: len(HEADER_BASE) + VERSION_SIZE + CRC_SIZE]
         # extract version
