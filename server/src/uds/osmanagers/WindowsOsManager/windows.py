@@ -14,6 +14,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds.core import osmanagers, types
+from uds.core.managers.userservice import UserServiceManager
 from uds.core.ui import gui
 from uds.core.util import log, fields
 from uds.core.types.states import State
@@ -107,10 +108,12 @@ class WindowsOsManager(osmanagers.OSManager):
             log.log(
                 userservice,
                 types.log.LogLevel.INFO,
-                'Unused user service for too long. Removing due to OS Manager parameters.',
+                'Unused user service for too long. Releasing (logout) due to OS Manager parameters.',
                 types.log.LogSource.OSMANAGER,
             )
-            userservice.release()
+            osmanagers.OSManager.logged_out(userservice, username='unused')
+            # release_from_logout handles cache return if pool allows it, else releases
+            UserServiceManager.manager().release_from_logout(userservice)
 
     def is_persistent(self) -> bool:
         return fields.onlogout_field_is_persistent(self.on_logout)

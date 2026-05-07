@@ -34,8 +34,9 @@ from datetime import timedelta
 
 from django.db.models import Q, Count
 
-from uds.core import types
+from uds.core import types, osmanagers
 from uds.core.jobs import Job
+from uds.core.managers.userservice import UserServiceManager
 from uds.core.util import log
 from uds.core.util.config import GlobalConfig
 from uds.core.types.states import State
@@ -96,6 +97,8 @@ class AssignedAndUnused(Job):
                         us,
                         types.log.LogLevel.INFO,
                         source=types.log.LogSource.SERVER,
-                        message='Removing unused assigned service',
+                        message='Releasing (logout) unused assigned service',
                     )
-                    us.release()
+                    osmanagers.OSManager.logged_out(us, username='unused')
+                    # release_from_logout handles cache return if pool allows it, else releases
+                    UserServiceManager.manager().release_from_logout(us)
