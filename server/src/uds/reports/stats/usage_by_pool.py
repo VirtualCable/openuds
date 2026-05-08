@@ -34,8 +34,10 @@ import datetime
 import io
 import logging
 import typing
-from collections import defaultdict
 
+from django.db.models import F, Window
+from django.db.models.functions import Lag
+from django.utils import timezone
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
@@ -70,64 +72,65 @@ class UsageByPool(StatsReport):
         self.pool.set_choices(vals)
 
     def get_data(self) -> tuple[list[dict[str, typing.Any]], str]:
-        # Generate the sampling intervals and get dataUsers from db
         start = self.start_date.as_timestamp()
         end = self.end_date.as_timestamp()
         logger.debug(self.pool.value)
         if '0-0-0-0' in self.pool.value:
-            pools = ServicePool.objects.all()
+            qs = ServicePool.objects.all()
         else:
-            pools = ServicePool.objects.filter(uuid__in=self.pool.value)
+            qs = ServicePool.objects.filter(uuid__in=self.pool.value)
 
-        # Build pool id -> pool map for fast lookup
-        pool_map: dict[int, ServicePool] = {p.id: p for p in pools}
+        # (uuid, name) per pool id. values_list avoids instantiating ServicePool
+        # rows just to read 2 fields.
+        pool_map: dict[int, tuple[str, str]] = {
+            p_id: (p_uuid, p_name)
+            for p_id, p_uuid, p_name in qs.values_list('id', 'uuid', 'name')
+        }
 
-        # Single query for ALL pools (eliminates N+1) + values() avoids model instantiation overhead
+        login = stats.events.types.stats.EventType.LOGIN
+        logout = stats.events.types.stats.EventType.LOGOUT
+
+        # LOGIN/LOGOUT pairing pushed to DB via window LAG over (owner_id, fld4) ordered by stamp.
+        # Preserves "last login wins" semantics: if prev event of same (pool, user) is LOGIN -> pair.
+        # Portable across MySQL 8+, PostgreSQL, SQLite 3.25+, Oracle (ANSI window functions).
+        partition = [F('owner_id'), F('fld4')]
         items = (
             StatsManager.manager()
             .enumerate_events(
                 stats.events.types.stats.EventOwnerType.SERVICEPOOL,
-                (stats.events.types.stats.EventType.LOGIN, stats.events.types.stats.EventType.LOGOUT),
+                (login, logout),
                 owner_id=list(pool_map.keys()),
                 since=start,
                 to=end,
             )
-            .order_by('stamp')
-            .values('owner_id', 'event_type', 'stamp', 'fld2', 'fld4')
+            .annotate(
+                prev_type=Window(Lag('event_type'), partition_by=partition, order_by=[F('stamp')]),
+                prev_stamp=Window(Lag('stamp'), partition_by=partition, order_by=[F('stamp')]),
+            )
+            .values('owner_id', 'event_type', 'stamp', 'fld2', 'fld4', 'prev_type', 'prev_stamp')
         )
 
-        # Group events by pool_id for correct LOGIN/LOGOUT pairing per pool
-        pool_events: dict[int, list[dict[str, typing.Any]]] = defaultdict(list)
-        for item in items:
-            pool_events[item['owner_id']].append(item)
-
         data: list[dict[str, typing.Any]] = []
-        for pool_id, evts in pool_events.items():
-            pool = pool_map[pool_id]
-            logins: dict[str, int] = {}
-            for i in evts:
-                username = i['fld4']  # full_username
-                if i['event_type'] == stats.events.types.stats.EventType.LOGIN:
-                    logins[username] = i['stamp']
-                else:
-                    stamp = logins.pop(username, None)  # pop avoids double lookup + del
-                    if stamp is not None:
-                        total = i['stamp'] - stamp
-                        # src_ip logic: if IPv6 (contains '[') return as-is, else split port
-                        fld2 = i['fld2']
-                        origin = fld2 if '[' in fld2 else fld2.split(':')[0]
-                        data.append(
-                            {
-                                'name': username,
-                                'origin': origin,
-                                'date': datetime.datetime.fromtimestamp(stamp),
-                                'time': total,
-                                'pool': pool.uuid,
-                                'pool_name': pool.name,
-                            }
-                        )
+        for i in items:
+            if i['event_type'] != logout or i['prev_type'] != login:
+                continue
+            pool_uuid, pool_name = pool_map[i['owner_id']]
+            login_stamp = i['prev_stamp']
+            fld2 = i['fld2']
+            # ipv6 handled inline (was StatsEvents.src_ip property; we use .values()).
+            origin = fld2 if '[' in fld2 else fld2.split(':')[0]
+            data.append(
+                {
+                    'name': i['fld4'],
+                    'origin': origin,
+                    'date': timezone.make_aware(datetime.datetime.fromtimestamp(login_stamp)),
+                    'time': i['stamp'] - login_stamp,
+                    'pool': pool_uuid,
+                    'pool_name': pool_name,
+                }
+            )
 
-        return data, ','.join([p.name for p in pools])
+        return data, ','.join(name for _uuid, name in pool_map.values())
 
     def generate(self) -> bytes:
         items, poolname = self.get_data()

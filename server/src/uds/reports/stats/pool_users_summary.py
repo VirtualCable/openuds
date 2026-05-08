@@ -29,11 +29,14 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections
 import csv
 import io
 import logging
 import typing
 
+from django.db.models import F, Window
+from django.db.models.functions import Lag
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
@@ -76,48 +79,44 @@ class UsageSummaryByUsersPool(StatsReport):
         end = self.end_date.as_timestamp()
         logger.debug(self.pool.value)
 
+        login = events.types.stats.EventType.LOGIN
+        logout = events.types.stats.EventType.LOGOUT
+
+        # LOGIN/LOGOUT pairing pushed to DB via window LAG over fld4 (single pool, no need
+        # to partition by owner_id). Preserves "last login wins" semantics: only LOGOUT
+        # rows whose previous event for the same user is a LOGIN are accepted as a pair.
         items = (
             StatsManager.manager()
             .enumerate_events(
                 events.types.stats.EventOwnerType.SERVICEPOOL,
-                (events.types.stats.EventType.LOGIN, events.types.stats.EventType.LOGOUT),
+                (login, logout),
                 owner_id=pool.id,
                 since=start,
                 to=end,
             )
-            .order_by('stamp')
+            .annotate(
+                prev_type=Window(Lag('event_type'), partition_by=[F('fld4')], order_by=[F('stamp')]),
+                prev_stamp=Window(Lag('stamp'), partition_by=[F('fld4')], order_by=[F('stamp')]),
+            )
+            .values('event_type', 'stamp', 'fld4', 'prev_type', 'prev_stamp')
         )
 
-        logins: dict[str, int] = {}
-        users: dict[str, dict[str, typing.Any]] = {}
+        users: dict[str, dict[str, int]] = collections.defaultdict(
+            lambda: {'sessions': 0, 'time': 0}
+        )
         for i in items:
-            # if '\\' in i.fld1:
-            #    continue
-            username = i.fld4
-            if i.event_type == events.types.stats.EventType.LOGIN:
-                logins[username] = i.stamp
-            else:
-                if username in logins:
-                    stamp = logins[username]
-                    del logins[username]
-                    total = i.stamp - stamp
-                    if username not in users:
-                        users[username] = {'sessions': 0, 'time': 0}
-                    users[username]['sessions'] += 1
-                    users[username]['time'] += total
-                    # data.append({
-                    #    'name': i.fld4,
-                    #    'date': datetime.datetime.fromtimestamp(stamp),
-                    #    'time': total
-                    # })
+            if i['event_type'] != logout or i['prev_type'] != login:
+                continue
+            entry = users[i['fld4']]
+            entry['sessions'] += 1
+            entry['time'] += i['stamp'] - i['prev_stamp']
 
-        # Extract different number of users
         data = [
             {
                 'user': k,
                 'sessions': v['sessions'],
-                'hours': '{:.2f}'.format(float(v['time']) / 3600),
-                'average': '{:.2f}'.format(float(v['time']) / 3600 / v['sessions']),
+                'hours': '{:.2f}'.format(v['time'] / 3600),
+                'average': '{:.2f}'.format(v['time'] / 3600 / v['sessions']),
             }
             for k, v in users.items()
         ]
