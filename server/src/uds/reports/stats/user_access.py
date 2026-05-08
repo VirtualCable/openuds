@@ -36,6 +36,7 @@ import logging
 import typing
 
 import django.template.defaultfilters as filters
+from django.utils import timezone
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
@@ -68,7 +69,7 @@ class StatsReportLogin(StatsReport):
         order=4,
         label=_('Number of intervals'),
         length=3,
-        min_value=0,
+        min_value=2,
         max_value=128,
         tooltip=_('Number of sampling points used in charts'),
         default=64,
@@ -77,12 +78,7 @@ class StatsReportLogin(StatsReport):
     def get_range_data(self) -> tuple[str, list[tuple[int, int]], list[dict[str, typing.Any]]]:
         start = self.start_date.as_timestamp()
         end = self.end_date.as_timestamp()
-        if self.sampling_points.as_int() < 2:
-            self.sampling_points.value = 2
-        if self.sampling_points.as_int() > 128:
-            self.sampling_points.value = 128
-
-        sampling_points = self.sampling_points.as_int()
+        sampling_points = max(2, min(128, self.sampling_points.as_int()))
 
         # x axis label format
         if end - start > 3600 * 24 * 2:
@@ -90,33 +86,44 @@ class StatsReportLogin(StatsReport):
         else:
             x_label_format = 'SHORT_DATETIME_FORMAT'
 
-        sampling_intervals: list[tuple[int, int]] = []
         sampling_interval_seconds = (end - start) / sampling_points
+        bucket_bounds: list[tuple[int, int, int]] = []
         for i in range(sampling_points):
-            sampling_intervals.append(
-                (int(start + i * sampling_interval_seconds), int(start + (i + 1) * sampling_interval_seconds))
+            b_start = int(start + i * sampling_interval_seconds)
+            b_end = int(start + (i + 1) * sampling_interval_seconds)
+            bucket_bounds.append((b_start, b_end, (b_start + b_end) // 2))
+
+        # Single query covering the full range; bucketize in Python.
+        # Was: sampling_points queries (up to 128) doing COUNT(*) each.
+        counts = [0] * sampling_points
+        last_idx = sampling_points - 1
+        for row in (
+            StatsManager.manager()
+            .enumerate_events(
+                stats.events.types.stats.EventOwnerType.AUTHENTICATOR,
+                stats.events.types.stats.EventType.LOGIN,
+                since=start,
+                to=end,
             )
+            .values('stamp')
+        ):
+            idx = int((row['stamp'] - start) // sampling_interval_seconds)
+            if idx < 0:
+                continue
+            if idx > last_idx:
+                idx = last_idx
+            counts[idx] += 1
 
         data: list[tuple[int, int]] = []
         report_data: list[dict[str, typing.Any]] = []
-        for interval in sampling_intervals:
-            key = (interval[0] + interval[1]) // 2
-            val = (
-                StatsManager.manager()
-                .enumerate_events(
-                    stats.events.types.stats.EventOwnerType.AUTHENTICATOR,
-                    stats.events.types.stats.EventType.LOGIN,
-                    since=interval[0],
-                    to=interval[1],
-                )
-                .count()
-            )
+        for i, (b_start, b_end, key) in enumerate(bucket_bounds):
+            val = counts[i]
             data.append((key, val))
             report_data.append(
                 {
-                    'date': utils.timestamp_as_str(interval[0], 'SHORT_DATETIME_FORMAT')
+                    'date': utils.timestamp_as_str(b_start, 'SHORT_DATETIME_FORMAT')
                     + ' - '
-                    + utils.timestamp_as_str(interval[1], 'SHORT_DATETIME_FORMAT'),
+                    + utils.timestamp_as_str(b_end, 'SHORT_DATETIME_FORMAT'),
                     'users': val,
                 }
             )
@@ -130,14 +137,26 @@ class StatsReportLogin(StatsReport):
         data_week = [0] * 7
         data_hour = [0] * 24
         data_week_hour = [[0] * 24 for _ in range(7)]
-        for val in StatsManager.manager().enumerate_events(
-            stats.events.types.stats.EventOwnerType.AUTHENTICATOR, stats.events.types.stats.EventType.LOGIN, since=start, to=end
+        # Hoisted: 1 tz lookup + tz-aware fromtimestamp per row instead of
+        # make_aware() (which re-resolves the tz internally on every call).
+        tz = timezone.get_current_timezone()
+        from_ts = datetime.datetime.fromtimestamp
+        for row in (
+            StatsManager.manager()
+            .enumerate_events(
+                stats.events.types.stats.EventOwnerType.AUTHENTICATOR,
+                stats.events.types.stats.EventType.LOGIN,
+                since=start,
+                to=end,
+            )
+            .values('stamp')
         ):
-            s = datetime.datetime.fromtimestamp(val.stamp)
-            data_week[s.weekday()] += 1
-            data_hour[s.hour] += 1
-            data_week_hour[s.weekday()][s.hour] += 1
-            logger.debug('Data: %s %s', s.weekday(), s.hour)
+            s = from_ts(row['stamp'], tz)
+            wd = s.weekday()
+            hr = s.hour
+            data_week[wd] += 1
+            data_hour[hr] += 1
+            data_week_hour[wd][hr] += 1
 
         return data_week, data_hour, data_week_hour
 
@@ -150,7 +169,7 @@ class StatsReportLogin(StatsReport):
         graph1 = io.BytesIO()
         
         def _tick_fnc1(l: int) -> str:
-            return filters.date(datetime.datetime.fromtimestamp(l), x_label_format)
+            return filters.date(timezone.make_aware(datetime.datetime.fromtimestamp(l)), x_label_format)
 
         x = [v[0] for v in data]
         d: dict[str, typing.Any] = {
@@ -229,7 +248,7 @@ class StatsReportLogin(StatsReport):
                 'data': report_data,
                 'beginning': self.start_date.as_date(),
                 'ending': self.end_date.as_date(),
-                'intervals': self.sampling_points.as_int(),
+                'intervals': max(2, min(128, self.sampling_points.as_int())),
             },
             header=gettext('Users access to UDS'),
             water=gettext('UDS Report for users access'),

@@ -35,10 +35,9 @@ import datetime
 import io
 import logging
 import typing
-import collections.abc
 
 import django.template.defaultfilters as filters
-from django.db.models import Count
+from django.utils import timezone
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
@@ -77,14 +76,12 @@ class PoolPerformanceReport(StatsReport):
         ]
         self.pools.set_choices(vals)
 
-    def list_pools(self) -> collections.abc.Iterable[tuple[int, str]]:
+    def list_pools(self) -> list[tuple[int, str]]:
         if '0-0-0-0' in self.pools.value:
-            pools = ServicePool.objects.all()
+            qs = ServicePool.objects.all()
         else:
-            pools = ServicePool.objects.filter(uuid__in=self.pools.value)
-
-        for p in pools:
-            yield (p.id, p.name)
+            qs = ServicePool.objects.filter(uuid__in=self.pools.value)
+        return list(qs.values_list('id', 'name'))
 
     def get_range_data(
         self,
@@ -93,12 +90,7 @@ class PoolPerformanceReport(StatsReport):
     ]:  # pylint: disable=too-many-locals
         start = self.start_date.as_timestamp()
         end = self.end_date.as_timestamp()
-        if self.sampling_points.as_int() < 2:
-            self.sampling_points.value = 2
-        if self.sampling_points.as_int() > 128:
-            self.sampling_points.value = 128
-
-        sampling_points = self.sampling_points.as_int()
+        sampling_points = max(2, min(128, self.sampling_points.as_int()))
 
         # x axis label format
         if end - start > 3600 * 24 * 2:
@@ -106,56 +98,73 @@ class PoolPerformanceReport(StatsReport):
         else:
             x_label_format = 'SHORT_DATETIME_FORMAT'
 
-        sampling_intervals: list[tuple[int, int]] = []
         sampling_interval_seconds = (end - start) / sampling_points
+        # Precompute per-bucket (start, end, midpoint) once.
+        bucket_bounds: list[tuple[int, int, int]] = []
         for i in range(sampling_points):
-            sampling_intervals.append(
-                (int(start + i * sampling_interval_seconds), int(start + (i + 1) * sampling_interval_seconds))
-            )
-
-        # Store dataUsers for all pools
-        pools_data: list[dict[str, typing.Any]] = []
+            b_start = int(start + i * sampling_interval_seconds)
+            b_end = int(start + (i + 1) * sampling_interval_seconds)
+            bucket_bounds.append((b_start, b_end, (b_start + b_end) // 2))
 
         fld = StatsManager.manager().get_event_field_for('username')
+        pools = self.list_pools()
+        last_idx = sampling_points - 1
 
+        # Single query covering all selected pools. Bucketize in Python keyed by owner_id.
+        rows = (
+            StatsManager.manager()
+            .enumerate_events(
+                events.types.stats.EventOwnerType.SERVICEPOOL,
+                events.types.stats.EventType.ACCESS,
+                since=start,
+                to=end,
+                owner_id=[p[0] for p in pools],
+            )
+            .values('owner_id', 'stamp', fld)
+        )
+
+        distinct_users: dict[int, list[set[str]]] = {
+            p[0]: [set() for _ in range(sampling_points)] for p in pools
+        }
+        accesses_count: dict[int, list[int]] = {
+            p[0]: [0] * sampling_points for p in pools
+        }
+        for row in rows:
+            idx = int((row['stamp'] - start) // sampling_interval_seconds)
+            if idx < 0:
+                continue
+            if idx > last_idx:
+                idx = last_idx
+            owner_id = row['owner_id']
+            distinct_users[owner_id][idx].add(row[fld])
+            accesses_count[owner_id][idx] += 1
+
+        pools_data: list[dict[str, typing.Any]] = []
         report_data: list[dict[str, typing.Any]] = []
-        for p in self.list_pools():
+        for pool_id, pool_name in pools:
+            users_buckets = distinct_users[pool_id]
+            access_buckets = accesses_count[pool_id]
             data_users: list[tuple[int, int]] = []
             data_accesses: list[tuple[int, int]] = []
-            for interval in sampling_intervals:
-                key = (interval[0] + interval[1]) // 2
-                q = (
-                    StatsManager.manager()
-                    .enumerate_events(
-                        events.types.stats.EventOwnerType.SERVICEPOOL,
-                        events.types.stats.EventType.ACCESS,
-                        since=interval[0],
-                        to=interval[1],
-                        owner_id=p[0],
-                    )
-                    .values(fld)
-                    .annotate(cnt=Count(fld))
-                )
-                accesses = 0
-                for v in q:
-                    accesses += v['cnt']
-
-                data_users.append((key, len(q)))  # Store number of users
+            for i, (b_start, b_end, key) in enumerate(bucket_bounds):
+                users_n = len(users_buckets[i])
+                accesses = access_buckets[i]
+                data_users.append((key, users_n))
                 data_accesses.append((key, accesses))
                 report_data.append(
                     {
-                        'name': p[1],
-                        'date': utils.timestamp_as_str(interval[0], 'SHORT_DATETIME_FORMAT')
+                        'name': pool_name,
+                        'date': utils.timestamp_as_str(b_start, 'SHORT_DATETIME_FORMAT')
                         + ' - '
-                        + utils.timestamp_as_str(interval[1], 'SHORT_DATETIME_FORMAT'),
-                        'users': len(q),
+                        + utils.timestamp_as_str(b_end, 'SHORT_DATETIME_FORMAT'),
+                        'users': users_n,
                         'accesses': accesses,
                     }
                 )
             pools_data.append(
                 {
-                    'pool': p[0],
-                    'name': p[1],
+                    'pool': pool_id,
+                    'name': pool_name,
                     'dataUsers': data_users,
                     'dataAccesses': data_accesses,
                 }
@@ -178,7 +187,7 @@ class PoolPerformanceReport(StatsReport):
         # l is the index of the x value
         # returns the date in the x value to be used as label on the x axis
         def _tick_fnc1(l: int) -> str:
-            return filters.date(datetime.datetime.fromtimestamp(x[l]), x_label_format) if int(x[l]) >= 0 else ''
+            return filters.date(timezone.make_aware(datetime.datetime.fromtimestamp(x[l])), x_label_format) if int(x[l]) >= 0 else ''
 
         data = {
             'title': _('Distinct Users'),
@@ -194,7 +203,7 @@ class PoolPerformanceReport(StatsReport):
         x = [v[0] for v in pools_data[0]['dataAccesses']]
         
         def _tick_fnc2(l: int) -> str:
-            return filters.date(datetime.datetime.fromtimestamp(x[l]), x_label_format) if int(x[l]) >= 0 else ''
+            return filters.date(timezone.make_aware(datetime.datetime.fromtimestamp(x[l])), x_label_format) if int(x[l]) >= 0 else ''
 
         data = {
             'title': _('Accesses'),
@@ -213,10 +222,10 @@ class PoolPerformanceReport(StatsReport):
             'uds/reports/stats/pools-performance.html',
             dct={
                 'data': report_data,
-                'pools': [i[1] for i in self.list_pools()],
+                'pools': [p['name'] for p in pools_data],
                 'beginning': self.start_date.as_date(),
                 'ending': self.end_date.as_date(),
-                'intervals': self.sampling_points.as_int(),
+                'intervals': max(2, min(128, self.sampling_points.as_int())),
             },
             header=gettext('UDS Pools Performance Report'),
             water=gettext('Pools Performance'),
