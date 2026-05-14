@@ -89,6 +89,9 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
         return self._mac if self._mac and self._mac != consts.MAC_UNKNOWN else self._ip
 
     def set_ready(self) -> types.states.TaskState:
+        # Refresh _ip/_mac from the Server model so WOL uses the current MAC
+        # (older user-service records migrated from v3.6 may have an empty _mac).
+        self.update_ip()
         self.service().wakeup(self._ip, self._mac)
         return types.states.TaskState.FINISHED
 
