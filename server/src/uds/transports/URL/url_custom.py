@@ -119,9 +119,10 @@ class URLCustomTransport(transports.Transport):
         # Fix username/password acording to os manager
         username: str = user.get_username_for_auth()
         username, password = userservice.process_user_password(username, password)
+        mac = userservice.get_unique_id()
 
         return self.update_link_window(
-            self.url_pattern.value.replace('_IP_', ip).replace('_USER_', username),
+            self.url_pattern.value.replace('_IP_', ip).replace('_USER_', username).replace('_MAC_', mac),
             on_same_window=self.force_new_window.value == 'overwrite',
             on_new_window=self.force_new_window.value == 'true',
             uuid=userservice.service_pool.uuid if self.force_new_window.value == 'true' else None,
