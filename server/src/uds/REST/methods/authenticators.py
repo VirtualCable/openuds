@@ -64,7 +64,7 @@ class Authenticators(ModelHandler):
     # Custom get method "search" that requires authenticator id
     custom_methods = [('search', True)]
     detail = {'users': Users, 'groups': Groups}
-    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'mfa_id:_', 'state']
+    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'mfa_id:_', 'state', 'net_filtering']
 
     table_title = _('Authenticators')
     table_fields = [
