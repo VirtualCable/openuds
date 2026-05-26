@@ -9,16 +9,30 @@ import subprocess
 from uds import tools  # type:  ignore
 from uds.tunnel import forward  # type: ignore
 
-remoteViewer = '/Applications/RemoteViewer.app/Contents/MacOS/RemoteViewer'
+remoteViewerPaths = [
+    '/Applications/RemoteViewer.app/Contents/MacOS/RemoteViewer',
+    '/opt/homebrew/bin/remote-viewer',
+    '/usr/local/bin/remote-viewer',
+]
 
-if not os.path.isfile(remoteViewer):
+remoteViewer = None
+for path in remoteViewerPaths:
+    if os.path.isfile(path):
+        remoteViewer = path
+        break
+
+if not remoteViewer:
     raise Exception(
         '''<p>You need to have installed virt-viewer to connect to this UDS service.</p>
 <p>
     Please, install appropriate package for your system.
 </p>
 <p>
-    <a href="https://ports.macports.org/port/virt-viewer/">Open download page</a>
+    You can install it via Homebrew:<br/>
+    <code>brew install virt-viewer</code>
+</p>
+<p>
+    Or download it from <a href="https://ports.macports.org/port/virt-viewer/">MacPorts</a>.
 </p>
 <p>
     Please, note that in order to UDS Connector to work correctly, you must copy the Remote Viewer app to your Applications Folder.<br/>
