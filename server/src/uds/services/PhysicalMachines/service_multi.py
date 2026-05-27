@@ -279,5 +279,5 @@ class IPMachinesService(services.Service):
 
     # Phisical machines does not have "real" providers, so
     # always is available
-    def is_avaliable(self) -> bool:
+    def is_available(self) -> bool:
         return True

@@ -338,7 +338,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
     def get_console_connection(self, vmid: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         return self.provider().api.get_console_connection_info(vmid)
 
-    def is_avaliable(self) -> bool:
+    def is_available(self) -> bool:
         return self.provider().is_available()
 
     def try_graceful_shutdown(self) -> bool:

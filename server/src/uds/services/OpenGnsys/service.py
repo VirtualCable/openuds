@@ -203,5 +203,5 @@ class OGService(services.Service):
     def try_start_if_unavailable(self) -> bool:
         return self.start_if_unavailable.as_bool()
 
-    def is_avaliable(self) -> bool:
+    def is_available(self) -> bool:
         return self.provider().is_available()

@@ -102,7 +102,7 @@ class TestOpenstackService(UDSTransactionTestCase):
                 service.api.delete_server(server.id)
                 api.delete_server.assert_called_once_with(server.id)
 
-                self.assertTrue(service.is_avaliable())
+                self.assertTrue(service.is_available())
                 api.is_available.assert_called_once_with()
 
                 self.assertEqual(service.get_basename(), service.basename.value)
