@@ -70,8 +70,9 @@ kind = ''
 logger.debug('Searching for UDSRDP')
 udsrdp = tools.findApp('udsrdp')  # type: ignore
 if udsrdp and os.path.isfile(udsrdp):  # type: ignore
-    logger.debug('UDSRDP found: %s', udsrdp)
-    executable = udsrdp  # type: ignore
+    udsrdp_path = typing.cast(str, udsrdp)
+    logger.debug('UDSRDP found: %s', udsrdp_path)
+    executable = udsrdp_path
     kind = 'udsrdp'
 
 # If UDSRDP not found, search Thincast
@@ -171,7 +172,7 @@ if kind == 'msrdc':
     )
     tools.addFileToUnlink(filename + '.rdp') # type: ignore
 
-if kind == 'thincast':
+elif kind == 'thincast':
     if sp['as_file']:  # type: ignore
         theFile = sp['as_file'] # type: ignore
         theFile = theFile.format( # type: ignore
