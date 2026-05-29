@@ -70,9 +70,8 @@ kind = ''
 logger.debug('Searching for UDSRDP')
 udsrdp = tools.findApp('udsrdp')  # type: ignore
 if udsrdp and os.path.isfile(udsrdp):  # type: ignore
-    udsrdp_path = typing.cast(str, udsrdp)
-    logger.debug('UDSRDP found: %s', udsrdp_path)
-    executable = udsrdp_path
+    logger.debug('UDSRDP found: %s', udsrdp)
+    executable = udsrdp  # type: ignore
     kind = 'udsrdp'
 
 # If UDSRDP not found, search Thincast
