@@ -222,6 +222,10 @@ class ServicePoolStats:
     l1_cache_count: int
     l2_cache_count: int
     assigned_count: int
+    # True when the service uses "snapshot back to cache": assigned machines will be
+    # reverted to their snapshot and returned to L1 cache on logout, so they reserve a
+    # cache slot and the cache must not be grown to replace them (would exceed the size).
+    snapshot_reuse: bool = False
 
     def has_l1_cache_overflow(self) -> bool:
         """Checks if L1 cache is overflown
@@ -253,9 +257,13 @@ class ServicePoolStats:
             return False
 
         l1_assigned_count = self.l1_cache_count + self.assigned_count
+        # In snapshot reuse mode, assigned machines return to L1 cache on logout, so they
+        # already reserve a cache slot. Count them against cache_l1_srvs so we do not grow
+        # the cache to replace them (which would push the pool over the configured size).
+        l1_cache_for_growth = l1_assigned_count if self.snapshot_reuse else self.l1_cache_count
         return l1_assigned_count < self.servicepool.max_srvs and (
             l1_assigned_count < self.servicepool.initial_srvs
-            or self.l1_cache_count < self.servicepool.cache_l1_srvs
+            or l1_cache_for_growth < self.servicepool.cache_l1_srvs
         )
 
     def has_l2_cache_overflow(self) -> bool:
