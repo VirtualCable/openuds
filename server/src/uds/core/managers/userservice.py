@@ -373,8 +373,6 @@ class UserServiceManager(metaclass=singleton.Singleton):
         ):
             return types.services.ServicePoolStats.null()  # No cache needed for this servicepool
 
-        service_instance = servicepool.service.get_instance()
-
         servicepool.userservices.update()  # Cleans cached queries
 
         # If this deployedService don't have a publication active and needs it, ignore it
@@ -427,10 +425,6 @@ class UserServiceManager(metaclass=singleton.Singleton):
             l1_cache_count=counts['l1_cache_count'] + l1_cache_increased_by,
             l2_cache_count=counts['l2_cache_count'] + l2_cache_increased_by,
             assigned_count=counts['assigned_count'] + assigned_increased_by,
-            # In "snapshot back to cache" mode the assigned machines will return to L1
-            # cache on logout (reverted to their snapshot), so they reserve a cache slot
-            # and must be taken into account to not grow the cache over the configured size.
-            snapshot_reuse=getattr(service_instance, 'restore_snapshot_on_back_to_cache', lambda: False)(),
         )
 
         # if we bypasses max cache, we will reduce it in first place. This is so because this will free resources on service provider
@@ -546,28 +540,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
             return
 
         servicepool = userservice.deployed_service
-        service_instance = servicepool.service.get_instance()
 
-        # In "snapshot back to cache" mode we prefer to revert the SAME machine to its
-        # snapshot and return it to L1 cache (reuse), instead of destroying it.
-        # Returning an assigned machine to L1 does not change the total amount of services
-        # (it only moves from "assigned" to "L1"), so max_srvs is respected by construction.
-        # We only need to ensure we do not exceed the configured L1 cache size: if the cache
-        # is already full, the machine is released (destroyed) to keep the cache within limits.
-        if getattr(service_instance, 'restore_snapshot_on_back_to_cache', lambda: False)():
-            l1_cache_count = (
-                servicepool.cached_users_services()
-                .filter(self.get_cache_state_filter(servicepool, types.services.CacheLevel.L1))
-                .count()
-            )
-            if l1_cache_count < servicepool.cache_l1_srvs:
-                # There is room in L1 cache: revert to snapshot and return this machine to cache
-                self.forced_move_assigned_to_cache_l1(userservice)
-            else:
-                userservice.release()  # Cache already at its configured size, destroy it
-            return
-
-        # Fix assigned value, because "userservice" will not count as assigned anymore
+        # Fix assigned value, because "userservice" will not count as assigned anymore.
+        # The same cache overflow/growth logic decides whether to return the machine to
+        # cache or destroy it. For snapshot pools, the move-to-cache queue additionally
+        # reverts the machine to its snapshot (BACK_TO_CACHE_SNAPSHOT_RECOVER).
         stats = self.get_cache_servicepool_stats(servicepool, assigned_increased_by=-1)
 
         # Note that only moves to cache L1
@@ -576,6 +553,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             userservice.release()  # Mark as removable
         elif stats.is_l1_cache_growth_required():
             # Move the clone of the user service to cache, and set our as REMOVED
+            # (for snapshot pools, this also reverts the machine to its snapshot)
             self.forced_move_assigned_to_cache_l1(userservice)
 
     def get_existing_assignation_for_user(
