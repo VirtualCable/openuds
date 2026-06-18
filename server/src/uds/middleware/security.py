@@ -100,7 +100,7 @@ def _process_response(
             "default-src 'self' 'unsafe-inline' 'unsafe-eval' uds: udss:; "
             "style-src 'self' 'unsafe-inline'; "
             "img-src 'self' https: data:; object-src 'none'; base-uri 'self'; "
-            "frame-ancestors 'none'; form-action 'self';"
+            "frame-ancestors 'none';"
         )
     return response
 
