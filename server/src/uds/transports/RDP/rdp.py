@@ -215,7 +215,7 @@ class RDPTransport(BaseRDPTransport):
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                     'as_rdp_url': r.as_rdp_url if self.mac_allow_msrdc.as_bool() else '',
-                    'as_file': r.as_file if self.mac_use_rdp_file.as_bool() else '',
+                    'as_file': r.as_file if self.mac_allow_msrdc.as_bool() or self.mac_use_rdp_file.as_bool() else '',
                     'address': r.address,
                 }
             )
