@@ -153,7 +153,7 @@ if kind == 'msrdc':
     tools.addFileToUnlink(filename + '.rdp') # type: ignore
 
 
-if kind == 'thincast':
+elif kind == 'thincast':
     if sp['as_file']:  # type: ignore
         theFile = sp['as_file']  # type: ignore
         filename = tools.saveTempFile(theFile) # type: ignore

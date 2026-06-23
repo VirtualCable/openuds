@@ -29,6 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections
 import logging
 import typing
 
@@ -171,13 +172,12 @@ class MetaAssignedService(DetailHandler):
             ]
         ):
             for m in parent.members.filter(enabled=True):
-                properties: dict[str, typing.Any] = {
-                    k: v
-                    for k, v in models.Properties.objects.filter(
-                        owner_type='userservice',
-                        owner_id__in=m.pool.assigned_user_services().values_list('uuid', flat=True),
-                    ).values_list('key', 'value')
-                }
+                properties: dict[str, dict[str, typing.Any]] = collections.defaultdict(dict)
+                for id, key, value in models.Properties.objects.filter(
+                    owner_type='userservice',
+                    owner_id__in=m.pool.assigned_user_services().values_list('uuid', flat=True),
+                ).values_list('owner_id', 'key', 'value'):
+                    properties[id][key] = value
                 for u in (
                     m.pool.assigned_user_services()
                     .filter(state__in=State.VALID_STATES)
