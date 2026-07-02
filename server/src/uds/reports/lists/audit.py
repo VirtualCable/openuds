@@ -36,6 +36,7 @@ import logging
 import re
 import typing
 
+from django.db.models import Q
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
@@ -82,25 +83,28 @@ class ListReportAuditCSV(ListReport):
         rx = re.compile(
             r'(?P<ip>[^\[ ]*) *(?P<user>.*?): \[(?P<method>[^/]*)/(?P<response_code>[^\]]*)\] (?P<request>.*)'
         )
+        # Marker of config-change entries stored as plain "logs" (from uds.REST.methods.config)
+        CONFIG_MARKER = 'Updating config value '
 
         start = self.start_date.as_datetime().replace(hour=0, minute=0, second=0, microsecond=0)
         end = self.end_date.as_datetime().replace(hour=23, minute=59, second=59, microsecond=999999)
         for i in Log.objects.filter(
+            Q(source=types.log.LogSource.REST)
+            | Q(source=types.log.LogSource.LOGS, data__contains=CONFIG_MARKER),
             created__gte=start,
             created__lte=end,
-            source=types.log.LogSource.REST,
             owner_type=types.log.LogObjectType.SYSLOG,
         ).order_by('-created'):
             # extract user, method, response_code and request from data field
             m = rx.match(i.data)
-        
+
             if m:
                 code: str = m.group('response_code')
                 try:
                     code_grp = int(code) // 100
                 except Exception:
                     code_grp = 500
-                    
+
                 response_code = code + '/' + {
                     '200': 'OK',
                     '400': 'Bad Request',
@@ -118,7 +122,7 @@ class ListReportAuditCSV(ListReport):
                     5: 'Server Error',
                 }.get(code_grp, 'Unknown')
                 )
-                
+
                 yield (
                     i.created,
                     m.group('ip'),
@@ -126,6 +130,19 @@ class ListReportAuditCSV(ListReport):
                     m.group('method'),
                     response_code,
                     m.group('request'),
+                )
+            elif CONFIG_MARKER in i.data:
+                # Config change logged as plain "logs" entry:
+                #   uds.REST.methods.config:put 55 Updating config value <section>.<key> to <value> by <user>
+                what = i.data[i.data.index(CONFIG_MARKER) + len(CONFIG_MARKER) :]
+                value, _sep, user = what.rpartition(' by ')
+                yield (
+                    i.created,
+                    '',  # no ip recorded for config-change logs
+                    user if _sep else '',
+                    'CONFIG',
+                    '',
+                    CONFIG_MARKER + (value if _sep else what),
                 )
 
     def generate(self) -> bytes:
