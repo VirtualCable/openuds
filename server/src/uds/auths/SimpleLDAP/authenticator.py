@@ -187,8 +187,10 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
     def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
         if values:
+            self.certificate.value = self.certificate.value.strip()
             auth_utils.validate_regex_field(self.username_attr)
-            validators.validate_certificate(self.certificate.value)
+            if self.certificate.value:
+                validators.validate_certificate(self.certificate.value)
 
     def unmarshal(self, data: bytes) -> None:
         if not data.startswith(b'v'):
@@ -310,10 +312,10 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     def _get_groups(self, user: ldaputil.LDAPResultType) -> list[str]:
         """
         Searchs for the groups the user belongs to and returns a list of group names
-        
+
         Args:
             user (ldaputil.LDAPResultType): The user to search for groups
-            
+
         Returns:
             list[str]: A list of group names the user belongs to
         """
@@ -479,89 +481,51 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         except Exception:
             return types.core.TestResult(False, _('Ldap search base is incorrect'))
 
+        def ensure_at_least_one(filter: str, error_msg: str) -> None:
+            try:
+                if (
+                    len(
+                        ensure.as_list(
+                            con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
+                                base=self.ldap_base.as_str(),
+                                scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
+                                filterstr=filter,
+                                attrlist=['dn'],
+                                attrsonly=True,
+                                sizelimit=1,
+                            )
+                        )
+                    )
+                    != 1
+                ):
+                    raise Exception(error_msg)
+            except ldap.SIZELIMIT_EXCEEDED as e:   # type: ignore
+                # Fine, more than one, but at least one found
+                pass
+
         try:
-            if (
-                len(
-                    ensure.as_list(
-                        con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
-                            base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
-                            filterstr=f'(objectClass={self.user_class.as_str()})',
-                            sizelimit=1,
-                        )
-                    )
-                )
-                != 1
-            ):
-                raise Exception(_('Ldap user class seems to be incorrect (no user found by that class)'))
-
-            if (
-                len(
-                    ensure.as_list(
-                        con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
-                            base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
-                            filterstr=f'(objectClass={self.group_class.as_str()})',
-                            sizelimit=1,
-                        )
-                    )
-                )
-                != 1
-            ):
-                raise Exception(_('Ldap group class seems to be incorrect (no group found by that class)'))
-
-            if (
-                len(
-                    ensure.as_list(
-                        con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
-                            base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
-                            filterstr=f'({self.user_id_attr.as_str()}=*)',
-                            sizelimit=1,
-                        )
-                    )
-                )
-                != 1
-            ):
-                raise Exception(
-                    _('Ldap user id attribute seems to be incorrect (no user found by that attribute)')
-                )
-
-            if (
-                len(
-                    ensure.as_list(
-                        con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
-                            base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
-                            filterstr=f'({self.group_id_attr.as_str()}=*)',
-                            sizelimit=1,
-                        )
-                    )
-                )
-                != 1
-            ):
-                raise Exception(
-                    _('Ldap group id attribute seems to be incorrect (no group found by that attribute)')
-                )
-
-            if (
-                len(
-                    ensure.as_list(
-                        con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
-                            base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
-                            filterstr=f'(&(objectClass={self.user_class.as_str()})({self.user_id_attr.as_str()}=*))',
-                            sizelimit=1,
-                        )
-                    )
-                )
-                != 1
-            ):
-                raise Exception(
-                    _(
-                        'Ldap user class or user id attr is probably wrong (can\'t find any user with both conditions)'
-                    )
-                )
+            ensure_at_least_one(
+                f'(objectClass={self.user_class.as_str()})',
+                _('Ldap user class seems to be incorrect (no user found by that class)'),
+            )
+            ensure_at_least_one(
+                f'(objectClass={self.group_class.as_str()})',
+                _('Ldap group class seems to be incorrect (no group found by that class)'),
+            )
+            ensure_at_least_one(
+                f'({self.user_id_attr.as_str()}=*)',
+                _('Ldap user id attribute seems to be incorrect (no user found by that attribute)'),
+            )
+            ensure_at_least_one(
+                f'({self.group_id_attr.as_str()}=*)',
+                _('Ldap group id attribute seems to be incorrect (no group found by that attribute)'),
+            )
+            ensure_at_least_one(
+                f'(&(objectClass={self.user_class.as_str()})({self.user_id_attr.as_str()}=*))',
+                _(
+                    'Ldap user class or user id attr is probably wrong (can\'t find any user with both conditions)'
+                ),
+            )
 
             res = ensure.as_list(
                 con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
