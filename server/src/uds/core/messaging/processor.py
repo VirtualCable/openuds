@@ -81,7 +81,8 @@ class MessageProcessorThread(BaseThread):
             # Locate all notifications from "persistent" and try to process them
             # If no notification can be fully resolved, it will be kept in the database
             not_before = sql_now() - datetime.timedelta(seconds=DO_NOT_REPEAT.as_int())
-            for n in Notification.get_persistent_queryset().all():
+            # Process remaining notifications, but only 100 at a time, to avoid locking the database for too long
+            for n in Notification.get_persistent_queryset().all()[:128]:
                 # If there are any other notification simmilar to this on default db, skip it
                 # Simmilar means that group, identificator and message are already been logged less than DO_NOT_REPEAT seconds ago
                 # from last time
