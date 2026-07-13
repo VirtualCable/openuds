@@ -312,6 +312,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         )
         if state.is_runing() and cache.is_usable():
             cache.set_state(State.PREPARING)
+        else:
+            cache.set_state(State.USABLE)
 
         # Data will be serialized on makeUnique process
         UserServiceOpChecker.make_unique(cache, state)
@@ -340,7 +342,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         log.log(user_service_copy, types.log.LogLevel.INFO, 'Service moved to cache')
 
         # Now, move the original to cache, but do it "hard" way, so we do not need to check for state
-        user_service.state = State.USABLE
+        user_service.state = State.PREPARING  # move_to_level will set real final state depending on the result of the operation
         user_service.os_state = State.USABLE
         user_service.user = None
         user_service.cache_level = types.services.CacheLevel.L1
