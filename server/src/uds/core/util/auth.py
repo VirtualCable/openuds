@@ -34,6 +34,7 @@ import collections.abc
 import re
 import unicodedata
 import logging
+import unicodedata
 
 from uds.core import ui, exceptions
 from uds.core.util import ensure
@@ -70,6 +71,29 @@ def normalize_username(username: str) -> str:
         return username
     username = ''.join(ch for ch in username if unicodedata.category(ch) not in _INVISIBLE_CATEGORIES)
     return unicodedata.normalize('NFC', username).strip()
+
+
+# Characters that should never end up in a user identifier:
+#   Cc  = control (NUL, TAB, ...)
+#   Cf  = format (BOM U+FEFF, ZWSP U+200B, ZWNJ U+200C, ZWJ U+200D, RTL/LTR marks, soft hyphen U+00AD, ...)
+#   Cs  = surrogate (invalid in Python str)
+_INVISIBLE_CATEGORIES = frozenset({'Cc', 'Cf', 'Cs'})
+
+
+def normalize_username(username: str) -> str:
+    """
+    Returns a canonical form of ``username`` so visually identical strings compare equal.
+
+    Strips invisible / formatting / control code points that some IdPs or copy-paste
+    sources embed in attribute values (BOM U+FEFF, ZWSP U+200B, soft hyphen U+00AD,
+    RTL/LTR marks, ...), applies NFKC compatibility decomposition (fullwidth → ASCII,
+    ligatures decomposed), and trims surrounding whitespace. Does not alter case.
+    """
+    if not username:
+        return username
+    username = unicodedata.normalize('NFKC', username)
+    username = ''.join(ch for ch in username if unicodedata.category(ch) not in _INVISIBLE_CATEGORIES)
+    return username.strip()
 
 
 def validate_regex_field(field: ui.gui.TextField, field_value: typing.Optional[str] = None) -> None:

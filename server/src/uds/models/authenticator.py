@@ -37,6 +37,7 @@ from django.db import models
 
 from uds.core import auths, environment, consts, ui
 from uds.core.util import log, net
+from uds.core.util.auth import normalize_username
 from uds.core.types.states import State
 
 from .managed_object_model import ManagedObjectModel
@@ -168,6 +169,9 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         Raises:
         """
         user: 'User'
+        # Strip BOM / zero-width / control chars before lookup so visually identical
+        # usernames (e.g. from IdP attrs or copy-paste) collapse to one DB row.
+        username = normalize_username(username)
         realname = realname or username
         user, _ = self.users.get_or_create(
             name=username,
