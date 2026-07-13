@@ -48,8 +48,18 @@ def test_normalize_username() -> None:
     assert normalize_username('\u200calice\u200d@example.com') == clean
     assert normalize_username('alice\u00ad@example.com') == clean  # soft hyphen
 
-    # NFKC: fullwidth -> ASCII
-    assert normalize_username('\uff41\uff4c\uff49\uff43\uff45') == 'alice'
+    # NFC: a decomposed accent composes, so it matches the precomposed form
+    assert normalize_username('jose\u0301') == 'jos\u00e9'
+    # ... even when an invisible char was blocking the composition
+    assert normalize_username('jose\u200d\u0301') == 'jos\u00e9'
+
+    # And the result is stable: normalizing twice changes nothing
+    for dirty in ('jose\u200d\u0301', '\ufeffalice@example.com', 'a\u200blice@example.com'):
+        assert normalize_username(normalize_username(dirty)) == normalize_username(dirty)
+
+    # NFC and not NFKC: compatibility chars are *different* identities, do not fold them
+    # into ASCII (that would merge two distinct directory users into one UDS user)
+    assert normalize_username('\uff41\uff4c\uff49\uff43\uff45') == '\uff41\uff4c\uff49\uff43\uff45'
 
     # Control / NUL
     assert normalize_username('bob\x00-x') == 'bob-x'
