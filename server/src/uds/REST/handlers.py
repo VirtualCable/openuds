@@ -40,6 +40,7 @@ from uds.core import consts, types
 from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import root_user
 from uds.core.util import net
+from uds.core.util.auth import normalize_username
 from uds.models import Authenticator, User
 from uds.core.managers.crypto import CryptoManager
 
@@ -373,7 +374,9 @@ class Handler:
         ):
             return root_user()
 
-        return Authenticator.objects.get(pk=auth_id).users.get(name=username)
+        # Normalized as in Authenticator.get_or_create_user: the stored row is clean, so
+        # a session username carrying invisible chars would not match it
+        return Authenticator.objects.get(pk=auth_id).users.get(name=normalize_username(username))
 
     def get_param(self, *names: str) -> str:
         """

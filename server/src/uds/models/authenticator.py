@@ -214,7 +214,10 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         This is done so we can check non existing or non blocked users (state != Active, or do not exists)
         """
         try:
-            usr: 'User' = self.users.get(name=username)
+            # Same normalization as get_or_create_user, or a polluted username coming from
+            # the IdP would not match the (already clean) stored row and the user would be
+            # treated as non existing
+            usr: 'User' = self.users.get(name=normalize_username(username))
             return State.from_str(usr.state).is_active()
         except Exception:
             return not_allowed_return_value
