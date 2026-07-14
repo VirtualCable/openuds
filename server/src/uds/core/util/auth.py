@@ -32,12 +32,44 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 import collections.abc
 import re
+import unicodedata
 import logging
 
 from uds.core import ui, exceptions
 from uds.core.util import ensure
 
 logger = logging.getLogger(__name__)
+
+# Characters that should never end up in a user identifier:
+#   Cc  = control (NUL, TAB, ...)
+#   Cf  = format (BOM U+FEFF, ZWSP U+200B, ZWNJ U+200C, ZWJ U+200D, RTL/LTR marks, soft hyphen U+00AD, ...)
+#   Cs  = surrogate (invalid in Python str)
+_INVISIBLE_CATEGORIES = frozenset({'Cc', 'Cf', 'Cs'})
+
+
+def normalize_username(username: str) -> str:
+    """
+    Returns a canonical form of ``username`` so visually identical strings compare equal.
+
+    Strips invisible / formatting / control code points that some IdPs or copy-paste
+    sources embed in attribute values (BOM U+FEFF, ZWSP U+200B, soft hyphen U+00AD,
+    RTL/LTR marks, ...), composes the result (NFC) and trims surrounding whitespace.
+    Does not alter case.
+
+    NFC and not NFKC: compatibility folding maps distinct code points onto the same
+    ASCII (fullwidth ｊohn → john, Ⅰsabel → Isabel), so two *different* identities of
+    the directory would collapse into a single UDS user, and one would inherit the
+    other's groups and assigned services.
+
+    Composing *after* the strip and not before is not cosmetic: an invisible char
+    between a base letter and its combining mark blocks composition, so normalizing
+    first would leave "e" + U+0301 decomposed once the ZWJ is removed, and it would
+    no longer match the precomposed "é" the next login sends.
+    """
+    if not username:
+        return username
+    username = ''.join(ch for ch in username if unicodedata.category(ch) not in _INVISIBLE_CATEGORIES)
+    return unicodedata.normalize('NFC', username).strip()
 
 
 def validate_regex_field(field: ui.gui.TextField, field_value: typing.Optional[str] = None) -> None:

@@ -47,7 +47,7 @@ from django.utils.translation import gettext as _
 from uds import models
 from uds.core import auths, consts, exceptions, types
 from uds.core.auths import Authenticator as AuthenticatorInstance, callbacks
-from uds.core.util import config, log, net
+from uds.core.util import config, log, net, auth as auth_utils
 from uds.core.util.stats import events
 from uds.core.managers.crypto import CryptoManager
 
@@ -275,6 +275,7 @@ def authenticate(
         request (ExtendedHttpRequestWithUser): Request object
 
     """
+    username = auth_utils.normalize_username(username)
     logger.debug('Authenticating user %s with authenticator %s', username, authenticator)
 
     # If global root auth is enabled && user/password is correct,
