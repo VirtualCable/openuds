@@ -107,8 +107,8 @@ def get_attributes_regex_field(field: 'ui.gui.TextField|str') -> set[str]:
         # If attributes concateated with +, add all
         if '+' in attr:
             res.update(attr.split('+'))
-        elif ':' in attr:  # lower precedence than +
-            res.add(attr.split(':')[0])
+        elif ':' in attr:  # lower precedence than +; "prefix:attr" — request the actual attribute
+            res.add(attr.split(':', 1)[1])
         else:  # If not, add the attribute
             res.add(attr)
 
@@ -148,6 +148,10 @@ def process_regex_field(
                     # Prepend the value after : to attribute value before :
                     attr, prependable = attr_name.split('**')
                     val = [prependable + a for a in ensure.as_list(attributes.get(attr, []))]
+                elif ':' in attr_name:
+                    # "prefix:attr" — look up attr, prepend prefix to each value (e.g. alumno:alum + "S" -> "alumnoS")
+                    prefix, attr = attr_name.split(':', 1)
+                    val = [prefix + a for a in ensure.as_list(attributes.get(attr, []))]
                 else:
                     val = ensure.as_list(attributes.get(attr_name, []))
                 return val
