@@ -107,6 +107,8 @@ def get_attributes_regex_field(field: 'ui.gui.TextField|str') -> set[str]:
         # If attributes concateated with +, add all
         if '+' in attr:
             res.update(attr.split('+'))
+        elif '**' in attr:  # lower precedence than +; "attr**prefix" — request the actual attribute
+            res.add(attr.split('**', 1)[0])
         elif ':' in attr:  # lower precedence than +; "prefix:attr" — request the actual attribute
             res.add(attr.split(':', 1)[1])
         else:  # If not, add the attribute
