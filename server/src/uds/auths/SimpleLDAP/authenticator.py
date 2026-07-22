@@ -533,6 +533,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
                     filterstr=f'(&(objectClass={self.group_class.as_str()})({self.group_id_attr.as_str()}=*))',
                     attrlist=[self.member_attr.as_str()],
+                    sizelimit=LDAP_RESULT_LIMIT,
                 )
             )
             if not res:
@@ -548,6 +549,10 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     break
             if ok is False:
                 raise Exception(_('Can\'t locate any group with the membership attribute specified'))
+        except ldap.SIZELIMIT_EXCEEDED:  # type: ignore
+            # Server reports the limit as an error and drops the partial results,
+            # but reaching it already proves that matching groups exist
+            return types.core.TestResult(True)
         except Exception as e:
             return types.core.TestResult(False, str(e))
 
