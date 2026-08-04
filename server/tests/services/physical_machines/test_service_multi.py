@@ -63,6 +63,20 @@ class TestServiceMulti(UDSTransactionTestCase):
         )
         self.assertEqual(service.randomize_host.value, fixtures.SERVICE_MULTI_VALUES_DICT['randomize_host'])
 
+    def test_userservices_limit(self) -> None:
+        service = fixtures.create_service_multi()
+        # userservices_limit is recovered on unmarshal, so simulate a load from db
+        service.unmarshal(service.marshal())
+        self.assertEqual(service.userservices_limit, len(fixtures.SERVER_GROUP_IPS_MACS))
+
+        # Machines on maintenance are ALSO counted, the limit is the number of registered machines
+        server = fields.get_server_group_from_field(service.server_group).servers.all()[0]
+        server.maintenance_mode = True
+        server.save(update_fields=['maintenance_mode'])
+
+        service.unmarshal(service.marshal())
+        self.assertEqual(service.userservices_limit, len(fixtures.SERVER_GROUP_IPS_MACS))
+
     def test_service_is_available(self) -> None:
         """
         Test the provider
