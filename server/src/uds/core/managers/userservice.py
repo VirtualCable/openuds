@@ -346,6 +346,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
         user_service.src_hostname = user_service.src_ip = ''
         user_service.save()
 
+        # Execute back operations to move to level 1 (runs the move-to-cache queue,
+        # which for "snapshot" put_back_to_cache triggers the snapshot recovery op)
+        user_service.move_to_level(types.services.CacheLevel.L1)
+
     def get_cache_servicepool_stats(
         self,
         servicepool: ServicePool,
@@ -368,8 +372,6 @@ class UserServiceManager(metaclass=singleton.Singleton):
             or servicepool.service.provider.maintenance_mode is True
         ):
             return types.services.ServicePoolStats.null()  # No cache needed for this servicepool
-
-        service_instance = servicepool.service.get_instance()
 
         servicepool.userservices.update()  # Cleans cached queries
 
@@ -413,12 +415,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
         assigned_filter = self.get_cache_state_filter(servicepool, types.services.CacheLevel.NONE)
 
         counts: dict[str, int] = servicepool.userservices.aggregate(
-            l1_cache_count=Count(Case(When(l1_cache_filter, then=1), output_field=IntegerField()))
-            + l1_cache_increased_by,
-            l2_cache_count=Count(Case(When(l2_cache_filter, then=1), output_field=IntegerField()))
-            + l2_cache_increased_by,
-            assigned_count=Count(Case(When(assigned_filter, then=1), output_field=IntegerField()))
-            + assigned_increased_by,
+            l1_cache_count=Count(Case(When(l1_cache_filter, then=1), output_field=IntegerField())),
+            l2_cache_count=Count(Case(When(l2_cache_filter, then=1), output_field=IntegerField())),
+            assigned_count=Count(Case(When(assigned_filter, then=1), output_field=IntegerField())),
         )
 
         pool_stat = types.services.ServicePoolStats(
@@ -540,8 +539,13 @@ class UserServiceManager(metaclass=singleton.Singleton):
             userservice.release()
             return
 
-        # Fix assigned value, because "userservice" will not count as assigned anymore
-        stats = self.get_cache_servicepool_stats(userservice.deployed_service, assigned_increased_by=-1)
+        servicepool = userservice.deployed_service
+
+        # Fix assigned value, because "userservice" will not count as assigned anymore.
+        # The same cache overflow/growth logic decides whether to return the machine to
+        # cache or destroy it. For snapshot pools, the move-to-cache queue additionally
+        # reverts the machine to its snapshot (BACK_TO_CACHE_SNAPSHOT_RECOVER).
+        stats = self.get_cache_servicepool_stats(servicepool, assigned_increased_by=-1)
 
         # Note that only moves to cache L1
         # Also, we can get values for L2 cache, thats why we check L1 for overflow and needed
@@ -549,6 +553,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             userservice.release()  # Mark as removable
         elif stats.is_l1_cache_growth_required():
             # Move the clone of the user service to cache, and set our as REMOVED
+            # (for snapshot pools, this also reverts the machine to its snapshot)
             self.forced_move_assigned_to_cache_l1(userservice)
 
     def get_existing_assignation_for_user(

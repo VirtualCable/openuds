@@ -34,7 +34,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core import services, types
+from uds.core import exceptions, services, types
 from uds.core.ui import gui
 from uds.core.util import fields, validators
 from uds.workers.deferred_deleter import DeferredDeletionWorker
@@ -100,10 +100,35 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         if values:
             validators.validate_basename(self.basename.value, self.lenname.value)
 
+            if self.has_field('put_back_to_cache') and self.put_back_to_cache.value == 'snapshot':
+                if not self.has_field('try_soft_shutdown'):
+                    raise exceptions.ui.ValidationError(_('Snapshot on back to cache is not supported'))
+                if not self.try_soft_shutdown.value:
+                    raise exceptions.ui.ValidationError(
+                        _('Snapshot on back to cache is not supported if try soft shutdown is not enabled')
+                    )
+
     def allow_putting_back_to_cache(self) -> bool:
         if self.has_field('put_back_to_cache'):
-            return self.put_back_to_cache.value == 'yes'
+            return self.put_back_to_cache.value != 'no'
         return False
+
+    def restore_snapshot_on_back_to_cache(self) -> bool:
+        if self.has_field('put_back_to_cache'):
+            return self.put_back_to_cache.value == 'snapshot'
+        return False
+
+    def snapshot_creation(self, userservice_instance: 'DynamicUserService') -> None:
+        """
+        Creates a snapshot for the machine
+        """
+        return
+
+    def snapshot_recovery(self, userservice_instance: 'DynamicUserService') -> None:
+        """
+        Removes the snapshot for the machine
+        """
+        return
 
     def get_basename(self) -> str:
         return self.basename.value

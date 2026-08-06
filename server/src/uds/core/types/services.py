@@ -162,6 +162,10 @@ class Operation(enum.IntEnum):
     NOP = 1101
     RETRY = 1102  # Do not have executors, inserted to retry operation and recognize it
 
+    # Snapshot operations for "put back to cache" 1150-1199
+    BACK_TO_CACHE_SNAPSHOT_CREATE = 1150
+    BACK_TO_CACHE_SNAPSHOT_RECOVER = 1151
+
     # Custom validations 2000-2999
     DESTROY_VALIDATOR = 2000  # Check if the userservice has an vmid to stop destroying it if needed
 
