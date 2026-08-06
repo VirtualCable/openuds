@@ -146,7 +146,7 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
     def provider(self) -> 'AnyOpenStackProvider':
         return typing.cast('AnyOpenStackProvider', super().provider())
 
-    def is_avaliable(self) -> bool:
+    def is_available(self) -> bool:
         return self.provider().is_available()
 
     def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:

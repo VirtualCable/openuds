@@ -84,17 +84,17 @@ class TestXenLinkedService(UDSTestCase):
             api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
 
-            self.assertTrue(service.is_avaliable())
+            self.assertTrue(service.is_available())
             api.test.assert_called_with()
             # With data cached, even if test fails, it will return True
             api.test.side_effect = Exception('Testing exception')
-            self.assertTrue(service.is_avaliable())
+            self.assertTrue(service.is_available())
 
             # Data is cached, so we need to reset it
             api.test.reset_mock()
             service.provider().is_available.cache_clear()  # type: ignore
             # Now should return False as we have reset the cache
-            self.assertFalse(service.is_avaliable())
+            self.assertFalse(service.is_available())
             api.test.assert_called_with()
 
     def test_start_deploy_of_template(self) -> None:

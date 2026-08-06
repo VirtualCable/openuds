@@ -265,7 +265,7 @@ class Service(Module):
         """
         return self._provider
 
-    def is_avaliable(self) -> bool:
+    def is_available(self) -> bool:
         """
         Returns if this service is reachable (that is, we can operate with it). This is used, for example, to check
         if a service is "operable" before removing an user service (pass from "waiting for removal" to "removing")
