@@ -486,7 +486,7 @@ class DynamicTestingService(dynamic_service.DynamicService):
         caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
         *,
-        force_new: bool = False,
+        for_unique_id: bool = False,
     ) -> str:
         self.mock.get_mac(caller_instance, vmid)
         return '02:04:06:08:0A:0C'
@@ -689,7 +689,7 @@ class DynamicTestingServiceForDeferredDeletion(dynamic_service.DynamicService):
         caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
         *,
-        force_new: bool = False,
+        for_unique_id: bool = False,
     ) -> str:
         return ''
 
