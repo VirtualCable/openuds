@@ -152,7 +152,7 @@ class TestProxmoxFixedService(UDSTransactionTestCase):
             fixtures.SNAPSHOTS_INFO.clear()
             service.snapshot_creation(userservice_instance)
             api.get_current_vm_snapshot.assert_called_with(int(vmid))
-            api.create_snapshot.assert_called_with(int(vmid), name='UDS Snapshot')
+            api.create_snapshot.assert_called_with(int(vmid), name='UDS_Snapshot')
 
             # Skip snapshot creation
             api.reset_mock()
