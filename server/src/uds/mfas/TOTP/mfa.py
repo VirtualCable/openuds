@@ -127,7 +127,6 @@ class TOTP_MFA(mfas.MFA):
         if data is None:
             data = (pyotp.random_base32(), False)
             self._save_user_data(userid, data)
-            logger.info("TOTP: New secret issued for user [%s]", userid)
         return data
 
     def _save_user_data(self, userid: str, data: tuple[str, bool]) -> None:
@@ -178,11 +177,6 @@ class TOTP_MFA(mfas.MFA):
         validity: typing.Optional[int] = None,
     ) -> 'mfas.MFA.RESULT':
         if self.ask_for_otp(request) is False:
-            logger.info(
-                "TOTP: Access allowed to user [%s] from IP [%s] without OTP, network is on the allowed list",
-                userid,
-                request.ip,
-            )
             return mfas.MFA.RESULT.ALLOWED
 
         # The data is provided by an external source, so we need to process anything on the request
@@ -198,11 +192,6 @@ class TOTP_MFA(mfas.MFA):
         validity: typing.Optional[int] = None,
     ) -> None:
         if self.ask_for_otp(request) is False:
-            logger.info(
-                "TOTP: Validation skipped for user [%s] from IP [%s], network is on the allowed list",
-                userid,
-                request.ip,
-            )
             return
 
         if self.cache.get(userid + code) is not None:
@@ -215,23 +204,22 @@ class TOTP_MFA(mfas.MFA):
         secret, qr_has_been_shown = self._user_data(userid)
 
         # Validate code
-        # The server time and the valid window are traced because a rejected code is, most of the time,
-        # a clock drift between the client and this server. The code itself is never traced, only its length.
         now = sql_now()
-        is_valid = self.get_totp(userid, username).verify(
+        if not self.get_totp(userid, username).verify(
             code, valid_window=self.valid_window.as_int(), for_time=now
-        )
-        logger.info(
-            "TOTP: Validation of user [%s] from IP [%s] returned [%s]. Code length [%d], "
-            "valid window [%d], server time [%s]",
-            userid,
-            request.ip,
-            is_valid,
-            len(code),
-            self.valid_window.as_int(),
-            now.isoformat(),
-        )
-        if not is_valid:
+        ):
+            # Only rejected codes are traced. The server time and the valid window go with them because a
+            # rejection is, most of the time, a clock drift between the client and this server.
+            # The code itself is never traced, only its length.
+            logger.warning(
+                "TOTP: Invalid code from user [%s] at IP [%s]. Code length [%d], "
+                "valid window [%d], server time [%s]",
+                userid,
+                request.ip,
+                len(code),
+                self.valid_window.as_int(),
+                now.isoformat(),
+            )
             raise exceptions.auth.MFAError(gettext('Invalid code'))
 
         self.cache.put(userid + code, True, self.valid_window.as_int() * (TOTP_INTERVAL + 1))

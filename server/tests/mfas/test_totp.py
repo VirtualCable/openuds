@@ -44,7 +44,8 @@ LOGGER_NAME: typing.Final[str] = 'uds.mfas.TOTP.mfa'
 
 class TOTPValidateTest(UDSTestCase):
     """
-    Validation of TOTP codes and of the traces left to diagnose a rejected one
+    Validation of TOTP codes and of the traces left by a rejected one.
+    A code that passes leaves no trace: only failures are logged.
     """
 
     secret: str
@@ -63,18 +64,15 @@ class TOTPValidateTest(UDSTestCase):
     def _current_code(self) -> str:
         return pyotp.TOTP(self.secret, interval=TOTP_INTERVAL).now()
 
-    def test_valid_code_passes_and_is_traced(self) -> None:
+    def test_valid_code_passes_without_tracing(self) -> None:
         mfa = self._mfa()
         code = self._current_code()
 
         with mock.patch.object(TOTP_MFA, 'ask_for_otp', return_value=True), mock.patch.object(
             TOTP_MFA, '_user_data', return_value=(self.secret, True)
         ):
-            with self.assertLogs(LOGGER_NAME, level='INFO') as logs:
+            with self.assertNoLogs(LOGGER_NAME, level='INFO'):
                 mfa.validate(self._request(), 'user1', 'user1', 'ident', code)
-
-        self.assertTrue(any('returned [True]' in line for line in logs.output))
-        self.assertFalse(any(code in line for line in logs.output), 'The code must never be traced')
 
     def test_invalid_code_raises_and_is_traced(self) -> None:
         mfa = self._mfa()
@@ -82,11 +80,11 @@ class TOTPValidateTest(UDSTestCase):
         with mock.patch.object(TOTP_MFA, 'ask_for_otp', return_value=True), mock.patch.object(
             TOTP_MFA, '_user_data', return_value=(self.secret, True)
         ):
-            with self.assertLogs(LOGGER_NAME, level='INFO') as logs:
+            with self.assertLogs(LOGGER_NAME, level='WARNING') as logs:
                 with self.assertRaises(exceptions.auth.MFAError):
                     mfa.validate(self._request(), 'user1', 'user1', 'ident', '000000')
 
-        self.assertTrue(any('returned [False]' in line for line in logs.output))
+        self.assertTrue(any('Invalid code from user' in line for line in logs.output))
         self.assertFalse(any("'000000'" in line for line in logs.output), 'The code must never be traced')
 
     def test_replayed_code_is_rejected_and_traced(self) -> None:
@@ -105,12 +103,11 @@ class TOTPValidateTest(UDSTestCase):
         self.assertTrue(any('already used' in line for line in logs.output))
         self.assertFalse(any(code in line for line in logs.output), 'The code must never be traced')
 
-    def test_allowed_network_skips_validation_and_is_traced(self) -> None:
+    def test_allowed_network_skips_validation_without_tracing(self) -> None:
         mfa = self._mfa()
 
         with mock.patch.object(TOTP_MFA, 'ask_for_otp', return_value=False):
-            with self.assertLogs(LOGGER_NAME, level='INFO') as logs:
+            with self.assertNoLogs(LOGGER_NAME, level='INFO'):
                 # An invalid code must be accepted: the network, not the code, is what allows the login
                 mfa.validate(self._request(), 'user1', 'user1', 'ident', 'not-a-code')
 
-        self.assertTrue(any('Validation skipped' in line for line in logs.output))
