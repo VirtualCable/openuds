@@ -56,3 +56,11 @@ class ErrorFromExceptionTest(UDSTestCase):
     def test_unmapped_exception_is_unknown_error(self) -> None:
         error = Error.from_exception(ValueError('not mapped'))
         self.assertEqual(error, Error.UNKNOWN_ERROR)
+
+    def test_unmapped_authenticator_subclass_is_unknown_error(self) -> None:
+        # The mapping is resolved by exact type, so a subclass is not the base class
+        class DerivedAuthenticatorException(exceptions.auth.AuthenticatorException):
+            pass
+
+        error = Error.from_exception(DerivedAuthenticatorException('derived'))
+        self.assertEqual(error, Error.UNKNOWN_ERROR)
