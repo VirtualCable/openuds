@@ -85,7 +85,7 @@ class OAuth2Test(UDSTestCase):
                 with mock.patch.object(oauth2, OAuth2Authenticator.retrieve_token.__name__, return_value='token_value'):
                     logout = oauth2.logout(mock.MagicMock(), 'not_used_username')
                     self.assertIsInstance(logout, types.auth.AuthenticationResult)
-                    self.assertTrue(logout.success)
+                    self.assertEqual(logout.success, types.auth.AuthenticationState.REDIRECT)
                     self.assertEqual(logout.url, 'https://logout.com?token=token_value')
 
     def test_get_login_url_code(self) -> None:
