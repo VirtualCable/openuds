@@ -80,6 +80,7 @@ class Error(enum.IntEnum):
     @staticmethod
     def from_exception(exception: Exception) -> 'Error':
         from uds.core.exceptions.auth import (
+            AuthenticatorException,
             InvalidUserException,
             InvalidAuthenticatorException,
         )
@@ -94,6 +95,7 @@ class Error(enum.IntEnum):
         trans_dct: dict[type, Error] = {
             InvalidUserException: Error.ACCESS_DENIED,
             InvalidAuthenticatorException: Error.INVALID_CALLBACK,
+            AuthenticatorException: Error.ACCESS_DENIED,
             InvalidServiceException: Error.INVALID_SERVICE,
             MaxServicesReachedError: Error.MAX_SERVICES_REACHED,
             ServiceInMaintenanceMode: Error.SERVICE_IN_MAINTENANCE,
