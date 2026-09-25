@@ -34,6 +34,7 @@ import random
 import typing
 from unittest import mock
 
+from uds.services.Proxmox.proxmox import exceptions as prox_exceptions
 
 from . import fixtures
 
@@ -80,7 +81,27 @@ class TestProxmovLinkedService(UDSTestCase):
             vm = random.choice(fixtures.VMINFO_LIST)
 
             self.assertFalse(service.is_deleted(str(vm.id)))
-            self.assertTrue(service.is_deleted('non_existent'))
+
+            typing.cast(mock.MagicMock, provider.api).get_vm_info.side_effect = prox_exceptions.ProxmoxNotFound(
+                'not found'
+            )
+            self.assertTrue(service.is_deleted('100'))
+
+    def test_service_is_deleted_propagates_errors_other_than_not_found(self) -> None:
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider.api)
+            service = fixtures.create_service_linked(provider=provider)
+
+            for error in (
+                prox_exceptions.ProxmoxNodeUnavailableError('node down'),
+                prox_exceptions.ProxmoxConnectionError('timeout'),
+                prox_exceptions.ProxmoxAuthError('auth'),
+                prox_exceptions.ProxmoxError('error 500'),
+            ):
+                api.get_vm_info.side_effect = error
+                with self.subTest(error=type(error).__name__):
+                    with self.assertRaises(type(error)):
+                        service.is_deleted('100')
 
     def test_service_methods_1(self) -> None:
         with fixtures.patched_provider() as provider:
