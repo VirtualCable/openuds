@@ -35,6 +35,9 @@ import time
 import typing
 import logging
 import contextlib
+from unittest import mock
+
+import requests
 
 from uds.core import types as core_types
 
@@ -46,7 +49,7 @@ from uds.services.Proxmox.proxmox import (
 
 from tests.utils import vars
 
-from tests.utils.test import UDSTransactionTestCase
+from tests.utils.test import UDSTestCase, UDSTransactionTestCase
 
 logger = logging.getLogger(__name__)
 
@@ -475,3 +478,15 @@ class TestProxmoxClient(UDSTransactionTestCase):
             # Get the console connection
             console_info = self.pclient.get_console_connection(vm.id)
             self.assertIsInstance(console_info, core_types.services.ConsoleConnectionInfo)
+
+
+class TestProxmoxClientRequestErrors(UDSTestCase):
+    def test_get_read_timeout_is_a_connection_error(self) -> None:
+        pclient = prox_client.ProxmoxClient('host', 8006, 'user', 'password')
+        session = mock.MagicMock()
+        session.get.side_effect = requests.ReadTimeout('read timeout=8')
+        with mock.patch.object(
+            prox_client.ProxmoxClient, 'session', new_callable=mock.PropertyMock, return_value=session
+        ):
+            with self.assertRaises(prox_exceptions.ProxmoxConnectionError):
+                pclient.do_get('version')
