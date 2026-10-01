@@ -138,11 +138,10 @@ class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
         return types.states.TaskState.FINISHED
 
     def _has_machines(self) -> bool:
-        # Errored and canceled machines are not counted by the core when unpublishing, but their
-        # disks still hang from this template and Proxmox refuses to delete it while they exist
+        # Same criterion the core uses when unpublishing: machines in INFO_STATES do not hold the template
         return (
             models.UserService.objects.filter(publication__uuid=self.get_uuid())
-            .exclude(state=types.states.State.REMOVED)
+            .exclude(state__in=types.states.State.INFO_STATES)
             .exists()
         )
 
