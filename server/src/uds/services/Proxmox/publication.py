@@ -33,6 +33,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext as _
+from uds import models
 from uds.core import types
 from uds.core.services.generics.dynamic.publication import DynamicPublication
 from uds.core.util import autoserializable
@@ -136,5 +137,27 @@ class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
 
         return types.states.TaskState.FINISHED
 
+    def _has_machines(self) -> bool:
+        # Errored and canceled machines are not counted by the core when unpublishing, but their
+        # disks still hang from this template and Proxmox refuses to delete it while they exist
+        return (
+            models.UserService.objects.filter(publication__uuid=self.get_uuid())
+            .exclude(state=types.states.State.REMOVED)
+            .exists()
+        )
+
     def op_delete(self) -> None:
-        self.service().delete(self, self._vmid)
+        if not self._has_machines():
+            self.service().delete(self, self._vmid)
+
+    def op_delete_checker(self) -> types.states.TaskState:
+        if self._has_machines():
+            return types.states.TaskState.RUNNING
+        # Not requested yet (machines were still there) or released after the deferred
+        # deletion gave up: ask for it again, the template may be free now
+        if not self.service().is_deletion_in_progress(self, self._vmid) and not self.service().is_deleted(
+            self._vmid
+        ):
+            self.service().delete(self, self._vmid)
+            return types.states.TaskState.RUNNING
+        return super().op_delete_checker()
