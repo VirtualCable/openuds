@@ -360,6 +360,7 @@ gettext("Use semicolon");
 gettext("Use pipe");
 gettext("Use tab");
 gettext("File");
+gettext("Download template");
 gettext("Ok");
 gettext("Cancel");
 gettext("New");
