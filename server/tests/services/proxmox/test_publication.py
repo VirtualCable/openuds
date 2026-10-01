@@ -179,16 +179,17 @@ class TestProxmoxPublication(UDSTransactionTestCase):
             self.assertFalse(publication._has_machines())
 
             userservice = services_fixtures.create_db_userservice(db_pool, db_publication, None)
-            # Errored machines keep their disk, so they must count too
-            for state in (types.states.State.USABLE, types.states.State.ERROR, types.states.State.CANCELED):
+            for state in (types.states.State.USABLE, types.states.State.REMOVING):
                 userservice.state = state
                 userservice.save(update_fields=['state'])
                 with self.subTest(state=state):
                     self.assertTrue(publication._has_machines())
 
-            userservice.state = types.states.State.REMOVED
-            userservice.save(update_fields=['state'])
-            self.assertFalse(publication._has_machines())
+            for state in types.states.State.INFO_STATES:
+                userservice.state = state
+                userservice.save(update_fields=['state'])
+                with self.subTest(state=state):
+                    self.assertFalse(publication._has_machines())
 
     def test_publication_destroy_waits_for_machines(self) -> None:
         with fixtures.patched_provider() as provider:
