@@ -54,7 +54,7 @@ from uds.services.Proxmox import (
     service_fixed,
     publication,
     deployment_fixed,
-    service_linked,
+    service,
 )
 
 from uds.services.Proxmox.proxmox import types as prox_types, exceptions as prox_exceptions
@@ -513,7 +513,7 @@ PROVIDER_VALUES_DICT: gui.ValuesDictType = {
     'concurrent_removal_limit': 1,
     'timeout': 10,
     'start_vmid': 100,
-    'macs_range': '00:00:00:00:00:00-00:00:00:ff:ff:ff',
+    'macs_range': '00:00:00:00:00:01-00:00:00:ff:ff:ff',
 }
 
 
@@ -550,10 +550,13 @@ def create_client_mock() -> mock.Mock:
 def patched_provider(
     **kwargs: typing.Any,
 ) -> typing.Generator[provider.ProxmoxProvider, None, None]:
-    client = create_client_mock()
-    provider = create_provider(**kwargs)
-    provider._cached_api = client
-    yield provider
+    yield create_mocked_provider(**kwargs)
+
+
+def create_mocked_provider(**kwargs: typing.Any) -> provider.ProxmoxProvider:
+    prov = create_provider(**kwargs)
+    prov._cached_api = create_client_mock()
+    return prov
 
 
 def create_provider(**kwargs: typing.Any) -> provider.ProxmoxProvider:
@@ -565,22 +568,22 @@ def create_provider(**kwargs: typing.Any) -> provider.ProxmoxProvider:
 
     uuid_ = str(uuid.uuid4())
     return provider.ProxmoxProvider(
-        environment=environment.Environment.private_environment(uuid), values=values, uuid=uuid_
+        environment=environment.Environment.private_environment(uuid_), values=values, uuid=uuid_
     )
 
 
 def create_service_linked(
     provider: typing.Optional[provider.ProxmoxProvider] = None, **kwargs: typing.Any
-) -> service_linked.ProxmoxServiceLinked:
+) -> service.ProxmoxService:
     """
     Create a fixed service
     """
     uuid_ = str(uuid.uuid4())
     values = SERVICE_LINKED_VALUES_DICT.copy()
     values.update(kwargs)
-    srvc = service_linked.ProxmoxServiceLinked(
+    srvc = service.ProxmoxService(
         environment=environment.Environment.private_environment(uuid_),
-        provider=provider or create_provider(),
+        provider=provider or create_mocked_provider(),
         values=values,
         uuid=uuid_,
     )
@@ -605,14 +608,14 @@ def create_service_fixed(
     values.update(kwargs)
     return service_fixed.ProxmoxServiceFixed(
         environment=environment.Environment.private_environment(uuid_),
-        provider=provider or create_provider(),
+        provider=provider or create_mocked_provider(),
         values=values,
         uuid=uuid_,
     )
 
 
 def create_publication(
-    service: typing.Optional[service_linked.ProxmoxServiceLinked] = None,
+    service: typing.Optional[service.ProxmoxService] = None,
     **kwargs: typing.Any,
 ) -> 'publication.ProxmoxPublication':
     """
@@ -647,7 +650,7 @@ def create_userservice_fixed(
 
 
 def create_userservice_linked(
-    service: typing.Optional[service_linked.ProxmoxServiceLinked] = None,
+    service: typing.Optional[service.ProxmoxService] = None,
     publication: typing.Optional['publication.ProxmoxPublication'] = None,
 ) -> deployment_linked.ProxmoxUserserviceLinked:
     """
