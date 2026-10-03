@@ -144,6 +144,11 @@ class IPMachinesService(services.Service):
     def enumerate_servers(self) -> typing.Iterable['models.Server']:
         return fields.get_server_group_from_field(self.server_group).servers.filter(maintenance_mode=False)
 
+    def userservices_limit_field(self) -> int:
+        # Machines on maintenance are ALSO counted: the limit is the number of registered
+        # machines, not the number of currently usable ones (hence not enumerate_servers()).
+        return fields.get_server_group_from_field(self.server_group).servers.count()
+
     def get_token(self) -> typing.Optional[str]:
         return self.token.as_str() or None
 
