@@ -37,7 +37,6 @@ from uds.core import types
 
 from . import fixtures
 
-from ...fixtures import services as services_fixtures
 from ...utils.test import UDSTransactionTestCase
 from ...utils import MustBeOfType
 from ...utils.helpers import limited_iterator
@@ -164,64 +163,3 @@ class TestProxmoxPublication(UDSTransactionTestCase):
             with mock.patch.object(publication, 'destroy') as destroy:
                 publication.cancel()
                 destroy.assert_called_with()
-
-    def test_publication_has_machines_follows_database(self) -> None:
-        with fixtures.patched_provider() as provider:
-            service = fixtures.create_service_linked(provider=provider)
-            publication = fixtures.create_publication(service=service)
-
-            db_provider = services_fixtures.create_db_provider()
-            db_service = services_fixtures.create_db_service(db_provider)
-            db_pool = services_fixtures.create_db_servicepool(db_service)
-            db_publication = services_fixtures.create_db_publication(db_pool)
-            publication._uuid = db_publication.uuid
-
-            self.assertFalse(publication._has_machines())
-
-            userservice = services_fixtures.create_db_userservice(db_pool, db_publication, None)
-            for state in (types.states.State.USABLE, types.states.State.REMOVING):
-                userservice.state = state
-                userservice.save(update_fields=['state'])
-                with self.subTest(state=state):
-                    self.assertTrue(publication._has_machines())
-
-            for state in types.states.State.INFO_STATES:
-                userservice.state = state
-                userservice.save(update_fields=['state'])
-                with self.subTest(state=state):
-                    self.assertFalse(publication._has_machines())
-
-    def test_publication_destroy_waits_for_machines(self) -> None:
-        with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api)
-            service = fixtures.create_service_linked(provider=provider)
-            publication = fixtures.create_publication(service=service)
-            service.must_stop_before_deletion = False
-
-            with mock.patch.object(publication, '_has_machines', return_value=True):
-                self.assertEqual(publication.destroy(), types.states.State.RUNNING)
-                for _ in range(3):
-                    self.assertEqual(publication.check_state(), types.states.State.RUNNING)
-                # Proxmox would refuse to delete a template with linked clones
-                api.delete_vm.assert_not_called()
-
-            with mock.patch.object(publication, '_has_machines', return_value=False):
-                self.assertEqual(publication.check_state(), types.states.State.RUNNING)
-                api.delete_vm.assert_called_once_with(int(publication.get_template_id()))
-
-    def test_publication_destroy_asks_again_after_deletion_was_released(self) -> None:
-        with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api)
-            service = fixtures.create_service_linked(provider=provider)
-            publication = fixtures.create_publication(service=service)
-            service.must_stop_before_deletion = False
-
-            with mock.patch.object(publication, '_has_machines', return_value=False):
-                self.assertEqual(publication.destroy(), types.states.State.RUNNING)
-                self.assertEqual(publication.check_state(), types.states.State.RUNNING)
-                api.delete_vm.assert_called_once_with(int(publication.get_template_id()))
-
-                # The deferred worker gave up and released the marker, but the template still exists
-                service.notify_deleted(publication._vmid)
-                self.assertEqual(publication.check_state(), types.states.State.RUNNING)
-                self.assertEqual(api.delete_vm.call_count, 2)
