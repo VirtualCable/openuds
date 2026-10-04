@@ -403,6 +403,9 @@ class VMInfo:
         )
 
 
+DISK_KEY_RE: typing.Final = re.compile(r'^(scsi|virtio|sata|ide|efidisk|tpmstate|unused)\d+$')
+
+
 @dataclasses.dataclass
 class VMConfiguration:
     name: str
@@ -416,13 +419,19 @@ class VMConfiguration:
 
     template: bool
     protection: bool
+    disks: list[str] = dataclasses.field(default_factory=list[str])
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMConfiguration':
         nets: list[NetworkConfiguration] = []
+        disks: list[str] = []
         for k in dictionary.keys():
             if k[:3] == 'net':
                 nets.append(NetworkConfiguration.from_str(k, dictionary[k]))
+            elif DISK_KEY_RE.match(k):
+                volume, *options = str(dictionary[k]).split(',')
+                if ':' in volume and 'media=cdrom' not in options:
+                    disks.append(volume)
 
         return VMConfiguration(
             name=dictionary.get('name', ''),
@@ -435,6 +444,7 @@ class VMConfiguration:
             tpmstate0=dictionary.get('tpmstate0', ''),
             template=dictionary.get('template', False),
             protection=dictionary.get('protection', False),
+            disks=disks,
         )
 
 
