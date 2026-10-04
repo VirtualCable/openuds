@@ -332,11 +332,30 @@ class ProxmoxService(DynamicService):
     def execute_delete(self, vmid: str) -> None:
         # All removals are deferred, so we can do it async
         # Try to stop it if already running... Hard stop
-        self.provider().api.delete_vm(int(vmid))
+        api = self.provider().api
+        node = api.get_vm_info(int(vmid)).node
+        with self.storage.as_dict() as storage:
+            if f'disks_{vmid}' not in storage:
+                storage[f'disks_{vmid}'] = (node, api.get_vm_disks(int(vmid), node))
+        api.delete_vm(int(vmid))
 
     def is_deleted(self, vmid: str) -> bool:
+        api = self.provider().api
         try:
-            self.provider().api.get_vm_info(int(vmid))
+            api.get_vm_info(int(vmid))
             return False
         except Exception:
-            return True
+            pass
+
+        # Proxmox answers OK to the VM removal before its disks are gone
+        with self.storage.as_dict() as storage:
+            stored = storage.get(f'disks_{vmid}')
+            if stored is None:
+                return True
+            node, disks = stored
+            existing = api.get_existing_disks(int(vmid), disks, node)
+            if existing:
+                api.delete_disks(existing, node)
+                return False
+            del storage[f'disks_{vmid}']
+        return True

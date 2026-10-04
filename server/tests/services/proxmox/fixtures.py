@@ -384,6 +384,11 @@ CLIENT_METHODS_INFO: list[AutoSpecMethodInfo] = [
     ),
     # remove_machine
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.delete_vm, returns=UPID),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_vm_disks, returns=['data:vm-1-disk-0']
+    ),
+    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.get_existing_disks, returns=[]),
+    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.delete_disks, returns=None),
     # list_snapshots
     AutoSpecMethodInfo(
         uds.services.Proxmox.proxmox.client.ProxmoxClient.list_snapshots,

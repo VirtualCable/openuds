@@ -34,6 +34,8 @@ import random
 import typing
 from unittest import mock
 
+from uds.services.Proxmox.proxmox import exceptions as prox_exceptions
+from uds.services.Proxmox.proxmox import types as prox_types
 
 from . import fixtures
 
@@ -81,6 +83,42 @@ class TestProxmovLinkedService(UDSTestCase):
 
             self.assertFalse(service.is_deleted(str(vm.id)))
             self.assertTrue(service.is_deleted('non_existent'))
+
+    def test_service_is_deleted_waits_for_disks(self) -> None:
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider.api)
+            service = fixtures.create_service_linked(provider=provider)
+            vm = fixtures.VMINFO_LIST[0]
+            disks = ['data:vm-1-disk-0']
+            api.get_vm_disks.return_value = disks
+
+            service.execute_delete(str(vm.id))
+            api.delete_vm.assert_called_once_with(vm.id)
+
+            api.get_vm_info.side_effect = prox_exceptions.ProxmoxNotFound('not found')
+            api.get_existing_disks.return_value = disks
+            self.assertFalse(service.is_deleted(str(vm.id)))
+            api.delete_disks.assert_called_once_with(disks, vm.node)
+
+            api.get_existing_disks.return_value = []
+            self.assertTrue(service.is_deleted(str(vm.id)))
+            # Stored disks are released once gone
+            api.get_existing_disks.reset_mock()
+            self.assertTrue(service.is_deleted(str(vm.id)))
+            api.get_existing_disks.assert_not_called()
+
+    def test_vm_configuration_disks(self) -> None:
+        config = prox_types.VMConfiguration.from_dict(
+            {
+                'scsi0': 'data:vm-100-disk-0,size=32G',
+                'efidisk0': 'data:vm-100-disk-1,size=1M',
+                'ide2': 'local:iso/win.iso,media=cdrom',
+                'ide3': 'none,media=cdrom',
+                'unused0': 'data:vm-100-disk-2',
+                'net0': 'virtio=AA:BB:CC:DD:EE:FF,bridge=vmbr0',
+            }
+        )
+        self.assertEqual(config.disks, ['data:vm-100-disk-0', 'data:vm-100-disk-1', 'data:vm-100-disk-2'])
 
     def test_service_methods_1(self) -> None:
         with fixtures.patched_provider() as provider:

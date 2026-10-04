@@ -557,6 +557,29 @@ class ProxmoxClient:
         node = node or self.get_vm_info(vmid).node
         return types.ExecResult.from_dict(self.do_delete(f'nodes/{node}/qemu/{vmid}?purge=1', node=node))
 
+    def get_vm_disks(self, vmid: int, node: typing.Optional[str] = None) -> list[str]:
+        return self.get_vm_config(vmid, node, force=True).disks
+
+    def get_existing_disks(self, vmid: int, disks: collections.abc.Iterable[str], node: str) -> list[str]:
+        # Proxmox answers a generic 500 for a missing volume, so existence is checked by listing
+        # the contents of each storage filtered by the owner vmid
+        wanted = set(disks)
+        existing: list[str] = []
+        for storage in {disk.split(':', 1)[0] for disk in wanted}:
+            content = self.do_get(
+                f'nodes/{node}/storage/{urllib.parse.quote(storage)}/content?vmid={vmid}', node=node
+            )['data']
+            existing.extend(volume['volid'] for volume in content if volume['volid'] in wanted)
+        return existing
+
+    def delete_disks(self, disks: collections.abc.Iterable[str], node: str) -> None:
+        for disk in disks:
+            storage, volume = disk.split(':', 1)
+            self.do_delete(
+                f'nodes/{node}/storage/{urllib.parse.quote(storage)}/content/{urllib.parse.quote(volume)}',
+                node=node,
+            )
+
     def list_snapshots(self, vmid: int, node: typing.Optional[str] = None) -> list[types.SnapshotInfo]:
         node = node or self.get_vm_info(vmid).node
         try:
