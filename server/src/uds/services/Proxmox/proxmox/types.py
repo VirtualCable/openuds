@@ -404,6 +404,8 @@ class VMInfo:
 
 
 DISK_KEY_RE: typing.Final = re.compile(r'^(scsi|virtio|sata|ide|efidisk|tpmstate|unused)\d+$')
+# A cdrom entry can hold a real volume (cloudinit), so the volume shape decides, not the media option
+VM_VOLUME_RE: typing.Final = re.compile(r'^[^:]+:(?:\d+/)?(?:vm|base)-\d+-')
 
 
 @dataclasses.dataclass
@@ -429,8 +431,8 @@ class VMConfiguration:
             if k[:3] == 'net':
                 nets.append(NetworkConfiguration.from_str(k, dictionary[k]))
             elif DISK_KEY_RE.match(k):
-                volume, *options = str(dictionary[k]).split(',')
-                if ':' in volume and 'media=cdrom' not in options:
+                volume = str(dictionary[k]).split(',', 1)[0]
+                if VM_VOLUME_RE.match(volume):
                     disks.append(volume)
 
         return VMConfiguration(
