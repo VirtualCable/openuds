@@ -511,3 +511,12 @@ class TestProxmoxClientDisks(UDSTestCase):
         ) as do_delete:
             pclient.delete_disks(['data:vm-100-disk-0', 'data:vm-100-disk-1'], 'node1')
             self.assertEqual(do_delete.call_count, 2)
+
+    def test_delete_disks_encodes_volume_slashes(self) -> None:
+        pclient = self._client()
+        with mock.patch.object(pclient, 'do_delete') as do_delete:
+            pclient.delete_disks(['data:100/vm-100-disk-0.qcow2'], 'node1')
+            do_delete.assert_called_once_with(
+                'nodes/node1/storage/data/content/100%2Fvm-100-disk-0.qcow2',
+                node='node1',
+            )
