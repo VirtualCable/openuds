@@ -26,6 +26,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Janier Rodríguez, jrodriguez at virtualcable dot es
 """
 import collections.abc
 import time
@@ -560,25 +561,35 @@ class ProxmoxClient:
     def get_vm_disks(self, vmid: int, node: typing.Optional[str] = None) -> list[str]:
         return self.get_vm_config(vmid, node, force=True).disks
 
-    def get_existing_disks(self, vmid: int, disks: collections.abc.Iterable[str], node: str) -> list[str]:
+    @cached('storcont', consts.CACHE_STORAGE_CONTENT_DURATION, key_helper=caching_key_helper)
+    def list_storage_volumes(self, node: str, storage: str, **kwargs: typing.Any) -> list[str]:
+        return [
+            volume['volid']
+            for volume in self.do_get(
+                f'nodes/{node}/storage/{urllib.parse.quote(storage)}/content', node=node
+            )['data']
+        ]
+
+    def get_existing_disks(self, disks: collections.abc.Iterable[str], node: str) -> list[str]:
         # Proxmox answers a generic 500 for a missing volume, so existence is checked by listing
-        # the contents of each storage filtered by the owner vmid
+        # the contents of each storage
         wanted = set(disks)
         existing: list[str] = []
         for storage in {disk.split(':', 1)[0] for disk in wanted}:
-            content = self.do_get(
-                f'nodes/{node}/storage/{urllib.parse.quote(storage)}/content?vmid={vmid}', node=node
-            )['data']
-            existing.extend(volume['volid'] for volume in content if volume['volid'] in wanted)
+            existing.extend(volid for volid in self.list_storage_volumes(node, storage) if volid in wanted)
         return existing
 
     def delete_disks(self, disks: collections.abc.Iterable[str], node: str) -> None:
         for disk in disks:
             storage, volume = disk.split(':', 1)
-            self.do_delete(
-                f'nodes/{node}/storage/{urllib.parse.quote(storage)}/content/{urllib.parse.quote(volume)}',
-                node=node,
-            )
+            try:
+                self.do_delete(
+                    f'nodes/{node}/storage/{urllib.parse.quote(storage)}/content/{urllib.parse.quote(volume)}',
+                    node=node,
+                )
+            except Exception:
+                # The volume may be gone since it was listed; the next check will retry if it is not
+                logger.debug('Could not delete disk %s on node %s', disk, node)
 
     def list_snapshots(self, vmid: int, node: typing.Optional[str] = None) -> list[types.SnapshotInfo]:
         node = node or self.get_vm_info(vmid).node

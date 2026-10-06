@@ -359,7 +359,7 @@ class ProxmoxService(DynamicService):
             if stored is None:
                 return True
             node, disks = stored
-            existing = api.get_existing_disks(int(vmid), disks, node)
+            existing = api.get_existing_disks(disks, node)
             if existing:
                 api.delete_disks(existing, node)
                 return False

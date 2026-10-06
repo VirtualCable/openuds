@@ -388,6 +388,9 @@ CLIENT_METHODS_INFO: list[AutoSpecMethodInfo] = [
         uds.services.Proxmox.proxmox.client.ProxmoxClient.get_vm_disks, returns=['data:vm-1-disk-0']
     ),
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.get_existing_disks, returns=[]),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.list_storage_volumes, returns=[]
+    ),
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.delete_disks, returns=None),
     # list_snapshots
     AutoSpecMethodInfo(
