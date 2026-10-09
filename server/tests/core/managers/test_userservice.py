@@ -57,6 +57,11 @@ class TestUserserviceManager(UDSTransactionTestCase):
         orig_src_ip = userservice.src_ip
         orig_src_hostname = userservice.src_hostname
 
+        # Moving to cache refreshes unique_id from the instance, so the instance must hold the recorded one
+        instance = userservice.get_instance()
+        instance.mac = userservice.unique_id  # type: ignore
+        userservice.update_data(instance)
+
         self.assertEqual(models.UserService.objects.all().count(), 1)
         # And uuser service is assigned to an user
         self.assertIsNotNone(userservice.user)
