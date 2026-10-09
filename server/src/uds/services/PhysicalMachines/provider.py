@@ -35,7 +35,7 @@ import logging
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import exceptions, services, types
+from uds.core import consts, exceptions, services, types
 from uds.core.ui.user_interface import gui
 from uds.core.util import net, resolver
 
@@ -117,7 +117,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
         Returns:
             str: URL of WOL server or empty ('') if no server for the ip is found
         """
-        if not self.config.value or not host or not mac:
+        if not self.config.value or not host or not mac or mac == consts.MAC_UNKNOWN:
             return ''
 
         # If host is a hostname, try to resolve it
