@@ -37,6 +37,7 @@ from django.conf import settings
 
 from uds import models
 from uds.core import consts, osmanagers, types
+from uds.core.managers.userservice import UserServiceManager
 from uds.core.util import log
 from uds.core.util.model import sql_now
 from uds.REST.utils import rest_result
@@ -146,7 +147,9 @@ def process_logout(server: 'models.Server', data: dict[str, typing.Any]) -> typi
         osmanager: typing.Optional[osmanagers.OSManager] = userservice.get_osmanager_instance()
         if not osmanager or osmanager.is_removable_on_logout(userservice):
             logger.debug('Removable on logout: %s', osmanager)
-            userservice.release()
+            # Use release_from_logout (same as actor logout) so pools that allow putting
+            # back to cache (e.g. snapshot reuse) return the machine instead of destroying it
+            UserServiceManager.manager().release_from_logout(userservice)
 
     return rest_result(consts.OK)
 
