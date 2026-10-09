@@ -216,7 +216,7 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
                     )
                 )
 
-    def is_avaliable(self) -> bool:
+    def is_available(self) -> bool:
         return self.provider().is_available()
 
     def sanitized_name(self, name: str) -> str:

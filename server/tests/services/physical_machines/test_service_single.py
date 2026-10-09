@@ -48,7 +48,7 @@ class TestService(UDSTransactionTestCase):
         Test the provider
         """
         service = fixtures.create_service_single()
-        self.assertTrue(service.is_avaliable())  # Always available
+        self.assertTrue(service.is_available())  # Always available
 
     def test_wakeup(self) -> None:
         # Patch security.secure_requests_session

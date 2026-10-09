@@ -356,5 +356,5 @@ class OpenStackLiveService(DynamicService):
             security_groups_names=self.security_groups.value,
         )
 
-    def is_avaliable(self) -> bool:
+    def is_available(self) -> bool:
         return self.provider().is_available()

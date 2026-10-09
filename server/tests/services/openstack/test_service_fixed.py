@@ -53,7 +53,7 @@ class TestOpenstackFixedService(UDSTransactionTestCase):
                 userservice = fixtures.create_fixed_userservice(service)
 
                 # Test service is_available method
-                self.assertTrue(service.is_avaliable())
+                self.assertTrue(service.is_available())
                 api.is_available.assert_called()
 
                 # assignables should be same as service.macines

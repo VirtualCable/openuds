@@ -61,17 +61,17 @@ class TestProxmovLinkedService(UDSTestCase):
             api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
 
-            self.assertTrue(service.is_avaliable())
+            self.assertTrue(service.is_available())
             api.test.assert_called_with()
             # With data cached, even if test fails, it will return True
             api.test.return_value = False
-            self.assertTrue(service.is_avaliable())
+            self.assertTrue(service.is_available())
 
             # Data is cached, so we need to reset it
             api.test.reset_mock()
             service.provider().is_available.cache_clear()  # type: ignore
             # Now should return False as we have reset the cache
-            self.assertFalse(service.is_avaliable())
+            self.assertFalse(service.is_available())
             api.test.assert_called_with()
             
     def test_service_is_deleted(self) -> None:
@@ -159,4 +159,4 @@ class TestProxmovLinkedService(UDSTestCase):
             self.assertEqual(service.get_console_connection('1'), fixtures.CONSOLE_CONNECTION_INFO)
 
             # Is available
-            self.assertTrue(service.is_avaliable())
+            self.assertTrue(service.is_available())
