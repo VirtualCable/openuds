@@ -334,10 +334,12 @@ class UserServiceManager(metaclass=singleton.Singleton):
         user_service_copy.in_use = False
         user_service_copy.state = State.REMOVED
         user_service_copy.os_state = State.USABLE
-        log.log(user_service_copy, types.log.LogLevel.INFO, 'Service moved to cache')
 
-        # Save the new element.
+        # Save BEFORE logging: an unsaved copy has owner_id=None, and that failed uds_log
+        # insert poisons an enclosing atomic() (release_from_logout) -> next save() dies
         user_service_copy.save()
+
+        log.log(user_service_copy, types.log.LogLevel.INFO, 'Service moved to cache')
 
         # Now, move the original to cache, but do it "hard" way, so we do not need to check for state
         user_service.state = State.PREPARING  # move_to_level will set real final state depending on the result of the operation
@@ -526,37 +528,42 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         This method will take care of removing the service if no cache is desired of cache already full (on servicepool)
         """
-        if userservice.allow_putting_back_to_cache() is False:
-            userservice.release()  # Normal release
-            return
+        # Concurrent logout events may hit the same userservice (duplicate actor logouts,
+        # or the unused-services worker racing an interactive logout). Lock and re-read so
+        # only the first event acts on a consistent state.
+        with transaction.atomic():
+            try:
+                userservice = UserService.objects.select_for_update().get(id=userservice.id)
+            except UserService.DoesNotExist:
+                # Row already released & cleaned by a prior logout, nothing to do
+                return
 
-        # Some sanity checks, should never happen
-        if userservice.cache_level != types.services.CacheLevel.NONE:
-            logger.error('Cache level is not NONE for userservice %s on release_on_logout', userservice)
-            userservice.release()
-            return
+            if userservice.allow_putting_back_to_cache() is False:
+                userservice.release()
+                return
 
-        if userservice.is_usable() is False:
-            logger.error('State is not USABLE for userservice %s on release_on_logout', userservice)
-            userservice.release()
-            return
+            # Already handled by a prior logout (back in cache or no longer usable). Skip:
+            # releasing here would destroy the cache element that logout just returned.
+            if userservice.cache_level != types.services.CacheLevel.NONE or not userservice.is_usable():
+                logger.debug('Userservice %s already handled on logout, skipping', userservice)
+                return
 
-        servicepool = userservice.deployed_service
+            servicepool = userservice.deployed_service
 
-        # Fix assigned value, because "userservice" will not count as assigned anymore.
-        # The same cache overflow/growth logic decides whether to return the machine to
-        # cache or destroy it. For snapshot pools, the move-to-cache queue additionally
-        # reverts the machine to its snapshot (BACK_TO_CACHE_SNAPSHOT_RECOVER).
-        stats = self.get_cache_servicepool_stats(servicepool, assigned_increased_by=-1)
+            # Fix assigned value, because "userservice" will not count as assigned anymore.
+            # The same cache overflow/growth logic decides whether to return the machine to
+            # cache or destroy it. For snapshot pools, the move-to-cache queue additionally
+            # reverts the machine to its snapshot (BACK_TO_CACHE_SNAPSHOT_RECOVER).
+            stats = self.get_cache_servicepool_stats(servicepool, assigned_increased_by=-1)
 
-        # Note that only moves to cache L1
-        # Also, we can get values for L2 cache, thats why we check L1 for overflow and needed
-        if stats.is_null() or stats.has_l1_cache_overflow():
-            userservice.release()  # Mark as removable
-        elif stats.is_l1_cache_growth_required():
-            # Move the clone of the user service to cache, and set our as REMOVED
-            # (for snapshot pools, this also reverts the machine to its snapshot)
-            self.forced_move_assigned_to_cache_l1(userservice)
+            # Note that only moves to cache L1
+            # Also, we can get values for L2 cache, thats why we check L1 for overflow and needed
+            if stats.is_null() or stats.has_l1_cache_overflow():
+                userservice.release()  # Mark as removable
+            elif stats.is_l1_cache_growth_required():
+                # Move the clone of the user service to cache, and set our as REMOVED
+                # (for snapshot pools, this also reverts the machine to its snapshot)
+                self.forced_move_assigned_to_cache_l1(userservice)
 
     def get_existing_assignation_for_user(
         self, service_pool: ServicePool, user: User
