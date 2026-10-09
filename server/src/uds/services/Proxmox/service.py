@@ -45,6 +45,7 @@ from uds.core.util import validators
 from . import helpers
 from .deployment_linked import ProxmoxUserserviceLinked
 from .publication import ProxmoxPublication
+from .proxmox import exceptions as prox_exceptions
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -338,5 +339,5 @@ class ProxmoxService(DynamicService):
         try:
             self.provider().api.get_vm_info(int(vmid))
             return False
-        except Exception:
+        except prox_exceptions.ProxmoxNotFound:
             return True

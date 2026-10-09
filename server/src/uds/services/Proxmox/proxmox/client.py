@@ -203,7 +203,7 @@ class ProxmoxClient:
             )
 
             logger.debug('GET result to %s: %s -- %s', path, result.status_code, result.content)
-        except requests.ConnectionError as e:
+        except (requests.ConnectionError, requests.Timeout) as e:
             raise exceptions.ProxmoxConnectionError(str(e))
 
         return self.ensure_correct(result, node=node)
