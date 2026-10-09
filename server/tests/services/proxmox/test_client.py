@@ -490,3 +490,47 @@ class TestProxmoxClientRequestErrors(UDSTestCase):
         ):
             with self.assertRaises(prox_exceptions.ProxmoxConnectionError):
                 pclient.do_get('version')
+
+
+class TestProxmoxClientDisks(UDSTestCase):
+    def _client(self) -> prox_client.ProxmoxClient:
+        return prox_client.ProxmoxClient('host', 8006, 'user', 'password')
+
+    def test_existing_disks_are_looked_up_without_the_owner_vmid(self) -> None:
+        pclient = self._client()
+        content = {
+            'data': [
+                {'volid': 'lookup:vm-100-disk-0'},
+                {'volid': 'lookup:vm-101-disk-0'},
+            ]
+        }
+        with mock.patch.object(pclient, 'do_get', return_value=content) as do_get:
+            existing = pclient.get_existing_disks(['lookup:vm-100-disk-0', 'lookup:vm-100-disk-1'], 'node1')
+            self.assertEqual(existing, ['lookup:vm-100-disk-0'])
+            url = do_get.call_args[0][0]
+            self.assertEqual(url, 'nodes/node1/storage/lookup/content')
+
+    def test_storage_volumes_listing_is_shared_between_deletions(self) -> None:
+        pclient = self._client()
+        content = {'data': [{'volid': 'shared:vm-100-disk-0'}]}
+        with mock.patch.object(pclient, 'do_get', return_value=content) as do_get:
+            pclient.list_storage_volumes('node1', 'shared')
+            pclient.list_storage_volumes('node1', 'shared')
+            do_get.assert_called_once()
+
+    def test_a_disk_that_vanishes_while_being_deleted_is_not_an_error(self) -> None:
+        pclient = self._client()
+        with mock.patch.object(
+            pclient, 'do_delete', side_effect=prox_exceptions.ProxmoxError('500 internal error')
+        ) as do_delete:
+            pclient.delete_disks(['data:vm-100-disk-0', 'data:vm-100-disk-1'], 'node1')
+            self.assertEqual(do_delete.call_count, 2)
+
+    def test_delete_disks_encodes_volume_slashes(self) -> None:
+        pclient = self._client()
+        with mock.patch.object(pclient, 'do_delete') as do_delete:
+            pclient.delete_disks(['data:100/vm-100-disk-0.qcow2'], 'node1')
+            do_delete.assert_called_once_with(
+                'nodes/node1/storage/data/content/100%2Fvm-100-disk-0.qcow2',
+                node='node1',
+            )

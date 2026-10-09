@@ -87,6 +87,7 @@ class DeferredDeletionWorker(Job):
                     delay_rate=exec_time.delay_rate,
                 )
             except gen_exceptions.NotFoundError:
+                service.notify_deleted(vmid)
                 return  # Already removed
             except Exception as e:
                 logger.warning(
@@ -118,6 +119,7 @@ class DeferredDeletionWorker(Job):
         delay_rate: float = 1.0,
     ) -> None:
         if isinstance(e, gen_exceptions.NotFoundError):
+            services[info.service_uuid].notify_deleted(info.vmid)
             return  # All ok, already removed
 
         is_retryable = isinstance(e, gen_exceptions.RetryableError)
@@ -138,6 +140,7 @@ class DeferredDeletionWorker(Job):
                     info.vmid,
                     services[info.service_uuid].db_obj().name,
                 )
+                services[info.service_uuid].notify_deleted(info.vmid)
                 return  # Do not readd it
         info.next_check = types.DeletionInfo.next_execution_calculator(delay_rate=delay_rate)
         info.total_retries += 1
@@ -147,6 +150,7 @@ class DeferredDeletionWorker(Job):
                 info.vmid,
                 services[info.service_uuid].db_obj().name,
             )
+            services[info.service_uuid].notify_deleted(info.vmid)
             return  # Do not readd it
         info.sync_to_storage(to_group)
 

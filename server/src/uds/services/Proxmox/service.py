@@ -27,6 +27,7 @@
 
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Janier Rodríguez, jrodriguez at virtualcable dot es
 """
 import logging
 import re
@@ -333,11 +334,39 @@ class ProxmoxService(DynamicService):
     def execute_delete(self, vmid: str) -> None:
         # All removals are deferred, so we can do it async
         # Try to stop it if already running... Hard stop
-        self.provider().api.delete_vm(int(vmid))
+        api = self.provider().api
+        try:
+            node = api.get_vm_info(int(vmid)).node
+            disks = api.get_vm_disks(int(vmid), node)
+            with self.storage.as_dict() as storage:
+                storage[f'disks_{vmid}'] = (node, disks)
+        except Exception as e:
+            logger.warning('Could not inspect disks for vm %s before deletion: %s', vmid, e)
+        api.delete_vm(int(vmid))
+
+    def notify_deleted(self, vmid: str) -> None:
+        # The deferred worker can stop tracking the vm before its disks are gone, and proxmox reuses vmids
+        with self.storage.as_dict() as storage:
+            storage.pop(f'disks_{vmid}', None)
+        super().notify_deleted(vmid)
 
     def is_deleted(self, vmid: str) -> bool:
+        api = self.provider().api
         try:
-            self.provider().api.get_vm_info(int(vmid))
+            api.get_vm_info(int(vmid))
             return False
         except prox_exceptions.ProxmoxNotFound:
-            return True
+            pass
+
+        # Proxmox answers OK to the VM removal before its disks are gone
+        with self.storage.as_dict() as storage:
+            stored = storage.get(f'disks_{vmid}')
+            if stored is None:
+                return True
+            node, disks = stored
+            existing = api.get_existing_disks(disks, node)
+            if existing:
+                api.delete_disks(existing, node)
+                return False
+            del storage[f'disks_{vmid}']
+        return True

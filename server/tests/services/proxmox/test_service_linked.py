@@ -35,6 +35,7 @@ import typing
 from unittest import mock
 
 from uds.services.Proxmox.proxmox import exceptions as prox_exceptions
+from uds.services.Proxmox.proxmox import types as prox_types
 
 from . import fixtures
 
@@ -102,6 +103,81 @@ class TestProxmovLinkedService(UDSTestCase):
                 with self.subTest(error=type(error).__name__):
                     with self.assertRaises(type(error)):
                         service.is_deleted('100')
+
+    def test_service_is_deleted_waits_for_disks(self) -> None:
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider.api)
+            service = fixtures.create_service_linked(provider=provider)
+            vm = fixtures.VMINFO_LIST[0]
+            disks = ['data:vm-1-disk-0']
+            api.get_vm_disks.return_value = disks
+
+            service.execute_delete(str(vm.id))
+            api.delete_vm.assert_called_once_with(vm.id)
+
+            api.get_vm_info.side_effect = prox_exceptions.ProxmoxNotFound('not found')
+            api.get_existing_disks.return_value = disks
+            self.assertFalse(service.is_deleted(str(vm.id)))
+            api.delete_disks.assert_called_once_with(disks, vm.node)
+
+            api.get_existing_disks.return_value = []
+            self.assertTrue(service.is_deleted(str(vm.id)))
+            # Stored disks are released once gone
+            api.get_existing_disks.reset_mock()
+            self.assertTrue(service.is_deleted(str(vm.id)))
+            api.get_existing_disks.assert_not_called()
+
+    def test_service_delete_rerecords_disks_and_releases_them_on_notify(self) -> None:
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider.api)
+            service = fixtures.create_service_linked(provider=provider)
+            vm = fixtures.VMINFO_LIST[0]
+
+            api.get_vm_disks.return_value = ['data:vm-1-disk-0']
+            service.execute_delete(str(vm.id))
+            # The worker gave up without waiting for the disks, so the recorded list must not survive
+            service.notify_deleted(str(vm.id))
+
+            api.get_vm_disks.return_value = ['data:vm-1-disk-9']
+            service.execute_delete(str(vm.id))
+            api.get_vm_info.side_effect = prox_exceptions.ProxmoxNotFound('not found')
+            api.get_existing_disks.return_value = ['data:vm-1-disk-9']
+            self.assertFalse(service.is_deleted(str(vm.id)))
+            api.delete_disks.assert_called_once_with(['data:vm-1-disk-9'], vm.node)
+
+    def test_service_execute_delete_proceeds_even_if_disk_inspection_fails(self) -> None:
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider.api)
+            service = fixtures.create_service_linked(provider=provider)
+            vm = fixtures.VMINFO_LIST[0]
+            api.get_vm_info.side_effect = prox_exceptions.ProxmoxError('cannot read info')
+
+            service.execute_delete(str(vm.id))
+            api.delete_vm.assert_called_once_with(vm.id)
+
+    def test_vm_configuration_disks(self) -> None:
+        config = prox_types.VMConfiguration.from_dict(
+            {
+                'scsi0': 'data:vm-100-disk-0,size=32G',
+                'scsi1': 'local:100/vm-100-disk-3.qcow2,size=8G',
+                'efidisk0': 'data:vm-100-disk-1,size=1M',
+                'ide0': 'data:vm-100-cloudinit,media=cdrom',
+                'ide2': 'local:iso/win.iso,media=cdrom',
+                'ide3': 'none,media=cdrom',
+                'unused0': 'data:vm-100-disk-2',
+                'net0': 'virtio=AA:BB:CC:DD:EE:FF,bridge=vmbr0',
+            }
+        )
+        self.assertEqual(
+            config.disks,
+            [
+                'data:vm-100-disk-0',
+                'local:100/vm-100-disk-3.qcow2',
+                'data:vm-100-disk-1',
+                'data:vm-100-cloudinit',
+                'data:vm-100-disk-2',
+            ],
+        )
 
     def test_service_methods_1(self) -> None:
         with fixtures.patched_provider() as provider:

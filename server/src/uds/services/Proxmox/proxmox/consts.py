@@ -39,5 +39,8 @@ import typing
 CACHE_DURATION: typing.Final[int] = consts.cache.DEFAULT_CACHE_TIMEOUT
 CACHE_INFO_DURATION: typing.Final[int] = consts.cache.SHORT_CACHE_TIMEOUT
 CACHE_VM_INFO_DURATION: typing.Final[int] = consts.cache.SHORTEST_CACHE_TIMEOUT
+# Deleted volumes must not linger here, so it is kept well below the 10 seconds between
+# deletion checks; it only exists so the deletions running in parallel share a single listing
+CACHE_STORAGE_CONTENT_DURATION: typing.Final[int] = 5
 # Cache duration is 3 minutes, so this is 60 mins * 24 = 1 day (default)
 CACHE_DURATION_LONG: typing.Final[int] = consts.cache.EXTREME_CACHE_TIMEOUT

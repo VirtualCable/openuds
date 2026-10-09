@@ -403,6 +403,11 @@ class VMInfo:
         )
 
 
+DISK_KEY_RE: typing.Final = re.compile(r'^(scsi|virtio|sata|ide|efidisk|tpmstate|unused)\d+$')
+# A cdrom entry can hold a real volume (cloudinit), so the volume shape decides, not the media option
+VM_VOLUME_RE: typing.Final = re.compile(r'^[^:]+:(?:\d+/)?(?:vm|base)-\d+-')
+
+
 @dataclasses.dataclass
 class VMConfiguration:
     name: str
@@ -416,13 +421,19 @@ class VMConfiguration:
 
     template: bool
     protection: bool
+    disks: list[str] = dataclasses.field(default_factory=list[str])
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMConfiguration':
         nets: list[NetworkConfiguration] = []
+        disks: list[str] = []
         for k in dictionary.keys():
             if k[:3] == 'net':
                 nets.append(NetworkConfiguration.from_str(k, dictionary[k]))
+            elif DISK_KEY_RE.match(k):
+                volume = str(dictionary[k]).split(',', 1)[0]
+                if VM_VOLUME_RE.match(volume):
+                    disks.append(volume)
 
         return VMConfiguration(
             name=dictionary.get('name', ''),
@@ -435,6 +446,7 @@ class VMConfiguration:
             tpmstate0=dictionary.get('tpmstate0', ''),
             template=dictionary.get('template', False),
             protection=dictionary.get('protection', False),
+            disks=disks,
         )
 
 
