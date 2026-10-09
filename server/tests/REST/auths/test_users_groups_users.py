@@ -34,6 +34,8 @@ import functools
 import logging
 
 from uds import models
+from uds.core.types.states import State
+from uds.auths.SimpleLDAP.authenticator import SimpleLDAPAuthenticator
 
 from ...utils import rest
 from ...fixtures import rest as rest_fixtures
@@ -197,3 +199,126 @@ class UsersTest(rest.test.RESTActorTestCase):
         count = len(list(models.ServicePool.get_pools_for_groups(groups)))
 
         self.assertEqual(len(response.json()), count)
+
+    def _create_external_auth(self) -> models.Authenticator:
+        auth = models.Authenticator.objects.create(
+            name='External Test Auth',
+            data_type=SimpleLDAPAuthenticator.type_type,
+        )
+        auth.data = auth.get_instance().serialize()
+        auth.save()
+        return auth
+
+    def test_import_csv_one_column(self) -> None:
+        auth = self._create_external_auth()
+        url = f'authenticators/{auth.uuid}/users/{auth.uuid}/importcsv'
+
+        csv_data = 'alice\nbob\ncharlie'
+        response = self.client.rest_put(url, {'data': csv_data})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
+
+        self.assertEqual(auth.users.count(), 3)
+        user_alice = auth.users.get(name='alice')
+        self.assertEqual(user_alice.real_name, 'alice')
+        self.assertEqual(user_alice.state, State.ACTIVE)
+        self.assertEqual(user_alice.comments, '')
+        self.assertEqual(user_alice.mfa_data, '')
+        self.assertEqual(user_alice.password, '')
+        self.assertFalse(user_alice.is_admin)
+        self.assertFalse(user_alice.staff_member)
+
+    def test_import_csv_two_columns(self) -> None:
+        auth = self._create_external_auth()
+        url = f'authenticators/{auth.uuid}/users/{auth.uuid}/importcsv'
+
+        csv_data = 'alice,Alice Smith\nbob,Bob Jones'
+        response = self.client.rest_put(url, {'data': csv_data})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
+
+        user_alice = auth.users.get(name='alice')
+        self.assertEqual(user_alice.real_name, 'alice')
+        self.assertEqual(user_alice.comments, 'Alice Smith (import)')
+
+        user_bob = auth.users.get(name='bob')
+        self.assertEqual(user_bob.comments, 'Bob Jones (import)')
+
+    def test_import_csv_three_columns(self) -> None:
+        auth = self._create_external_auth()
+        url = f'authenticators/{auth.uuid}/users/{auth.uuid}/importcsv'
+
+        csv_data = 'alice,Alice Smith,ignored_column'
+        response = self.client.rest_put(url, {'data': csv_data})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
+
+        user_alice = auth.users.get(name='alice')
+        self.assertEqual(user_alice.real_name, 'alice')
+        self.assertEqual(user_alice.comments, 'Alice Smith (import)')
+        self.assertEqual(user_alice.mfa_data, '')
+
+    def test_import_csv_internal_authenticator_rejected(self) -> None:
+        url = f'authenticators/{self.auth.uuid}/users/{self.auth.uuid}/importcsv'
+
+        response = self.client.rest_put(url, {'data': 'hacker'})
+        self.assertEqual(response.status_code, 400)
+
+    def test_import_csv_with_header(self) -> None:
+        auth = self._create_external_auth()
+        url = f'authenticators/{auth.uuid}/users/{auth.uuid}/importcsv'
+
+        csv_data = 'username,full_name,extra\nalice,Alice,ignored'
+        response = self.client.rest_put(url, {'data': csv_data, 'has_header': True})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
+
+        self.assertEqual(auth.users.count(), 1)
+        self.assertFalse(auth.users.filter(name='username').exists())
+        u = auth.users.get(name='alice')
+        self.assertEqual(u.real_name, 'alice')
+        self.assertEqual(u.mfa_data, '')
+
+    def test_import_csv_custom_separator(self) -> None:
+        auth = self._create_external_auth()
+        url = f'authenticators/{auth.uuid}/users/{auth.uuid}/importcsv'
+
+        csv_data = 'alice;Alice Smith;ignored\nbob;Bob Jones;ignored2'
+        response = self.client.rest_put(url, {'data': csv_data, 'separator': ';'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
+
+        user_alice = auth.users.get(name='alice')
+        self.assertEqual(user_alice.real_name, 'alice')
+        self.assertEqual(user_alice.comments, 'Alice Smith (import)')
+        self.assertEqual(user_alice.mfa_data, '')
+
+    def test_import_csv_duplicates_and_empty_rows(self) -> None:
+        auth = self._create_external_auth()
+        url = f'authenticators/{auth.uuid}/users/{auth.uuid}/importcsv'
+
+        auth.users.create(name='existing_user', comments='')
+
+        csv_data = '\n   \nexisting_user,Duplicate User\nalice,New User\n'
+        response = self.client.rest_put(url, {'data': csv_data})
+        self.assertEqual(response.status_code, 200)
+        errors = response.json()
+        self.assertEqual(len(errors), 1)
+        self.assertIn('already exists', errors[0])
+
+        self.assertEqual(auth.users.count(), 2)
+        self.assertTrue(auth.users.filter(name='alice').exists())
+
+    def test_import_csv_list_format(self) -> None:
+        auth = self._create_external_auth()
+        url = f'authenticators/{auth.uuid}/users/{auth.uuid}/importcsv'
+
+        payload = {'data': [['alice', 'Alice List', 'mfa_list']]}
+        response = self.client.rest_put(url, payload)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
+
+        user_alice = auth.users.get(name='alice')
+        self.assertEqual(user_alice.real_name, 'alice')
+        self.assertEqual(user_alice.comments, 'Alice List (import)')
+        self.assertEqual(user_alice.mfa_data, '')
