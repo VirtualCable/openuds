@@ -42,6 +42,7 @@ from uds.core.types.states import State
 
 from uds.core.auths.user import User as AUser
 from uds.core.util import log, ensure
+from uds.core.util.auth import normalize_username
 from uds.core.util.model import process_uuid, sql_stamp_seconds
 from uds.models import Authenticator, User, Group, ServicePool
 from uds.core.managers.crypto import CryptoManager
@@ -210,6 +211,12 @@ class Users(DetailHandler):
             'staff_member',
             'is_admin',
         ]
+        # Normalized as on login, or a name pasted with invisible chars (BOM, zero-width, ...)
+        # would create a row that no authenticated user could ever match.
+        # Note this also turns an all-invisible name into an empty one, rejected right below.
+        if 'name' in self._params:
+            self._params['name'] = normalize_username(self._params['name'])
+
         if self._params.get('name', '').strip() == '':
             raise exceptions.rest.RequestError(_('Username cannot be empty'))
 
