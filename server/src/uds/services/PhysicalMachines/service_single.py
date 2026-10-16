@@ -121,5 +121,5 @@ class IPSingleMachineService(services.Service):
 
     # Phisical machines does not have "real" providers, so
     # always is available
-    def is_available(self) -> bool:
+    def is_avaliable(self) -> bool:
         return True

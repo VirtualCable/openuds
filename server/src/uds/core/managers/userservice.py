@@ -755,7 +755,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             )
             or service_pool.service.provider.is_in_maintenance()
             or service_pool.is_restrained()
-            or not service_instance.is_available()
+            or not service_instance.is_avaliable()
         ):
             return False
 
@@ -1257,7 +1257,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             if meta.ha_policy == types.pools.HighAvailabilityPolicy.ENABLED:
                 # Check that servide is accessible
                 if (
-                    not already_assigned.deployed_service.service.get_instance().is_available()
+                    not already_assigned.deployed_service.service.get_instance().is_avaliable()
                 ):  # Not available, mark for removal
                     already_assigned.release()
                 raise Exception()  # And process a new access
@@ -1281,7 +1281,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             for pool in pools:  # Pools are already sorted, and "full" pools are filtered out
                 if meta.ha_policy == types.pools.HighAvailabilityPolicy.ENABLED:
                     # If not available, skip it
-                    if pool.service.get_instance().is_available() is False:
+                    if pool.service.get_instance().is_avaliable() is False:
                         continue
 
                 # Ensure transport is available for the OS
