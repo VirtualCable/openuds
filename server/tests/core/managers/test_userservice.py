@@ -220,3 +220,79 @@ class TestUserserviceManager(UDSTransactionTestCase):
         self.assertEqual(assigned_info.userservice.src_ip, '1.2.3.4')
         self.assertEqual(assigned_info.userservice.src_hostname, '1.2.3.4')
         self.assertEqual(assigned_info.transport.uuid, service_pool.transports.all()[0].uuid)
+
+    def test_get_user_service_with_usable_cache_and_os_not_ready(self) -> None:
+        userservice = services_fixtures.create_db_assigned_userservices()[0]
+        user = userservice.user
+        assert user is not None
+
+        userservice.cache_level = core_types.services.CacheLevel.L1
+        userservice.user = None
+        userservice.state = core_types.states.State.USABLE
+        userservice.os_state = core_types.states.State.PREPARING
+        userservice.save()
+
+        service_pool = userservice.service_pool
+
+        service_pool.initial_srvs = 1
+        service_pool.cache_l1_srvs = 0
+        service_pool.cache_l2_srvs = 0
+        service_pool.max_srvs = 3
+        service_pool.save()
+
+        assigned = self.manager.get_assignation_for_user(service_pool, user)
+
+        self.assertIsNotNone(assigned)
+        assert assigned is not None
+        self.assertEqual(assigned.uuid, userservice.uuid)
+        self.assertEqual(assigned.cache_level, core_types.services.CacheLevel.NONE)
+        self.assertEqual(service_pool.assigned_user_services().filter(user=user).count(), 1)
+
+    def test_get_assignation_assigns_a_single_userservice_when_cache_os_is_not_ready(self) -> None:
+        """A cache hit on a service whose os is still preparing is resolved by the second
+        lookup, which already reserves the row on database. Falling through to the
+        "cache missed" lookups from there reserved a second user service for the same
+        user, leaving the first one assigned and unreachable.
+        """
+        from tests.fixtures import authenticators as auth_fixtures
+
+        provider = services_fixtures.create_db_provider()
+        service = services_fixtures.create_db_service(provider)
+        osmanager = services_fixtures.create_db_osmanager()
+        authenticator = auth_fixtures.create_db_authenticator()
+        groups = auth_fixtures.create_db_groups(authenticator, 1)
+        user = auth_fixtures.create_db_users(authenticator, 1, groups=groups)[0]
+        transport = services_fixtures.create_db_transport()
+        service_pool = services_fixtures.create_db_servicepool(service, osmanager, groups, [transport])
+
+        service_pool.initial_srvs = 0
+        service_pool.cache_l1_srvs = 2
+        service_pool.cache_l2_srvs = 0
+        service_pool.max_srvs = 4
+        service_pool.save()
+
+        publication = services_fixtures.create_db_publication(service_pool)
+
+        usable_cache = services_fixtures.create_db_userservice(service_pool, publication, None)
+        usable_cache.cache_level = core_types.services.CacheLevel.L1
+        usable_cache.os_state = core_types.states.State.PREPARING
+        usable_cache.save()
+
+        preparing_cache = services_fixtures.create_db_userservice(service_pool, publication, None)
+        preparing_cache.cache_level = core_types.services.CacheLevel.L1
+        preparing_cache.state = core_types.states.State.PREPARING
+        preparing_cache.os_state = core_types.states.State.PREPARING
+        preparing_cache.save()
+
+        assigned = self.manager.get_assignation_for_user(service_pool, user)
+
+        self.assertIsNotNone(assigned)
+        assert assigned is not None
+        self.assertEqual(assigned.uuid, usable_cache.uuid)
+        self.assertEqual(assigned.cache_level, core_types.services.CacheLevel.NONE)
+        self.assertEqual(assigned.user, user)
+        self.assertEqual(models.UserService.objects.filter(user=user).count(), 1)
+
+        preparing_cache.refresh_from_db()
+        self.assertIsNone(preparing_cache.user)
+        self.assertEqual(preparing_cache.cache_level, core_types.services.CacheLevel.L1)
