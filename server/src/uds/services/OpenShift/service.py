@@ -137,7 +137,7 @@ class OpenshiftService(DynamicService):
             if vm.name == name:
                 yield vm.name
 
-    def is_available(self) -> bool:
+    def is_avaliable(self) -> bool:
         """
         Checks if provider is available
         """

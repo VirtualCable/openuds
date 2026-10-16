@@ -122,7 +122,7 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
         """
         return typing.cast('OpenshiftProvider', super().provider())
 
-    def is_available(self) -> bool:
+    def is_avaliable(self) -> bool:
         """
         Checks if provider is available
         """
