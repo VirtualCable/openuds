@@ -76,6 +76,63 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     # How many "retries" operation on same state will be allowed before giving up
     max_retries: typing.ClassVar[int] = consts.services.USRV_MAX_RETRIES
 
+    # Delay, in seconds, inserted as NOP operations between CREATE_COMPLETED and START
+    # on _create_queue and _create_queue_l1_cache. Lets external storage or cluster
+    # managers settle their affinity rules before the broker asks the provider to
+    # power on the new VM.
+    #
+    # Defaults to 0 so installations without this need see no change. Edits made
+    # by hand on a deployed appliance should land here and a `touch` must follow
+    # so the .py mtime is newer than the legacy .pyc bundled by the broker.
+    DELAY_AFTER_CREATE_SECONDS: typing.ClassVar[int] = 0
+
+    @classmethod
+    def _delay_after_create_ops(cls) -> list[types.services.Operation]:
+        '''
+        Returns a list of NOP operations whose total wait time approximates
+        ``DELAY_AFTER_CREATE_SECONDS``. Each NOP consumes one broker cycle,
+        so wall time per NOP is roughly ``USRV_SUGGESTED_CHECK_INTERVAL``.
+        '''
+        seconds = max(0, int(cls.DELAY_AFTER_CREATE_SECONDS))
+        if seconds <= 0:
+            return []
+        per_nop = max(1, int(consts.services.USRV_SUGGESTED_CHECK_INTERVAL))
+        return [types.services.Operation.NOP] * -(-seconds // per_nop)
+
+    @classmethod
+    def _insert_delay(cls, queue: typing.Sequence[types.services.Operation]) -> list[types.services.Operation]:
+        '''
+        Returns a copy of ``queue`` with ``_delay_after_create_ops`` inserted
+        right before ``START``. If the queue has no ``START``, the NOPs are
+        not appended (they would sit past ``FINISH`` and never run).
+        '''
+        ops = list(queue)
+        delay = cls._delay_after_create_ops()
+        if not delay:
+            return ops
+        try:
+            insert_at = ops.index(types.services.Operation.START)
+        except ValueError:
+            return ops
+        ops[insert_at:insert_at] = delay
+        return ops
+
+    @classmethod
+    def _create_queue_with_delay(cls) -> list[types.services.Operation]:
+        '''
+        Returns ``_create_queue`` with the configured delay inserted right
+        before ``START``. Returns a copy so the class variable stays
+        untouched.
+        '''
+        return cls._insert_delay(cls._create_queue)
+
+    @classmethod
+    def _create_queue_l1_cache_with_delay(cls) -> list[types.services.Operation]:
+        '''
+        Same as :meth:`_create_queue_with_delay` for the L1 cache queue.
+        '''
+        return cls._insert_delay(cls._create_queue_l1_cache)
+
     # Some customization fields
     # If ip can be manually overriden, normally True... (set by actor, for example)
     can_set_ip: typing.ClassVar[bool] = True
@@ -112,7 +169,6 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         types.services.Operation.START_COMPLETED,
         types.services.Operation.FINISH,
     ]
-
     _create_queue_l2_cache: typing.ClassVar[list[types.services.Operation]] = [
         types.services.Operation.INITIALIZE,
         types.services.Operation.CREATE,
@@ -386,13 +442,13 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         Deploys an service instance for an user.
         """
         logger.debug('Deploying for user')
-        self._set_queue(self._create_queue.copy())  # copy is needed to avoid modifying class var
+        self._set_queue(self._create_queue_with_delay())  # copy is needed to avoid modifying class var
         return self._execute_queue()
 
     @typing.final
     def deploy_for_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
         if level == types.services.CacheLevel.L1:
-            self._set_queue(self._create_queue_l1_cache.copy())
+            self._set_queue(self._create_queue_l1_cache_with_delay())
         else:
             self._set_queue(self._create_queue_l2_cache.copy())
         return self._execute_queue()
