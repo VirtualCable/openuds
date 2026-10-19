@@ -81,9 +81,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     # managers settle their affinity rules before the broker asks the provider to
     # power on the new VM.
     #
-    # Defaults to 0 so installations without this need see no change. Edits made
-    # by hand on a deployed appliance should land here and a `touch` must follow
-    # so the .py mtime is newer than the legacy .pyc bundled by the broker.
+    # Defaults to 0 so installations without this need see no change.
     DELAY_AFTER_CREATE_SECONDS: typing.ClassVar[int] = 0
 
     @classmethod
