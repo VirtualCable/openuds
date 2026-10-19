@@ -28,10 +28,13 @@
 
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Andres Schumann, aschumann at virtualcable dot es
 """
 import logging
 import typing
 import collections.abc
+import io
+import csv
 
 from django.utils.translation import gettext as _
 from django.forms.models import model_to_dict
@@ -42,6 +45,7 @@ from uds.core.types.states import State
 
 from uds.core.auths.user import User as AUser
 from uds.core.util import log, ensure
+from uds.core.util.auth import normalize_username
 from uds.core.util.model import process_uuid, sql_stamp_seconds
 from uds.models import Authenticator, User, Group, ServicePool
 from uds.core.managers.crypto import CryptoManager
@@ -84,6 +88,8 @@ class Users(DetailHandler):
         'clean_related',
         'add_to_group',
         'enable_client_logging',
+        'importcsv',
+        'import',
     ]
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
@@ -210,6 +216,12 @@ class Users(DetailHandler):
             'staff_member',
             'is_admin',
         ]
+        # Normalized as on login, or a name pasted with invisible chars (BOM, zero-width, ...)
+        # would create a row that no authenticated user could ever match.
+        # Note this also turns an all-invisible name into an empty one, rejected right below.
+        if 'name' in self._params:
+            self._params['name'] = normalize_username(self._params['name'])
+
         if self._params.get('name', '').strip() == '':
             raise exceptions.rest.RequestError(_('Username cannot be empty'))
 
@@ -359,6 +371,72 @@ class Users(DetailHandler):
             props['client_logging'] = sql_stamp_seconds()
 
         return {'status': 'ok'}
+
+    def importcsv(self, parent: 'Model') -> typing.Any:
+        auth = ensure.is_instance(parent, Authenticator)
+        if not auth.get_instance().external_source:
+            raise exceptions.rest.RequestError(
+                _('User import is only supported for external/federated authenticators')
+            )
+
+        data: typing.Any = self._params.get('data', '')
+        has_header: bool = bool(self._params.get('has_header', False))
+        separator: str = str(self._params.get('separator', ','))
+
+        if isinstance(data, list):
+            rows: list[list[str]] = [
+                [str(cell).strip() for cell in row]
+                for row in data
+                if isinstance(row, (list, tuple))
+            ]
+        else:
+            if separator == 'tab':
+                separator = '\t'
+            f = io.StringIO(str(data))
+            reader = csv.reader(f, delimiter=separator)
+            rows = [[cell.strip() for cell in row] for row in reader]
+
+        if has_header and rows:
+            rows = rows[1:]
+
+        existing_usernames: set[str] = set(auth.users.values_list('name', flat=True))
+        errors: list[str] = []
+
+        for line_num, row in enumerate(rows, 1):
+            if not row or not any(row):
+                continue
+            username = row[0].strip()
+            if not username:
+                errors.append(_('Line {}: username is required').format(line_num))
+                continue
+            if username in existing_usernames:
+                errors.append(_('Line {}: user {} already exists').format(line_num, username))
+                continue
+
+            comments = ''
+            if len(row) > 1 and row[1].strip():
+                comments = f'{row[1].strip()} (import)'
+
+            try:
+                auth.users.create(
+                    name=username,
+                    real_name=username,
+                    comments=comments,
+                    state=State.ACTIVE,
+                    staff_member=False,
+                    is_admin=False,
+                    mfa_data='',
+                    password='',
+                )
+                existing_usernames.add(username)
+            except Exception as e:
+                logger.error('Error importing user %s: %s', username, e)
+                errors.append(_('Line {}: error creating user {}: {}').format(line_num, username, e))
+
+        return errors
+
+
+setattr(Users, 'import', Users.importcsv)
 
 
 class Groups(DetailHandler):

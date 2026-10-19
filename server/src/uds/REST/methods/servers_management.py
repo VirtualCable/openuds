@@ -31,6 +31,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import io
+import csv
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -345,11 +347,11 @@ class ServersServers(DetailHandler):
 
     def importcsv(self, parent: 'Model') -> typing.Any:
         """
-        We receive a json with string[][] format with the data.
+        We receive a csv string with the data.
         Has no header, only the data.
         """
         parent = ensure.is_instance(parent, models.ServerGroup)
-        data: list[list[str]] = self._params.get('data', [])
+        data: typing.Any = self._params.get('data', '')
         logger.debug('Data received: %s', data)
         # String lines can have 1, 2 or 3 fields.
         # if 1, it's a IP
@@ -358,16 +360,20 @@ class ServersServers(DetailHandler):
         # if ip is empty and has a hostname, it will be kept, but if it has no hostname, it will be skipped
         # If the IP is invalid and has no hostname, it will be skipped
         import_errors: list[str] = []
-        for line_number, row in enumerate(data, 1):
+
+        f = io.StringIO('\n'.join(','.join(row) for row in data)) 
+        reader: typing.Iterable[list[str]] = csv.reader(f)
+
+        for line_number, row in enumerate(reader, 1):
             if len(row) == 0:
                 continue
-            hostname = row[0].strip()
+            hostname = row[0]
             ip = ''
             mac = consts.MAC_UNKNOWN
             if len(row) > 1:
-                ip = row[1].strip()
+                ip = row[1]
             if len(row) > 2:
-                mac = row[2].strip().upper().strip() or consts.MAC_UNKNOWN
+                mac = row[2].upper() or consts.MAC_UNKNOWN
                 if mac and not net.is_valid_mac(mac):
                     import_errors.append(f'Line {line_number}: MAC {mac} is invalid, skipping')
                     continue  # skip invalid macs

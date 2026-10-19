@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Janier Rodríguez, jrodriguez at virtualcable dot es
 """
 import typing
 import logging
@@ -194,15 +195,31 @@ class TOTP_MFA(mfas.MFA):
             return
 
         if self.cache.get(userid + code) is not None:
+            logger.warning(
+                "TOTP: Code already used by user [%s] from IP [%s], length [%d]", userid, request.ip, len(code)
+            )
             raise exceptions.auth.MFAError(gettext('Code is already used. Wait a minute and try again.'))
 
         # Get data from storage related to this user
         secret, qr_has_been_shown = self._user_data(userid)
 
         # Validate code
+        now = sql_now()
         if not self.get_totp(userid, username).verify(
-            code, valid_window=self.valid_window.as_int(), for_time=sql_now()
+            code, valid_window=self.valid_window.as_int(), for_time=now
         ):
+            # Only rejected codes are traced. The server time and the valid window go with them because a
+            # rejection is, most of the time, a clock drift between the client and this server.
+            # The code itself is never traced, only its length.
+            logger.warning(
+                "TOTP: Invalid code from user [%s] at IP [%s]. Code length [%d], "
+                "valid window [%d], server time [%s]",
+                userid,
+                request.ip,
+                len(code),
+                self.valid_window.as_int(),
+                now.isoformat(),
+            )
             raise exceptions.auth.MFAError(gettext('Invalid code'))
 
         self.cache.put(userid + code, True, self.valid_window.as_int() * (TOTP_INTERVAL + 1))
