@@ -88,13 +88,14 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     def _delay_after_create_ops(cls) -> list[types.services.Operation]:
         '''
         Returns a list of NOP operations whose total wait time approximates
-        ``DELAY_AFTER_CREATE_SECONDS``. Each NOP consumes one broker cycle,
-        so wall time per NOP is roughly ``USRV_SUGGESTED_CHECK_INTERVAL``.
+        ``DELAY_AFTER_CREATE_SECONDS``. Each NOP consumes one check cycle,
+        so wall time per NOP is roughly the service's ``suggested_delay``
+        (subclasses such as VMware use a shorter cycle than the default).
         '''
         seconds = max(0, int(cls.DELAY_AFTER_CREATE_SECONDS))
         if seconds <= 0:
             return []
-        per_nop = max(1, int(consts.services.USRV_SUGGESTED_CHECK_INTERVAL))
+        per_nop = max(1, int(cls.suggested_delay))
         return [types.services.Operation.NOP] * -(-seconds // per_nop)
 
     @classmethod

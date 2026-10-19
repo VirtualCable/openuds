@@ -66,6 +66,17 @@ def test_l1_cache_queue_also_gets_the_delay() -> None:
     assert inserted == [services_types.Operation.NOP, services_types.Operation.NOP]
 
 
+def test_nop_count_follows_the_service_check_interval() -> None:
+    class _FastCheckUserService(_StubUserService):
+        suggested_delay = 4
+
+    _FastCheckUserService.DELAY_AFTER_CREATE_SECONDS = 10
+    queue = _FastCheckUserService()._create_queue_with_delay()
+    start_index = queue.index(services_types.Operation.START)
+    nops = [op for op in queue[:start_index] if op == services_types.Operation.NOP]
+    assert len(nops) == 3
+
+
 def test_delay_zero_or_negative_is_no_op() -> None:
     for value in (0, -1, -100):
         stub = _stub(value)
