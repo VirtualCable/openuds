@@ -34,6 +34,8 @@ import typing
 import datetime
 from unittest import mock
 
+import dns.resolver
+
 from uds import models
 from uds.core import consts, types
 from uds.core.util import fields
@@ -290,7 +292,16 @@ class TestPhysicalMigration(UDSTransactionTestCase):
         # So test is valid for both cases
 
         # First, proceed to migration of data
-        physical_machine_multiple.migrate(self.apps_mock(), None)
+        # DNS is faked so the result does not depend on the host resolver: the IPs get a
+        # reverse name and "localhost" does not resolve (systemd-resolved, for example,
+        # answers for it, and then it would not be filtered out)
+        def fake_resolve(qname: typing.Any, rdtype: str = 'A', *args: typing.Any, **kwargs: typing.Any) -> list[str]:
+            if rdtype == 'PTR':
+                return [f'{qname}.']
+            raise dns.resolver.NXDOMAIN()
+
+        with mock.patch('dns.resolver.resolve', side_effect=fake_resolve):
+            physical_machine_multiple.migrate(self.apps_mock(), None)
 
         # Now check that data has been migrated correctly
         # Single ip
