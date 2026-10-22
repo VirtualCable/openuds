@@ -459,10 +459,7 @@ class OpenshiftClient:
             namespace, source_pvc_name
         )
 
-        eviction_strategy = (
-            vm_obj.get('spec', {}).get('template', {}).get('spec', {}).get('evictionStrategy')
-        )
-        access_modes = ['ReadWriteMany'] if eviction_strategy == 'LiveMigrate' else ['ReadWriteOnce']
+        access_modes = self._access_modes_for_vm(namespace, source_vm_name, vm_obj)
 
         pvc_spec = {
             "accessModes": access_modes,
@@ -611,13 +608,50 @@ class OpenshiftClient:
         RWO-only storage classes still work.
         """
         path = f"/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{source_vm_name}"
-        vm_obj = self.do_request('GET', path)
-        eviction_strategy = (
-            vm_obj.get('spec', {}).get('template', {}).get('spec', {}).get('evictionStrategy')
-        )
-        if eviction_strategy == 'LiveMigrate':
+        return self._access_modes_for_vm(namespace, source_vm_name, self.do_request('GET', path))
+
+    def _access_modes_for_vm(
+        self, namespace: str, vm_name: str, vm_obj: dict[str, typing.Any]
+    ) -> list[str]:
+        if self._effective_eviction_strategy(namespace, vm_name, vm_obj) == 'LiveMigrate':
             return ['ReadWriteMany']
         return ['ReadWriteOnce']
+
+    def _effective_eviction_strategy(
+        self, namespace: str, vm_name: str, vm_obj: dict[str, typing.Any]
+    ) -> str | None:
+        """
+        KubeVirt applies the cluster-wide evictionStrategy (KubeVirt CR, managed by the
+        HyperConverged operator on OpenShift) to VMs that do not set their own, so a
+        template without the field can still be LiveMigrate once it runs.
+        Precedence: VM template spec, then the running VMI, then the cluster default.
+        """
+        vm_strategy = vm_obj.get('spec', {}).get('template', {}).get('spec', {}).get('evictionStrategy')
+        if vm_strategy:
+            return vm_strategy
+
+        try:
+            vmi = self.do_request(
+                'GET', f"/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachineinstances/{vm_name}"
+            )
+            vmi_strategy = vmi.get('spec', {}).get('evictionStrategy')
+            if vmi_strategy:
+                return vmi_strategy
+        except exceptions.OpenshiftError as e:
+            logger.debug('Could not read VMI %s to get its evictionStrategy: %s', vm_name, e)
+
+        # Reading the KubeVirt CR needs cluster-scope permissions; without them we
+        # keep the previous behaviour (ReadWriteOnce) instead of failing the creation
+        try:
+            kubevirts = self.do_request('GET', '/apis/kubevirt.io/v1/kubevirts')
+            for kubevirt in kubevirts.get('items', []):
+                cluster_strategy = kubevirt.get('spec', {}).get('configuration', {}).get('evictionStrategy')
+                if cluster_strategy:
+                    return cluster_strategy
+        except exceptions.OpenshiftError as e:
+            logger.debug('Could not read the cluster-wide evictionStrategy: %s', e)
+
+        return None
 
     # @cached('test', consts.CACHE_VM_INFO_DURATION)
     def test(self) -> bool:
