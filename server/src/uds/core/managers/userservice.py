@@ -310,7 +310,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             State.from_str(cache.state).localized,
             State.from_str(cache.os_state).localized,
         )
-        if state.is_runing() and cache.is_usable():
+        if state.is_runing():
             cache.set_state(State.PREPARING)
         else:
             cache.set_state(State.USABLE)
