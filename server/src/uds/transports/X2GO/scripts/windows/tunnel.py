@@ -27,7 +27,13 @@ theFile = sp['xf'].format(export=home, keyFile=keyFile.replace('\\', '/'), ip='1
 filename = tools.saveTempFile(theFile)
 
 x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'
-executable = tools.findApp('x2goclient.exe', [x2goPath])
+executable = tools.findApp('x2goclient.exe', x2goPath)
+if executable is None:
+    # Clients before March 2025 expect a list of folders, later ones a single folder
+    try:
+        executable = tools.findApp('x2goclient.exe', [x2goPath])
+    except TypeError:
+        pass
 if executable is None:
     raise Exception(
         '''<p>You must have installed latest X2GO Client in default program file folder in order to connect to this UDS service.</p>
