@@ -18,6 +18,12 @@ filename = tools.saveTempFile(theFile)
 x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'
 executable = tools.findApp('x2goclient.exe', x2goPath)
 if executable is None:
+    # Clients before March 2025 expect a list of folders, later ones a single folder
+    try:
+        executable = tools.findApp('x2goclient.exe', [x2goPath])
+    except TypeError:
+        pass
+if executable is None:
     raise Exception(
         '''<p>You must have installed latest X2GO Client in order to connect to this UDS service.</p>
 <p>You can download it for windows from <a href="http://wiki.x2go.org/doku.php">X2Go Site</a>.</p>'''
