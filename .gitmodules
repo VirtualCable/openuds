@@ -1,16 +1,16 @@
 [submodule "tunnel-server"]
 	path = tunnel-server
 	url = git@github.com:VirtualCable/uds-tunnel-server.git
-	branch = v5.0
+	branch = master
 [submodule "actor"]
 	path = actor
 	url = git@github.com:VirtualCable/uds-actor.git
-	branch = v5.0
+	branch = master
 [submodule "client-py3"]
 	path = client
 	url = git@github.com:VirtualCable/uds-client.git
-	branch = v5.0
+	branch = master
 [submodule "server"]
 	path = server
     url = git@github.com:VirtualCable/broker.git
-    branch = v5.0
+    branch = master
