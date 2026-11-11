@@ -2,7 +2,7 @@
 
 Virtual Cable takes the security of our software products and services seriously.
 
-If you find any vulnerability, please, report it to "agomez@virtualcable.net".
+If you find any vulnerability, please, report it to "security@virtualcable.net".
 
 Please, do not use the issue tracker for security vulnerabilities.
 
