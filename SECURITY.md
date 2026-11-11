@@ -2,7 +2,7 @@
 
 Virtual Cable takes the security of our software products and services seriously.
 
-If you find any vulnerability, please, report it to "security@udsenterprise.com".
+If you find any vulnerability, please, report it to "security@virtualcable.net".
 
 Please, do not use the issue tracker for security vulnerabilities.
 
