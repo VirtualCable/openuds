@@ -52,6 +52,10 @@ def create_service() -> DynamicService:
 
 
 class DynamicPutBackToCacheTest(UDSTestCase):
+    def test_default_value_is_no(self) -> None:
+        service = create_service()
+        self.assertEqual(service.put_back_to_cache.value, "no")
+
     def test_unset_value_does_not_allow_putting_back_to_cache(self) -> None:
         service = create_service()
         self.assertFalse(service.allow_putting_back_to_cache())

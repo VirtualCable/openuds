@@ -497,6 +497,7 @@ def put_back_to_cache_field(
         order=order,
         label=_('Put back to cache'),
         tooltip=_('On machine releasy by logout, put it back to cache instead of deleting if possible.'),
+        default='no',
         choices=[
             {'id': 'no', 'text': _('No. Never put it back to cache')},
             {'id': 'yes', 'text': _('Yes, try to put it back to cache')},
