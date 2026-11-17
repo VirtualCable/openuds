@@ -65,6 +65,11 @@ class DynamicPutBackToCacheTest(UDSTestCase):
         service.put_back_to_cache.value = "no"
         self.assertFalse(service.allow_putting_back_to_cache())
 
+    def test_legacy_none_value_does_not_allow_putting_back_to_cache(self) -> None:
+        service = create_service()
+        service.put_back_to_cache.value = "None"
+        self.assertFalse(service.allow_putting_back_to_cache())
+
     def test_yes_allows_putting_back_to_cache(self) -> None:
         service = create_service()
         service.put_back_to_cache.value = "yes"
