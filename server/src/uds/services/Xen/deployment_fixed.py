@@ -83,7 +83,7 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
         with self.service().provider().get_connection() as api:
             task_info = api.get_task_info(self._task)
             if task_info.is_failure():
-                raise Exception(task_info.result)  # Will set error state
+                raise Exception(task_info.failure_reason())  # Will set error state
             
             if task_info.is_success():
                 return types.states.TaskState.FINISHED

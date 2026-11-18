@@ -111,8 +111,8 @@ class XenPublication(DynamicPublication, autoserializable.AutoSerializable):
                 self.service().convert_to_template(self._vmid)
                 return types.states.TaskState.FINISHED
             elif task_info.is_failure():
-                logger.warning('Task failed: %s', task_info.result)
-                return self._error(task_info.result)
+                logger.warning('Task failed: %s', task_info.failure_reason())
+                return self._error(task_info.failure_reason())
 
         return types.states.TaskState.RUNNING
 
