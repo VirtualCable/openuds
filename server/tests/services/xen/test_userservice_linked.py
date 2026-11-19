@@ -36,7 +36,6 @@ from unittest import mock
 from tests.utils import MustBeOfType
 from uds import models
 from uds.core import types
-from uds.services.Xen.xen import types as xen_types
 
 
 from . import fixtures
