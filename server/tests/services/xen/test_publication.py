@@ -104,6 +104,22 @@ class TestXenPublication(UDSTransactionTestCase):
             self.assertEqual(state, types.states.State.ERROR)
             self.assertEqual(publication.error_reason(), 'ERROR, BOOM!')
 
+    def test_publication_error_reports_xapi_error_info(self) -> None:
+        with fixtures.patched_provider() as provider:
+            service = fixtures.create_service_linked(provider=provider)
+            publication = fixtures.create_publication(service=service)
+
+            fixtures.TASK_INFO.result = ''
+            fixtures.TASK_INFO.error_info = ['SR_FULL', 'sr-ref']
+            fixtures.TASK_INFO.status = xen_types.TaskStatus.FAILURE
+
+            state = publication.publish()
+            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, 128):
+                state = publication.check_state()
+
+            self.assertEqual(state, types.states.State.ERROR)
+            self.assertEqual(publication.error_reason(), 'SR_FULL / sr-ref')
+
     def test_publication_destroy(self) -> None:
         vmid = str(fixtures.VMS_INFO[0].opaque_ref)
         with fixtures.patched_provider() as provider:

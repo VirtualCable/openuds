@@ -36,6 +36,7 @@ from unittest import mock
 from tests.utils import MustBeOfType
 from uds import models
 from uds.core import types
+from uds.services.Xen.xen import types as xen_types
 
 
 from . import fixtures
@@ -116,6 +117,25 @@ class TestXenLinkedUserService(UDSTransactionTestCase):
             api.start_vm.assert_called_with(userservice._vmid)
             api.shutdown_vm.assert_called_with(userservice._vmid)
             
+    def test_userservice_linked_deploy_error_reports_xapi_error_info(self) -> None:
+        with fixtures.patched_provider() as provider:
+            service = fixtures.create_service_linked(provider=provider)
+            userservice = fixtures.create_userservice_linked(service=service)
+
+            publication = userservice.publication()
+            publication._vmid = '1'
+
+            fixtures.TASK_INFO.result = ''
+            fixtures.TASK_INFO.error_info = ['SR_FULL']
+            fixtures.TASK_INFO.status = xen_types.TaskStatus.FAILURE
+
+            state = userservice.deploy_for_user(models.User())
+            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                state = userservice.check_state()
+
+            self.assertEqual(state, types.states.TaskState.ERROR)
+            self.assertIn('Error deploying machine: SR_FULL', userservice._reason)
+
     def test_userservice_linked_user(self) -> None:
         """
         Test the user service
