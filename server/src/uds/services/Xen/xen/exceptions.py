@@ -113,6 +113,19 @@ class XenRetryableError(XenException, exceptions.services.generics.RetryableErro
         logger.debug('Retryable exception create: %s', message)
 
 
+class XenSessionExpired(XenRetryableError):
+    """The XAPI session used by a call no longer exists on the server."""
+
+
+@typing.runtime_checkable
+class SessionHolder(typing.Protocol):
+    def reset_session(self) -> None: ...
+
+
+def is_session_handle_invalid(details: list[typing.Any]) -> bool:
+    return len(details) > 1 and details[0] == 'HANDLE_INVALID' and details[1] == 'session'
+
+
 @contextlib.contextmanager
 def translator() -> typing.Generator[None, None, None]:
     try:
@@ -120,6 +133,8 @@ def translator() -> typing.Generator[None, None, None]:
     except XenException:
         raise  # No need to translate
     except XenAPI.Failure as e:
+        if is_session_handle_invalid(e.details):
+            raise XenSessionExpired(e.details[1:]) from e
         if e.details[0] == 'HANDLE_INVALID':
             raise XenNotFoundError(e.details[1:]) from e
         raise XenFailure(typing.cast(typing.Any, e.details)) from e
@@ -138,7 +153,13 @@ def catched(f: collections.abc.Callable[P, T]) -> collections.abc.Callable[P, T]
 
     @functools.wraps(f)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
-        with translator():
-            return f(*args, **kwargs)
+        try:
+            with translator():
+                return f(*args, **kwargs)
+        except XenSessionExpired:
+            # The session is gone: the next call must log in again, not reuse it.
+            if args and isinstance(args[0], SessionHolder):
+                args[0].reset_session()
+            raise
 
     return wrapper

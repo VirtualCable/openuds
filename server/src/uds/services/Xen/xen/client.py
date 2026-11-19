@@ -252,9 +252,24 @@ class XenClient:  # pylint: disable=too-many-public-methods
             self.login(switch_to_master=True)
         return self._logged_in
 
+    def reset_session(self) -> None:
+        # The server already dropped this session; a logout call would only fail.
+        self._logged_in = False
+        self._session = None
+        self._pool_name = self._api_version = ''
+
     def test(self) -> None:
+        # A live session must still answer: this checks the server and the session without opening a new one
+        if self._logged_in:
+            try:
+                with exceptions.translator():
+                    self._get_xenapi_property('pool').get_all()
+                return
+            except exceptions.XenSessionExpired:
+                self.reset_session()
         self.login(False)
 
+    @exceptions.catched
     def get_task_info(self, task_opaque_ref: str) -> xen_types.TaskInfo:
         try:
             with exceptions.translator():

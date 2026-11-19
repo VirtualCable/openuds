@@ -30,6 +30,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import contextlib
 import logging
+import threading
 import typing
 
 from django.utils.translation import gettext_noop as _
@@ -146,13 +147,21 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         old_field_name='hostBackup',
     )
 
-    _cached_api: typing.Optional[client.XenClient]
-    _use_count: int = 0
+    _cached_api: client.XenClient | None = None
 
     # XenServer engine, right now, only permits a connection to one server and only one per instance
     # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..
     # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
     # and this way all will be fine
+    def __init__(
+        self,
+        environment: 'environment.Environment',
+        values: 'types.core.ValuesType' = None,
+        uuid: typing.Optional[str] = None,
+    ) -> None:
+        super().__init__(environment, values, uuid)
+        self._connection_lock = threading.RLock()
+
     @property
     def api(self) -> client.XenClient:
         """
@@ -175,16 +184,17 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     @contextlib.contextmanager
     def get_connection(self) -> typing.Iterator[client.XenClient]:
         """
-        Context manager for XenServer API
+        Context manager for XenServer API.
+
+        The session stays open after the block: XAPI tasks started inside it
+        (Async.VM.clone, Async.VM.copy) need their session until they finish.
+        Logging out here killed those tasks with HANDLE_INVALID.
+
+        Calls are serialized per provider: one client and one session are shared,
+        and a session reset must not race with a call that is using the session.
         """
-        self._use_count += 1
-        try:
+        with self._connection_lock:
             yield self.api
-        finally:
-            self._use_count -= 1
-            if self._use_count == 0 and self._cached_api:
-                self._cached_api.logout()
-                self._cached_api = None
 
     # There is more fields type, but not here the best place to cover it
     def initialize(self, values: 'types.core.ValuesType') -> None:
@@ -192,7 +202,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         We will use the "autosave" feature for form fields
         """
 
-        # Just reset _api connection variable
+        # Drop the connection without calling the server: the old one may be unreachable
         self._cached_api = None
 
     def test_connection(self) -> None:
@@ -203,7 +213,8 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
             True if all went fine, false if id didn't
         """
-        self.api.test()
+        with self.get_connection() as api:
+            api.test()
 
     def get_macs_range(self) -> str:
         return self.macs_range.value
