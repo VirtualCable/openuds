@@ -14,3 +14,7 @@
 	path = server
     url = git@github.com:VirtualCable/broker.git
     branch = v5.0
+[submodule "ldap-client"]
+	path = ldap-client
+	url = git@github.com:VirtualCable/uds-ldap-client.git
+	branch = v5.0
