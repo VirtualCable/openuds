@@ -183,7 +183,7 @@ def process_regex_field(
                     # Prepend the value after : to attribute value before :
                     attr, prependable = attr_name.split('**')
                     val = [prependable + a for a in ensure.as_list(attributes.get(attr, []))]
-                elif ':' in attr_name:
+                elif ':' in attr_name and attr_name not in attributes:
                     # "prefix:attr" — look up attr, prepend prefix to each value (e.g. alumno:alum + "S" -> "alumnoS")
                     prefix, attr = attr_name.split(':', 1)
                     val = [prefix + a for a in ensure.as_list(attributes.get(attr, []))]
