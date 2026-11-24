@@ -2,7 +2,7 @@
 # Latest versions should work fine with master branch
 Django>5.0
 bitarray
-numpy
+numpy==2.3.5
 html5lib
 cryptography
 python3-saml
@@ -37,7 +37,7 @@ setproctitle
 openpyxl
 boto3
 uvicorn[standard]
-numpy
+numpy==2.3.5
 pandas
 xxhash
 psutil
